@@ -8,7 +8,7 @@ __WARNING__: dev in progress
 
 ## Installing
 
-- To install simply use `go install`
+To install simply use `go install`.
 
 ```shell
 $ go install github.com/gomeet/gomeet/gomeet
@@ -52,7 +52,7 @@ Flags:
 
 ## Usage example
 
-- Generation of `github.com/gomeet-examples/svc-echo` service
+Generation of `github.com/gomeet-examples/svc-echo` service.
 
 ```shell
 $ gomeet new github.com/gomeet-examples/svc-echo
