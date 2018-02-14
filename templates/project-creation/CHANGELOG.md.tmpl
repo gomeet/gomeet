@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ```shell
 $ gomeet new {{ .GoPkg }} \
-    --default-prefixes={{ .PkgNfo.DefaultPrefixes }} \
-	--proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
-	--no-gogo{{ end }}{{ if .SubServices }} \
-    --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
+  --default-prefixes={{ .PkgNfo.DefaultPrefixes }} \
+  --proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
+  --no-gogo{{ end }}{{ if .SubServices }} \
+  --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
 ```
 

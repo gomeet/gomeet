@@ -197,11 +197,13 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make test` - Runing tests
 - `make tools` - Installing all development tools
 - `make tools-sync` - Re-Syncronizes development tools
+- `make tools-upgrade-gomeet` - Upgrading all gomeet's development tools [gomeet-tools-markdown-server](github.com/gomeet/gomeet-tools-markdown-server), [protoc-gen-gomeetfaker](github.com/gomeet/go-proto-gomeetfaker/protoc-gen-gomeetfaker), [gomeet & protoc-gen-gomeet-service](https://github.com/gomeet/gomeet)
 - `make tools-upgrade` - Upgrading all development tools
 - `make tools-clean` - Uninstall all development tools
 - `make dep` - Executes the `dep ensure` command
 - `make dep-update-{{ .ProjectGroupName }} [individual svc name without {{ .Prefix }} prefix|default all]` - Executes the `dep ensure -update {{ .ProjectGroupGoPkg }}/{{ .Prefix }}[individual svc name without {{ .Prefix }} prefix|default all]`
 - `make dep-update-gomeet-utils` - Executes the `dep ensure -update github.com/gomeet/gomeet`
+- `make gomeet-regenerate-project` - regenerate the project with [gomeet](https://github.com/gomeet/gomeet) be careful this replaces files except for the protobuf file
 
 #### Add a tool
 

@@ -108,7 +108,7 @@
   ##version = "{{ "{{SubServiceVersion}}" }}"
 
 {{ range .SubServices }}[[constraint]]
-  branch = "develop"
+  branch = "master"
   name = "{{ .GoPkg }}"
 
 {{ end }}# END SUB-SERVICES DEFINITION : dep

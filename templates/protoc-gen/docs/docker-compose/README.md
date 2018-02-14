@@ -29,7 +29,7 @@ docker-compose down -d
 ### Console
 
 ```bash
-docker-compose run console
+docker-compose run console-{{ .ShortName }}
 ```
 
 Detach console with `Ctrl + p Ctrl + q` and attach with :
