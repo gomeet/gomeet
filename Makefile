@@ -48,6 +48,14 @@ build-%: gen-templates
 		-o _build/$* \
 	$*/main.go
 
+.PHONY: install
+install: build
+	@echo "$(NAME): $@ task"
+	go install \
+		-ldflags '-extldflags "-lm -lstdc++ -static"' \
+		-ldflags "-X github.com/gomeet/gomeet/gomeet/cmd.version=$(VERSION) -X github.com/gomeet/gomeet/gomeet/cmd.name=$(NAME)" \
+	github.com/gomeet/gomeet/gomeet
+
 .PHONY: gen-templates
 gen-templates: tools
 	@echo "$(NAME): gen-templates task"

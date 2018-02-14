@@ -11,7 +11,7 @@ __WARNING__: dev in progress
 To install simply use `go install`.
 
 ```shell
-$ go install github.com/gomeet/gomeet/gomeet
+$ go get -u github.com/gomeet/gomeet/gomeet
 ```
 
 ## Usage
