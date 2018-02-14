@@ -1,0 +1,208 @@
+version: "3"
+
+volumes:
+  # db_user_data: {}
+  # db_device_data: {}
+  prometheus_data: {}
+  grafana_data: {}
+
+networks:
+  # db:
+  #   driver: bridge
+  grpc:
+    driver: bridge
+  http:
+    driver: bridge
+  monitoring-front:
+    driver: bridge
+  monitoring-back:
+    driver: bridge
+
+services:
+  #############
+  # Databases #
+  #############
+  # db-device:
+  #   image: mariadb
+  #   restart: always
+  #   environment:
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     MYSQL_DATABASE: ${MYSQL_SVC_DEVICE_DATABASE}
+  #     MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+  #   volumes:
+  #     - db_device_data:/var/lib/mysql
+  #   networks:
+  #     - db
+
+  # db-user:
+  #   image: mariadb
+  #   restart: always
+  #   environment:
+  #     MYSQL_USER: ${MYSQL_USER}
+  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     MYSQL_DATABASE: ${MYSQL_SVC_USER_DATABASE}
+  #     MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+  #   volumes:
+  #     - db_user_data:/var/lib/mysql
+  #   networks:
+  #     - db
+
+  ############
+  # Services #
+  ############
+  svc-{{ .ShortName }}:
+    build: ./
+    image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
+    #deploy:
+    #  replicas: 5
+    #  resources:
+    #    limits:
+    #      cpus: "0.1"
+    #      memory: 50M
+    #  restart_policy:
+    #    condition: on-failure
+    command: serve {{ range .SubServices }}--svc-{{ .ShortName }}-address "svc-{{ .ShortName }}:13000"{{ end }}
+    ports:
+      - 8383:13000
+{{ if .SubServices }}    depends_on:{{ end }}
+{{ range .SubServices }}      - svc-{{ .ShortName }}{{ end }}
+    networks:
+      - monitoring-back
+      - grpc
+      - http
+{{ range .SubServices }}
+  svc-{{ .ShortName }}:
+    image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
+    command: serve
+    # command: serve --mysql-migrate --mysql-dsn "${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db-device:3306)/${MYSQL_SVC_DEVICE_DATABASE}"
+    # deploy:
+    #   replicas: 5
+    #   resources:
+    #     limits:
+    #       cpus: "0.1"
+    #       memory: 50M
+    #   restart_policy:
+    #     condition: on-failure
+    networks:
+      - monitoring-back
+      - grpc
+      - http
+{{ end }}
+  ############
+  # Consoles #
+  ############
+  console-{{ .ShortName }}:
+    image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
+    command: console --address=svc-{{ .ShortName }}:13000
+    depends_on:
+      - svc-{{ .ShortName }}
+    networks:
+      - grpc
+{{ range .SubServices }}
+  console-{{ .ShortName }}:
+    image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
+    image: gomeet/gomeet-svc-bi:${TAG_SVC_BI}
+    command: console --address=svc-{{ .ShortName }}:13000
+    depends_on:
+      - svc-{{ .ShortName }}
+    networks:
+      - grpc
+{{ end }}
+  #################
+  # Extra - Infra #
+  #################
+  go-swagger:
+    # container_name: go-swagger
+    image: gomeet/gomeet-go-swagger
+    depends_on:
+      - svc-{{ .ShortName }}
+    command: [ "serve", "http://svc-{{ .ShortName }}:13000/api/v1/swagger.json" ]
+    environment:
+      - PORT=80
+    ports:
+      - 8000:80
+    networks:
+      - http
+
+  godoc:
+    # container_name: godoc
+    image: gomeet/gomeet-godoc
+    volumes:
+      - ./:/go/src/{{ .GoPkg }}
+    ports:
+      - 8001:6060
+
+  prometheus:
+    image: prom/prometheus:v1.8.2
+    # container_name: gomeet-prometheus
+    volumes:
+      - ./infra/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.local.path=/prometheus'
+      - '--alertmanager.url=http://alertmanager:9093'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    links:
+      - alertmanager
+    depends_on:
+      - svc-{{ .ShortName }}
+{{ range .SubServices }}      - svc-{{ .ShortName }}{{ end }}
+    networks:
+      - monitoring-back
+
+  grafana:
+    image: grafana/grafana:4.6.2
+    # container_name: gomeet-grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    env_file:
+      - infra/config.monitoring
+    networks:
+      - monitoring-back
+      - monitoring-front
+
+  alertmanager:
+    image: prom/alertmanager:v0.10.0
+    ports:
+      - 9093:9093
+    volumes:
+      - ./infra/alertmanager/:/etc/alertmanager/
+    networks:
+      - monitoring-back
+    command:
+      - '-config.file=/etc/alertmanager/config.yml'
+      - '-storage.path=/alertmanager'
+
+  cadvisor:
+    image: google/cadvisor:v0.25.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - 8080
+    networks:
+      - monitoring-back
+
+  node-exporter:
+    # container_name: node-exporter
+    image: prom/node-exporter:v0.15.1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: '-collector.procfs=/host/proc -collector.sysfs=/host/sys -collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)" collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+    expose:
+      - 9100
+    networks:
+      - monitoring-back

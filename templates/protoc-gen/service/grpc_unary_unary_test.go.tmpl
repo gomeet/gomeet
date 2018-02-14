@@ -1,0 +1,26 @@
+package service
+
+import (
+	"testing"
+
+	"golang.org/x/net/context"
+	"github.com/stretchr/testify/assert"
+
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType }}
+)
+
+func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
+	server := new{{ upperPascalCase .ShortName }}Server()
+	ctx := context.Background()
+
+	req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
+	// req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	res, err := server.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
+	assert.Nil(t, err, "{{ upperPascalCase .GrpcMethod.Method.Name }}: error on call")
+	assert.NotNil(t, res, "{{ upperPascalCase .GrpcMethod.Method.Name }}: error on call")
+
+	// Do something useful tests with req and res
+	// for example :
+	// assert.Equal(t, req.GetUuid(), req.GetUuid(), "{{ upperPascalCase .GrpcMethod.Method.Name }}: Uuid field in response must be the same as that of the request")
+}

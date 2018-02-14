@@ -1,0 +1,55 @@
+package service
+
+import (
+	"errors"
+
+	"github.com/golang/protobuf/proto"
+	"golang.org/x/net/context"
+
+	gomeetContext "{{ .GomeetPkg }}/utils/context"
+	"{{ .GomeetPkg }}/utils/jwt"
+	"{{ .GomeetPkg }}/utils/log"
+)
+
+func (s *{{ lowerPascalCase .ShortName }}Server) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	lFields := log.Fields{"fullMethodName": fullMethodName}
+	log.Debug(ctx, "AuthFuncOverride call", lFields)
+
+	newCtx, err := gomeetContext.ParseJWTFromContext(ctx, s.jwtSecret)
+	if err != nil {
+		if s.jwtSecret == "" ||
+			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Version" ||
+			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" {
+			return ctx, nil
+		}
+
+		log.Error(ctx, "Authentification failed", err, log.Fields{})
+
+		return nil, err
+	}
+
+	return newCtx, nil
+}
+
+func (s *{{ lowerPascalCase .ShortName }}Server) AclFuncOverride(ctx context.Context, fullMethodName string, msg proto.Message) error {
+	lFields := log.Fields{"fullMethodName": fullMethodName}
+	log.Debug(ctx, "AclFuncOverride call", lFields)
+
+	// return an error `errors.New("Error message")` to prevent the user from accessing this request
+	if s.jwtSecret == "" ||
+		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Version" ||
+		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" {
+		return nil
+	}
+
+	jwtClaims, ok := ctx.Value("jwt").(jwt.Claims)
+	if !ok {
+		return errors.New("Invalid jwt")
+	}
+
+	lFields["jwtClaims"] = jwtClaims
+	log.Debug(ctx, "AclFuncOverride call - allowed", lFields)
+
+	// here the user is allowed from accessing this request
+	return nil
+}

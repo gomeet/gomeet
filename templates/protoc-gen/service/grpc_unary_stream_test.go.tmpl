@@ -1,0 +1,35 @@
+package service
+
+import (
+	"testing"
+	"io"
+
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/context"
+
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType }}
+)
+
+func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
+	ctx := context.Background()
+	req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
+	// req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	stream, err := cli.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
+	assert.Nil(t, err)
+
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			assert.Fail(t, err.Error())
+			break
+		}
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+	}
+}

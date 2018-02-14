@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+option go_package = "{{ .GoPkg }}/{{ .GoProtoPkgAlias }};{{ .GoProtoPkgAlias }}";
+option java_package = "com.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.v1";
+option objc_class_prefix = "GMPB";
+
+package grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }};
+
+import "google/api/annotations.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "github.com/gomeet/go-proto-gomeetfaker/gomeetfaker.proto";
+{{ if .IsGogoGen }}import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.equal_all) = true;
+option (gogoproto.populate_all) = true;
+option (gogoproto.testgen_all) = true;
+{{ end }}
+service {{ upperPascalCase .ShortName }} {
+	// Version method receives no paramaters and returns a version message.
+	rpc Version(EmptyMessage) returns (VersionResponse) {
+		option (google.api.http) = {
+			get: "/api/v1/version"
+		};
+	}
+
+	// ServicesStatus method receives no paramaters and returns all services status message
+	rpc ServicesStatus(EmptyMessage) returns (ServicesStatusList) {
+		option (google.api.http) = {
+			get: "/api/v1/services/status"
+		};
+	}
+
+	// Echo method receives a simple message and returns it.
+	rpc Echo(EchoRequest) returns (EchoResponse) {
+		option (google.api.http) = {
+			post: "/api/v1/echo"
+			body: "*"
+		};
+	}
+}
+
+message EmptyMessage {}
+
+// VersionMessage represents a version message
+message VersionResponse {
+	// Id represents the message identifier.
+	string name    = 1 [(gomeetfaker.field).app.name = true];
+	string version = 2 [(gomeetfaker.field).app.version = true];
+}
+
+// SeviceStatus represents a sub services status message
+message ServiceStatus {
+	enum Status {
+		OK          = 0;
+		UNAVAILABLE = 1;
+	}
+	string name    = 1 [(gomeetfaker.field).app.name = true]; // name of service
+	string version = 2 [(gomeetfaker.field).app.version = true]; // version of service
+	Status status  = 3; // status of service see enum Status
+	string e_msg   = 4 [(gomeetfaker.field).skip = true];; // error message can be empty
+}
+
+// ServicesStatusList is the sub services status list
+message ServicesStatusList {
+	repeated ServiceStatus services = 1;
+}
+
+// EchoRequest represents a simple message sent to the Echo service.
+message EchoRequest {
+	string uuid    = 1 [(gomeetfaker.field).uuid.version = "V4"]; // Uuid represents the message identifier.
+  string content = 2 [(gomeetfaker.field).lorem.string = true]; // some content
+}
+
+// EchoResponse represents a simple message that the Echo service return.
+message EchoResponse {
+	string uuid    = 1 [(gomeetfaker.field).uuid.version = "V4"]; // Uuid represents the message identifier.
+  string content = 2 [(gomeetfaker.field).lorem.string = true]; // some content
+}

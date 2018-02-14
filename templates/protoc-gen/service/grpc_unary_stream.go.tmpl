@@ -1,0 +1,25 @@
+package service
+
+import (
+	"errors"
+	"{{ .GomeetPkg }}/utils/log"
+
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
+)
+
+func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.Method.Name }}(req *{{ messageGoType .GrpcMethod.Method.GetInputType }}, stream pb.{{ upperPascalCase .ShortName }}_{{ upperPascalCase .GrpcMethod.Method.Name }}Server) error {
+	log.Debug(stream.Context(), "message call", log.Fields{"req": req})
+
+	// res := &{{ messageGoType .GrpcMethod.Method.GetOutputType }}{}
+	// Do something useful with res
+	// for now a fake response is returned see https://github.com/gomeet/go-proto-gomeetfaker
+	res := {{ messageFake .GrpcMethod.Method.GetOutputType }}
+
+	err := stream.Send(res)
+	if err != nil {
+		return err
+	}
+
+	return nil
+	// return errors.New("not yet implemented")
+}

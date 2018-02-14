@@ -1,0 +1,32 @@
+package remotecli
+
+import (
+	"errors"
+	"fmt"
+{{ grpcMethodCmdImports .GrpcMethod.Method }}
+)
+
+func (c *remoteCli) cmd{{ upperPascalCase .GrpcMethod.Method.Name }}(args []string) (string, error) {
+	if len(args) < {{ grpcMethodCmdCountArgsValidity .GrpcMethod.Method }} {
+		return "", errors.New("Bad arguments : {{ grpcMethodCliHelp .GrpcMethod.Method }}")
+	}
+
+{{ grpcMethodCmdCastArgsToVar "req" .GrpcMethod.Method }}
+
+	// message validation - github.com/mwitkow/go-proto-validators
+	if reqValidator, ok := interface{}(*req).(interface{
+		Validate() error
+	}); ok {
+		if err := reqValidator.Validate(); err != nil {
+			return "", err
+		}
+	}
+
+	// sending message to server
+	r, err := c.c.{{ upperPascalCase .GrpcMethod.Method.Name }}(c.ctx, req)
+	if err != nil {
+		return "", fmt.Errorf("{{ upperPascalCase .GrpcMethod.Method.Name }} service call fail - %v", err)
+	}
+
+	return fmt.Sprintf("{{ upperPascalCase .GrpcMethod.Method.Name }}: %v", r), nil
+}

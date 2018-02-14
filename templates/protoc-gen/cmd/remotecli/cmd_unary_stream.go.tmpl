@@ -1,0 +1,9 @@
+package remotecli
+
+import (
+	"errors"
+)
+
+func (c *remoteCli) cmd{{ upperPascalCase .GrpcMethod.Method.Name }}(args []string) (string, error) {
+	return "", errors.New("{{ grpcMethodCliHelp .GrpcMethod.Method }} is unary/stream method - Not yet implemented")
+}

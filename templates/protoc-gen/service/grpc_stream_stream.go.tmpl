@@ -1,0 +1,41 @@
+package service
+
+import (
+	"errors"
+	"io"
+
+	"{{ .GomeetPkg }}/utils/log"
+
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetOutputType }}
+)
+
+func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.Method.Name }}(stream pb.{{ upperPascalCase .ShortName }}_{{ upperPascalCase .GrpcMethod.Method.Name }}Server) error {
+	// event loop
+	for {
+		// message receiving
+		req, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return err
+		}
+
+		res := &{{ messageGoType .GrpcMethod.Method.GetOutputType }}{}
+
+		// Do something useful with req and res
+		if req != nil {
+			log.Debug(stream.Context(), "recive stream req", log.Fields{"req": req})
+		}
+
+		// send response
+		err = stream.Send(res)
+		if err != nil {
+			return err
+		}
+	}
+
+	//return nil
+	return errors.New("not yet implemented")
+}

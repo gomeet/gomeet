@@ -1,0 +1,16 @@
+// The main package for the {{ .Name }} executable.
+package main
+
+import (
+	log "github.com/sirupsen/logrus"
+
+	"{{ .GoPkg }}/cmd"
+)
+
+// Main manages command execution
+func main() {
+	err := cmd.RootCmd.Execute()
+	if err != nil {
+		log.Fatal(err)
+	}
+}

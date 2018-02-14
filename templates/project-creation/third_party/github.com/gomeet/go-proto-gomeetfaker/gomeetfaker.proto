@@ -1,0 +1,371 @@
+syntax = "proto2";
+package gomeetfaker;
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "gomeetfaker";
+
+extend google.protobuf.FileOptions {
+  optional string locale = 13000;
+}
+
+extend google.protobuf.FieldOptions {
+  optional FieldFakerRules field = 13001;
+}
+
+message FieldFakerRules {
+  oneof type {
+    ValueRules       value        = 1;
+    UuidRules        uuid         = 2;
+    EnumRules        enum         = 3;
+    AddressRules     address      = 4;
+    AppRules         app          = 5;
+    AvatarRules      avatar       = 6;
+    BitcoinRules     bitcoin      = 7;
+    BusinessRules    business     = 8;
+    CodeRules        code         = 9;
+    CommerceRules    commerce     = 10;
+    CompanyRules     company      = 11;
+    DateRules        date         = 12;
+    FinanceRules     finance      = 13;
+    HackerRules      hacker       = 14;
+    InternetRules    internet     = 15;
+    LoremRules       lorem        = 16;
+    NameRules        name         = 17;
+    NumberRules      number       = 18;
+    PhoneNumberRules phone_number = 19;
+    TeamRules        team         = 20;
+    TimeRules        time         = 21;
+    uint32           repeated     = 22;
+    bool             skip         = 23;
+  }
+}
+
+message ValueRules {
+  optional uint32 repeated = 1;
+  required string content  = 2;
+}
+
+message UuidRules {
+  optional uint32 repeated = 1;
+  required string version  = 2; // V1, V4
+}
+
+message EnumRules {
+  optional uint32 repeated = 1;
+  oneof type {
+     bool   random          = 2;
+     bool   first           = 3;
+     bool   last            = 4;
+     uint32 index           = 5;
+     uint32 value           = 6;
+     bool   random_no_empty = 7;
+  }
+}
+
+message AddressRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool                city              = 2;
+    bool                street_name       = 3;
+    bool                street_address    = 4;
+    bool                secondary_address = 5;
+    bool                building_number   = 6;
+    bool                postcode          = 7;
+    AddressRulesByState postcode_by_state = 8;
+    bool                zip_code          = 9;
+    AddressRulesByState zip_code_by_state = 10;
+    bool                time_zone         = 11;
+    bool                city_prefix       = 12;
+    bool                city_suffix       = 13;
+    bool                street_suffix     = 14;
+    bool                state             = 15;
+    bool                state_abbr        = 16;
+    bool                country           = 17;
+    bool                country_code      = 18;
+    bool                latitude          = 19;
+    bool                longitude         = 20;
+    bool                string            = 21;
+  }
+}
+
+message AddressRulesByState {
+  required string state = 1;
+}
+
+message AppRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool name    = 2;
+    bool version = 3;
+    bool author  = 4;
+    bool string  = 5;
+  }
+}
+
+message AvatarRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    AvatarUrlRules url    = 2;
+    bool           string = 3;
+  }
+}
+message AvatarUrlRules {
+  required string format = 1;
+  required uint64 width  = 2;
+  required uint64 height = 3;
+}
+
+message BitcoinRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool address = 2;
+    bool string  = 3;
+  }
+}
+
+message BusinessRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool credit_card_number      = 2;
+    bool credit_card_expiry_date = 3;
+    bool credit_card_type        = 4;
+  }
+}
+
+message CodeRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool isbn10 = 2;
+    bool isbn13 = 3;
+    bool ean13  = 4;
+    bool ean8   = 5;
+    bool rut    = 6;
+    bool abn    = 7;
+  }
+}
+
+message CommerceRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool color        = 2;
+    bool department   = 3;
+    bool product_name = 4;
+    bool price        = 5;
+  }
+}
+
+message CompanyRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool name          = 2;
+    bool suffix        = 3;
+    bool catch_phrase  = 4;
+    bool bs            = 5;
+    bool ein           = 6;
+    bool duns_number   = 7;
+    bool logo          = 8;
+    bool string        = 9;
+  }
+}
+
+message DateRules {
+  optional uint32 repeated = 1;
+  optional string format = 2;
+  oneof type {
+    DateRulesBetween  between  = 3;
+    string            forward  = 4; // time.ParseDuration parses a duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+    string            backward = 5; // time.ParseDuration parses a duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+    DateRulesBirthday birthday = 6;
+  }
+}
+
+message DateRulesBirthday {
+  required int32 min = 1;
+  required int32 max = 2;
+}
+
+message DateRulesBetween {
+  required string from = 1;
+  required string to   = 2;
+}
+
+message FinanceRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    FinanceRulesCreditCard credit_card = 2;
+  }
+}
+
+message FinanceRulesCreditCard {
+  required string type = 1;
+}
+
+message HackerRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool say_something_smart = 2;
+    bool abbreviation        = 3;
+    bool adjective           = 4;
+    bool noun                = 5;
+    bool verb                = 6;
+    bool ing_verb            = 7;
+    bool phrases             = 8;
+  }
+}
+
+message InternetRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool                  email          = 2;
+    bool                  free_email     = 3;
+    bool                  safe_email     = 4;
+    bool                  user_name      = 5;
+    InternetRulesPassword password       = 6;
+    bool                  domain_name    = 7;
+    bool                  domain_word    = 8;
+    bool                  domain_suffix  = 9;
+    bool                  mac_address    = 10;
+    bool                  ipv4_address   = 11;
+    bool                  ipv6_address   = 12;
+    bool                  url            = 13;
+    bool                  slug           = 14;
+  }
+}
+
+message InternetRulesPassword {
+  required int32 min = 1;
+  required int32 max = 2;
+}
+
+message LoremRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool                character   = 2;
+    LoremRulesNum       characters  = 3;
+    bool                word        = 4;
+    LoremRulesNum       words       = 5;
+    LoremRulesSentence  sentence    = 6;
+    LoremRulesNum       sentences   = 7;
+    LoremRulesParagraph paragraph   = 8;
+    LoremRulesNum       paragraphs  = 9;
+    bool                string      = 10;
+  }
+}
+
+message LoremRulesNum {
+  required uint32 num = 1;
+}
+
+message LoremRulesSentence {
+  required uint32 words = 1;
+}
+
+message LoremRulesParagraph {
+  required uint32 sentence = 1;
+}
+
+message NameRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool name       = 2;
+    bool first_name = 3;
+    bool last_name  = 4;
+    bool prefix     = 5;
+    bool suffix     = 6;
+    bool title      = 7;
+    bool string     = 8;
+  }
+}
+
+message NumberRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    NumberRulesDigit    number      = 2;
+    NumberRulesDecimal  decimal     = 3;
+    bool                digit       = 4;
+    NumberRulesDigit    hexadecimal = 5;
+    NumberRulesBetween  between     = 6;
+    NumberRulesPositive positive    = 7;
+    NumberRulesNegative negative    = 8;
+  }
+}
+
+message NumberRulesDigit {
+  required uint32 digits = 1;
+}
+
+message NumberRulesDecimal {
+  required uint32 precision = 1;
+  required uint32 scale     = 2;
+}
+
+message NumberRulesBetween {
+  required uint32 min = 1;
+  required uint32 max = 2;
+}
+
+message NumberRulesPositive {
+  required uint32 max = 1;
+}
+
+message NumberRulesNegative {
+  required int32 min = 1;
+}
+
+message NumberRulesCount {
+  required int32 c = 1;
+}
+
+message NumberRulesCount2 {
+  required int32 c1 = 1;
+  required int32 c2 = 2;
+}
+
+message PhoneNumberRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool                  phone_number      = 2;
+    bool                  cell_phone        = 3;
+    bool                  area_code         = 4;
+    bool                  exchange_code     = 5;
+    PhoneNumberRulesDigit subscriber_number = 6;
+    bool                  string            = 7;
+  }
+}
+
+message PhoneNumberRulesDigit {
+  required uint32 digits = 1;
+}
+
+message TeamRules {
+  optional uint32 repeated = 1;
+  oneof type {
+    bool name      = 2;
+    bool creature  = 3;
+    bool state     = 4;
+    bool string    = 5;
+  }
+}
+
+message TimeRules {
+  optional uint32 repeated = 1;
+  optional string format = 2;
+  oneof type {
+    TimeRulesBetween  between  = 3;
+    string            forward  = 4; // time.ParseDuration parses a duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+    string            backward = 5; // time.ParseDuration parses a duration string. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+    TimeRulesBirthday birthday = 6;
+  }
+}
+
+message TimeRulesBirthday {
+  required int32 min = 1;
+  required int32 max = 2;
+}
+
+message TimeRulesBetween {
+  required string from = 1;
+  required string to   = 2;
+}

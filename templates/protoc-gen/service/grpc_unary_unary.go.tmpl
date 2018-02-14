@@ -1,0 +1,20 @@
+package service
+
+import (
+	"golang.org/x/net/context"
+
+	"{{ .GomeetPkg }}/utils/log"
+
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
+)
+
+func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.Method.Name }}(ctx context.Context, req *{{ messageGoType .GrpcMethod.Method.GetInputType }}) (*{{ messageGoType .GrpcMethod.Method.GetOutputType }}, error) {
+	log.Debug(ctx, "service call", log.Fields{"req": req})
+
+	// res := &{{ messageGoType .GrpcMethod.Method.GetOutputType }}{}
+	// Do something useful with req and res
+	// for now a fake response is returned see https://github.com/gomeet/go-proto-gomeetfaker
+	res := {{ messageFake .GrpcMethod.Method.GetOutputType }}
+
+	return res, nil
+}

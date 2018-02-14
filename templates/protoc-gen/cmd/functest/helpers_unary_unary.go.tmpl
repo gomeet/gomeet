@@ -1,0 +1,66 @@
+package functest
+
+import (
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
+)
+
+func testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request() (reqs []*{{ messageGoType .GrpcMethod.Method.GetInputType }}) {
+	// return an array of {{ messageGoType .GrpcMethod.Method.GetInputType }} struct pointers,
+	// each of them will be passed as an argument to the grpc {{ upperPascalCase .GrpcMethod.Method.Name }} method
+
+	reqs = append(reqs, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
+	return reqs
+}
+
+func test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(
+	testsType string,
+	testCaseResults []*TestCaseResult,
+) (failures []TestFailure) {
+	// Do something useful functional test with
+	// testCaseResults[n].Request, testCaseResults[n].Response and testCaseResults[n].Error
+	// then return a array of TestFailure struct
+	// testsType value is value of FUNCTEST_HTTP (HTTP) and FUNCTEST_GRPC (GRPC) constants cf. types.go
+	for _, tr := range testCaseResults {
+		var (
+			req *{{ messageGoType .GrpcMethod.Method.GetInputType }}
+			res *{{ messageGoType .GrpcMethod.Method.GetOutputType }}
+			err error
+			ok  bool
+		)
+		if tr.Request == nil {
+			failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected request message type {{ messageGoType .GrpcMethod.Method.GetInputType }} - nil given"})
+			continue
+		}
+		req, ok = tr.Request.(*{{ messageGoType .GrpcMethod.Method.GetInputType }})
+		if !ok {
+			failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected request message type pb.SimpleMessage - cast fail"})
+			continue
+		}
+
+		if tr.Response != nil {
+			res, ok = tr.Response.(*{{ messageGoType .GrpcMethod.Method.GetOutputType }})
+			if !ok {
+				failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected response message type pb.SimpleMessage - cast fail"})
+				continue
+			}
+		}
+
+		// Do something useful functional test with req, res and err
+		err = tr.Error
+		if err != nil {
+			// if no error are expected do something like this
+			// failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "no error expected"})
+			// continue
+		}
+
+		if req != nil && res != nil {
+			// for example :
+			// if res.GetId() != req.GetId() {
+			//     failureMsg := fmt.Sprintf("expected ID \"%s\" but got \"%s\" for request: %v", req.GetId(), res.GetId(), req)
+			//     failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: failureMsg})
+			// }
+		}
+	}
+
+	return failures
+}
