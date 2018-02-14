@@ -103,3 +103,6 @@ tools-upgrade: tools
 dep: tools
 	_tools/bin/dep ensure
 
+.PHONY: doc-server
+doc-server: tools
+	_tools/bin/gomeet-tools-markdown-server

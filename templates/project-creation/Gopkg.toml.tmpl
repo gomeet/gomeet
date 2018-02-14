@@ -94,7 +94,7 @@
   version = "1.0.0"
 {{ end }}
 [[constraint]]
-  branch = "develop"
+  branch = "master"
   name = "github.com/gomeet/gomeet"
 
 {{ if .DbTypes }}[[constraint]]
@@ -108,7 +108,7 @@
   ##version = "{{ "{{SubServiceVersion}}" }}"
 
 {{ range .SubServices }}[[constraint]]
-  branch = "master"
+  branch = "develop"
   name = "{{ .GoPkg }}"
 
 {{ end }}# END SUB-SERVICES DEFINITION : dep

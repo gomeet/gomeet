@@ -20,8 +20,7 @@ type FinishMsgParams struct {
 	Cmd  []string
 }
 
-const finishMsg = `To finish project initialization do :
-  $ cd {{ .Path }}
+const finishMsg = `  $ cd {{ .Path }}
 {{ range .Cmd }}  $ {{ . }}
 {{ end }}
 `
@@ -120,6 +119,9 @@ func new(cmd *cobra.Command, args []string) {
 
 	// Create a new template and parse the finishMsg into it.
 	t := template.Must(template.New("finishMsg").Parse(finishMsg))
+
+	// git init and ...
+	fmt.Println("To finish project initialization do :")
 	err = t.Execute(
 		os.Stdout,
 		FinishMsgParams{
@@ -138,6 +140,30 @@ func new(cmd *cobra.Command, args []string) {
 	}
 
 	if err := p.ExecAfterProjectCreationCmd(true); err != nil {
+		er(err)
+	}
+
+	// git flow init -d and ...
+	fmt.Println("")
+	fmt.Println("To git flow initialization do :")
+	err = t.Execute(
+		os.Stdout,
+		FinishMsgParams{
+			Path: p.Path(),
+			Arg:  name,
+			Cmd:  p.AfterProjectCreationGitFlowCmd(),
+		},
+	)
+	if err != nil {
+		er(err)
+	}
+
+	if !askIsOK("Do it?") {
+		fmt.Println("Exiting..")
+		return
+	}
+
+	if err := p.ExecAfterProjectCreationGitFlowCmd(true); err != nil {
 		er(err)
 	}
 }

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	GomeetDefaultPrefixes = "svc-,gomeet-svc-,rdv-svc-"
+	GomeetDefaultPrefixes = "svc-,gomeet-svc-"
 )
 
 type Empty struct{}

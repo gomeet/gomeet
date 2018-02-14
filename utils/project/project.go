@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/fatih/color"
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
@@ -202,8 +203,27 @@ func (p Project) AfterProjectCreationCmd() (r []string) {
 	return r
 }
 
+func (p Project) AfterProjectCreationGitFlowCmd() (r []string) {
+	r = append(r, "git flow init -d")
+	return r
+}
+
 func (p Project) ExecAfterProjectCreationCmd(v bool) error {
-	for _, sCmd := range p.AfterProjectCreationCmd() {
+	return p.execCommands(v, p.AfterProjectCreationCmd())
+}
+
+func (p Project) ExecAfterProjectCreationGitFlowCmd(v bool) error {
+	return p.execCommands(v, p.AfterProjectCreationGitFlowCmd())
+}
+
+func (p Project) execCommands(v bool, cmds []string) error {
+	if len(cmds) < 1 {
+		return nil
+	}
+
+	var wg sync.WaitGroup
+	wg.Add(len(cmds))
+	for _, sCmd := range cmds {
 		var err error
 		parts := helpers.ParseCmd(sCmd)
 		cmdName := parts[0]
@@ -221,6 +241,7 @@ func (p Project) ExecAfterProjectCreationCmd(v bool) error {
 
 			scanner := bufio.NewScanner(cmdReader)
 			go func() {
+				defer wg.Done()
 				for scanner.Scan() {
 					fmt.Println(scanner.Text())
 				}
@@ -238,6 +259,7 @@ func (p Project) ExecAfterProjectCreationCmd(v bool) error {
 				return err
 			}
 		} else {
+			wg.Done()
 			err = cmd.Run()
 			if err != nil {
 				return err
