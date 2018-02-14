@@ -51,7 +51,7 @@ Flags:
       --sub-services string       Sub services dependencies (comma separated)
 ```
 
-## Usage example
+## Use case
 
 Generation of `github.com/gomeet-examples/svc-echo` service with the `gomeet new` command.
 
