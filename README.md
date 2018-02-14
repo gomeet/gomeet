@@ -24,6 +24,7 @@ Usage:
 Available Commands:
   help        Help about any command
   new         Create a new microservice
+  version     Return version
 
 Flags:
   -h, --help   help for gomeet
@@ -52,7 +53,7 @@ Flags:
 
 ## Usage example
 
-Generation of `github.com/gomeet-examples/svc-echo` service.
+Generation of `github.com/gomeet-examples/svc-echo` service with the `gomeet new` command.
 
 ```shell
 $ gomeet new github.com/gomeet-examples/svc-echo
