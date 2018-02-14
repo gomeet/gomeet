@@ -110,6 +110,10 @@ func new(cmd *cobra.Command, args []string) {
 		er(err)
 	}
 
+	if force {
+		return
+	}
+
 	if askIsOK("Print tree?") {
 		p.PrintTreeFolder()
 	}
