@@ -1,4 +1,5 @@
 NAME = gomeet
+VERSION = $(shell cat VERSION)
 
 OS_ARCH=$(shell go env GOARCH)
 OS_NAME=$(shell go env GOOS)
@@ -43,6 +44,7 @@ build-%: gen-templates
 	-mkdir -p _build
 	CGO_ENABLED=0 go build \
 		-ldflags '-extldflags "-lm -lstdc++ -static"' \
+		-ldflags "-X github.com/gomeet/gomeet/gomeet/cmd.version=$(VERSION) -X github.com/gomeet/gomeet/gomeet/cmd.name=$(NAME)" \
 		-o _build/$* \
 	$*/main.go
 
