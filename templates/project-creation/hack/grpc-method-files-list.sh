@@ -20,6 +20,4 @@ echo $BASE_DIR/service/grpc_"$fn_underscore"_test.go
 echo $BASE_DIR/cmd/functest/helpers_"$fn_underscore".go
 echo $BASE_DIR/cmd/functest/grpc_"$fn_underscore".go
 echo $BASE_DIR/cmd/functest/http_"$fn_underscore".go
-echo $BASE_DIR/docs/grpc-services/"$fn_underscore"/assets/sequence.txt
-echo $BASE_DIR/docs/grpc-services/"$fn_underscore"/README.md
 

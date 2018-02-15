@@ -32,8 +32,7 @@ y|Y)
   $BASE_DIR/cmd/remotecli/cmd_$fn_underscore.go \
   $BASE_DIR/cmd/functest/helpers_$fn_underscore.go \
   $BASE_DIR/cmd/functest/grpc_$fn_underscore.go \
-  $BASE_DIR/cmd/functest/http_$fn_underscore.go \
-  $BASE_DIR/docs/grpc-services/$fn_underscore"
+  $BASE_DIR/cmd/functest/http_$fn_underscore.go"
 
   for f in $FILES
   do
@@ -43,36 +42,6 @@ y|Y)
   done
 
   echo ""
-  echo "______________"
-  echo "MANUAL REMOVAL"
-  echo ""
-  (find . -path ./_tools -prune -o \
-       -path ./vendor -prune -o \
-       -path ./.git -prune -o \
-       -path './{{ .GoProtoPkgAlias }}/*.go' -prune -o \
-       -path './{{ .GoProtoPkgAlias }}/*.json' -prune -o \
-       -type f \
-       -exec grep --color=always -rIn -e "$fn" -e "$fn_underscore" {} +) \
-  | sort -u
-
-  echo ""
-  echo -n "Open ? (Y/n) "
-  read confirm_edit
-  case "$confirm_edit" in
-  n|N)
-    echo "Don't forget the manual deletion..."
-    ;;
-  y|Y|*)
-    eval $EDITOR $(find . -path ./_tools -prune -o \
-         -path ./vendor -prune -o \
-         -path ./.git -prune -o \
-         -path './{{ .GoProtoPkgAlias }}/*.go' -prune -o \
-         -path './{{ .GoProtoPkgAlias }}/*.json' -prune -o \
-         -type f \
-         -exec grep -lI -e "$fn" -e "$fn_underscore" {} +)
-    exit 0
-    ;;
-  esac
   ;;
 n|N|*)
   echo "Cancel..."

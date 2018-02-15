@@ -25,14 +25,7 @@ then
 	GOMEET_EDITOR=$EDITOR' "-c tabdo /'$fn'\|'$fn_underscore'" -p'
 fi
 
-METHOD_FILES="$BASE_DIR/{{ .GoProtoPkgAlias }}/{{ .ShortName }}.proto
-$BASE_DIR/service/service.go
-$BASE_DIR/cmd/root.go
-$BASE_DIR/cmd/cli.go
-$BASE_DIR/cmd/remotecli/cmd_help.go
-$($SCRIPTPATH/grpc-method-files-list.sh $1)
-$BASE_DIR/docs/grpc-services/README.md
-"
+METHOD_FILES="$($SCRIPTPATH/grpc-method-files-list.sh $1)"
 
 eval $GOMEET_EDITOR \
 	$METHOD_FILES
