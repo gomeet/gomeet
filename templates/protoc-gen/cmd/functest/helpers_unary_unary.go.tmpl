@@ -33,14 +33,14 @@ func test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(
 		}
 		req, ok = tr.Request.(*{{ messageGoType .GrpcMethod.Method.GetInputType }})
 		if !ok {
-			failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected request message type pb.SimpleMessage - cast fail"})
+			failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected request message type {{ messageGoType .GrpcMethod.Method.GetInputType }} - cast fail"})
 			continue
 		}
 
 		if tr.Response != nil {
 			res, ok = tr.Response.(*{{ messageGoType .GrpcMethod.Method.GetOutputType }})
 			if !ok {
-				failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected response message type pb.SimpleMessage - cast fail"})
+				failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: "expected response message type {{ messageGoType .GrpcMethod.Method.GetInputType }} - cast fail"})
 				continue
 			}
 		}

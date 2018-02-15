@@ -9,7 +9,7 @@ import (
 {{ protoMessagesNeededImports false .GrpcMethod.Method.GetOutputType }}
 )
 
-func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.Method.Name }}(stream pb.{{ upperPascalCase .ShortName }}_{{ upperPascalCase .GrpcMethod.Method.Name }}Server) error {
+func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.Method.Name }}(stream {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}_{{ upperPascalCase .GrpcMethod.Method.Name }}Server) error {
 	// event loop
 	for {
 		// message receiving

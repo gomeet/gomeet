@@ -904,7 +904,7 @@ func castCmdField(idx int, prefix string, field *ggdescriptor.Field) string {
 				if len(enum.Outers) > 0 {
 					eName = fmt.Sprintf("%s_%s", strings.Join(enum.Outers, "_"), eName)
 				}
-				ret.WriteString(fmt.Sprintf("%s, ok := pb.%s_value[strings.ToUpper(args[%d])]\n", varName, eName, idx))
+				ret.WriteString(fmt.Sprintf("%s, ok := %s.%s_value[strings.ToUpper(args[%d])]\n", varName, enum.File.GoPkg.Name, eName, idx))
 				ret.WriteString("if !ok {\n")
 				ret.WriteString(fmt.Sprintf("\treturn \"\", fmt.Errorf(\"Bad arguments : unknown %s \\\"%%s\\\"\", args[%d])\n", cmdHelpName, idx))
 				ret.WriteString("}\n")

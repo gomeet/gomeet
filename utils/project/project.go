@@ -194,6 +194,7 @@ func (p *Project) ProjectCreation(keepFile, keepProto bool) error {
 }
 
 func (p Project) AfterProjectCreationCmd() (r []string) {
+	r = append(r, "chmod +x hack/*")
 	r = append(r, "git init")
 	r = append(r, "git add .")
 	r = append(r, fmt.Sprintf("git commit -m 'First commit (gomeet new %s)'", p.GoPkg()))
