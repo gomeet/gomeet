@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -190,15 +191,27 @@ func (p *Project) ProjectCreation(keepFile, keepProto bool) error {
 		}
 	}
 
-	return p.folder.render(*p)
+	if err := p.folder.render(*p); err != nil {
+		return nil
+	}
+
+	if err := filepath.Walk(p.Path()+"/hack/", func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chmod(name, 0755)
+		}
+		return err
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p Project) AfterProjectCreationCmd() (r []string) {
-	r = append(r, "chmod +x hack/*")
 	r = append(r, "git init")
 	r = append(r, "git add .")
 	r = append(r, fmt.Sprintf("git commit -m 'First commit (gomeet new %s)'", p.GoPkg()))
-	r = append(r, "make tools-sync proto dep test")
+	r = append(r, "make tools-sync proto dep dep-prune test")
 	r = append(r, "git add .")
 	r = append(r, "git commit -m 'Added tools and dependencies'")
 	return r
