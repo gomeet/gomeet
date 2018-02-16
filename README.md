@@ -8,10 +8,18 @@ __WARNING__: dev in progress
 
 ## Installing
 
-To install simply use `go install`.
+To install simply use `go get`.
 
 ```shell
 $ go get -u github.com/gomeet/gomeet/gomeet
+```
+
+Or use git
+
+```shell
+git clone https://github.com/gomeet/gomeet.git $GOPATH/src/github.com/gomeet/gomeet
+cd $GOPATH/src/github.com/gomeet/gomeet
+make install
 ```
 
 ## Usage
@@ -101,6 +109,19 @@ Which branch should be used for bringing forth production releases?
 ...SNIP...
 
 ```
+
+## TODO
+
+- [ ] Add an use case see [gomeet-examples](https://github.com/gomeet-examples/)
+- [ ] Add ui generator
+- [ ] Make releases on github or gogs
+- [ ] Use bazel for build?
+- [ ] Improvements
+
+## Similar projects
+
+- [lile](https://github.com/lileio/lile) - certainly better : less boillerplate
+- [protoc-gen-gotemplate](https://github.com/moul/protoc-gen-gotemplate) - certainly better : more generic
 
 ## License
 
