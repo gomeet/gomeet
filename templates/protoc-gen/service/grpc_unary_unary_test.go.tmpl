@@ -22,5 +22,5 @@ func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
 
 	// Do something useful tests with req and res
 	// for example :
-	// assert.Equal(t, req.GetUuid(), req.GetUuid(), "{{ upperPascalCase .GrpcMethod.Method.Name }}: Uuid field in response must be the same as that of the request")
+	// assert.Equal(t, req.GetUuid(), res.GetUuid(), "{{ upperPascalCase .GrpcMethod.Method.Name }}: Uuid field in response must be the same as that of the request")
 }
