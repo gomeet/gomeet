@@ -112,11 +112,13 @@ Which branch should be used for bringing forth production releases?
 
 ## TODO
 
+- [ ] Units tests
 - [ ] Add an use case see [gomeet-examples](https://github.com/gomeet-examples/)
 - [ ] Add ui generator
 - [ ] Make releases on github or gogs
 - [ ] Use bazel for build?
 - [ ] Improvements
+- [ ] Add `make package-<OS>-<ARCH>` directives
 
 ## Similar projects
 

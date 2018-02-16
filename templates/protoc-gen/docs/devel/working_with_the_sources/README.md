@@ -201,6 +201,7 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make tools-upgrade` - Upgrading all development tools
 - `make tools-clean` - Uninstall all development tools
 - `make dep` - Executes the `dep ensure` command
+- `make dep-prune` - Executes the `dep prune` command
 - `make dep-update-{{ .ProjectGroupName }} [individual svc name without {{ .Prefix }} prefix|default all]` - Executes the `dep ensure -update {{ .ProjectGroupGoPkg }}/{{ .Prefix }}[individual svc name without {{ .Prefix }} prefix|default all]`
 - `make dep-update-gomeet-utils` - Executes the `dep ensure -update github.com/gomeet/gomeet`
 - `make gomeet-regenerate-project` - regenerate the project with [gomeet](https://github.com/gomeet/gomeet) be careful this replaces files except for the protobuf file

@@ -293,6 +293,10 @@ install:
 dep: tools
 	_tools/bin/dep ensure
 
+.PHONY: dep-prune
+dep-prune: tools
+	_tools/bin/dep prune
+
 .PHONY: dep-update-{{ .ProjectGroupName }}
 dep-update-{{ .ProjectGroupName }}: tools
 	@echo "dep-update-{{ .ProjectGroupName }} $(ASKED_SVC)"
