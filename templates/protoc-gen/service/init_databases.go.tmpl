@@ -15,7 +15,7 @@ import (
 )
 
 // initDatabaseHandle initializes the databases handles of the server.
-{{ if eq (len .DbTypes) 1 }}func (s *userServer) initDatabaseHandle() error {
+{{ if eq (len .DbTypes) 1 }}func (s *{{ lowerPascalCase .ShortName }}Server) initDatabaseHandle() error {
 	{{ range .DbTypes }}// establish the connection if it's not ready
 	if s.{{ lowerPascalCase . }}Handle == nil {
 		{{ if eq . "mysql" }}if strings.Contains(s.{{ lowerPascalCase . }}DataSourceName, "?") {
@@ -42,7 +42,7 @@ import (
 	}{{ end }}
 	return nil
 }
-{{ else }}func (s *userServer) initDatabaseHandle(dbType string) error {
+{{ else }}func (s *{{ lowerPascalCase .ShortName }}Server) initDatabaseHandle(dbType string) error {
 	if len(dbType) > 0 {
 		switch strings.ToLower(dbType) {
 		{{ range .DbTypes }}case "{{ lower . }}":
@@ -81,7 +81,7 @@ import (
 }
 {{ end }}
 
-{{ if eq (len .DbTypes) 1 }}func (s *userServer) closeDatabaseHandle() error {
+{{ if eq (len .DbTypes) 1 }}func (s *{{ lowerPascalCase .ShortName }}Server) closeDatabaseHandle() error {
 	{{ range .DbTypes }}// close the connection if it's not empty
 	if s.{{ lowerPascalCase . }}Handle != nil {
 		err := s.{{ lowerPascalCase . }}Handle.Close()
@@ -93,7 +93,7 @@ import (
 
 	return nil
 }
-{{ else }}func (s *userServer) closeDatabaseHandle(dbType string) error {
+{{ else }}func (s *{{ lowerPascalCase .ShortName }}Server) closeDatabaseHandle(dbType string) error {
 	if len(dbType) > 0 {
 		switch strings.ToLower(dbType) {
 		{{ range .DbTypes }}case "{{ lower . }}":
