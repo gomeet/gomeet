@@ -190,17 +190,18 @@ func (p *Project) ProjectCreation(keepFile, keepProto bool) error {
 			return err
 		}
 	}
-
-	if err := p.folder.render(*p); err != nil {
+	err := p.folder.render(*p)
+	if err != nil {
 		return nil
 	}
 
-	if err := filepath.Walk(p.Path()+"/hack/", func(name string, info os.FileInfo, err error) error {
+	err = filepath.Walk(p.Path()+"/hack/", func(name string, info os.FileInfo, err error) error {
 		if err == nil {
 			err = os.Chmod(name, 0755)
 		}
 		return err
-	}); err != nil {
+	})
+	if err != nil {
 		return err
 	}
 

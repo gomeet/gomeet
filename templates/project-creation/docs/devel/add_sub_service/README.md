@@ -91,7 +91,7 @@ Search the comment `SUB-SERVICES DEFINITION : func-init` and add this code in li
 
 ```go
 // init{{ "{{SubServiceNamePascalCase}}" }}Client initializes the gRPC client connecting to the {{ "{{SubServiceNamePascalCase}}" }} service.
-func (s *{{CurentServiceNameLowerCamelCase}}Server) init{{ "{{SubServiceNamePascalCase}}" }}Client() error {
+func (s *{{ "{{CurentServiceNameLowerCamelCase}}" }}Server) init{{ "{{SubServiceNamePascalCase}}" }}Client() error {
   if s.svc{{ "{{SubServiceNamePascalCase}}" }}GrpcClient != nil {
     return nil
   }

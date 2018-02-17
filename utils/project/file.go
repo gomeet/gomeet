@@ -247,12 +247,13 @@ func (f *folder) addTree(name, s string, grpcM *grpcMethod, keepFilesIfExists bo
 	return rootF, nil
 }
 
-func (f *folder) render(p Project) error {
+func (f folder) render(p Project) error {
 	for _, v := range f.files {
 		fileExist := false
 		contents, err := templates.Asset(v.Template)
 		if err != nil {
-			return err
+			helpers.Log(helpers.LogError, err.Error())
+			continue
 		}
 
 		if strings.HasSuffix(v.AbsPath, ".png") {
@@ -265,7 +266,7 @@ func (f *folder) render(p Project) error {
 			}
 			err := ioutil.WriteFile(v.AbsPath, contents, os.ModePerm)
 			if err != nil {
-				return err
+				helpers.Log(helpers.LogError, err.Error())
 			}
 			continue
 		}
@@ -275,7 +276,7 @@ func (f *folder) render(p Project) error {
 			Funcs(tmplHelpers.ProtoHelpersFuncMap()).
 			Parse(string(contents))
 		if err != nil {
-			return err
+			continue
 		}
 
 		if _, err := os.Stat(v.AbsPath); err == nil {
@@ -288,7 +289,8 @@ func (f *folder) render(p Project) error {
 
 		file, err := os.Create(v.AbsPath)
 		if err != nil {
-			return err
+			helpers.Log(helpers.LogError, err.Error())
+			continue
 		}
 		defer file.Close()
 
@@ -297,24 +299,28 @@ func (f *folder) render(p Project) error {
 			var out bytes.Buffer
 			err = t.Execute(&out, vData)
 			if err != nil {
-				return err
+				helpers.Log(helpers.LogError, err.Error())
+				continue
 			}
 
 			b, err := format.Source(out.Bytes())
 			if err != nil {
 				b = out.Bytes()
 				log.Println(string(b))
-				return err
+				helpers.Log(helpers.LogError, err.Error())
+				continue
 			}
 
 			_, err = file.Write(b)
 			if err != nil {
-				return err
+				helpers.Log(helpers.LogError, err.Error())
+				continue
 			}
 		} else {
 			err = t.Execute(file, vData)
 			if err != nil {
-				return err
+				helpers.Log(helpers.LogError, err.Error())
+				continue
 			}
 		}
 
@@ -329,13 +335,15 @@ func (f *folder) render(p Project) error {
 		if _, err := os.Stat(v.AbsPath); os.IsNotExist(err) {
 			err = os.Mkdir(v.AbsPath, os.ModePerm)
 			if err != nil {
-				return err
+				helpers.Log(helpers.LogError, err.Error())
+				continue
 			}
 			helpers.Log(helpers.LogCreating, v.AbsPath)
 		}
 
 		if err := v.render(p); err != nil {
-			return err
+			helpers.Log(helpers.LogError, err.Error())
+			continue
 		}
 	}
 
