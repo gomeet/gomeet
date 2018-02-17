@@ -32,6 +32,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 	grpc_acl "{{ .GomeetPkg }}/utils/grpc-middlewares/acl"
 	grpc_cid "{{ .GomeetPkg }}/utils/grpc-middlewares/cid"
 )
@@ -138,6 +139,21 @@ func serve() {
 	}
 
 	log.Infof("%s version %s - %s", svc.Name, svc.Version, svcName)
+
+	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
+	if {{ lowerPascalCase . }}Migrate {
+		if {{ lowerPascalCase . }}DataSourceName == "" {
+			log.Errorf("The --{{ lower . }}-dsn flag is required for automatic schema migration")
+			os.Exit(1)
+		}
+
+		{{ if eq (len $.DbTypes) 1 }}err := models.MigrateSchema({{ lowerPascalCase . }}DataSourceName)
+		{{ else }}err := models.MigrateSchema("{{ lower . }}", {{ lowerPascalCase . }}DataSourceName){{ end }}
+		if err != nil {
+			log.Errorf("Database schema migration failure: %v\n", err)
+			os.Exit(1)
+		}
+	}{{ end }}
 
 	if grpcServerAddress != "" && httpServerAddress != "" {
 		serveOnMultipleAddresses(grpcServerAddress, httpServerAddress)
