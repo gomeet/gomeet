@@ -96,15 +96,15 @@ func new(cmd *cobra.Command, args []string) {
 		p.SetDefaultProtoPkgAlias(protoName)
 	}
 
-	keepProto := true
+	keepProtoModel := true
 	if force {
-		keepProto = !askIsOK("Are you sure you want to overwrite the protobuf file ?")
+		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf and models files ?")
 	}
 
 	p.UseGogoGen(!noGogo)
 
 	// create new project
-	err = p.ProjectCreation(!force, keepProto)
+	err = p.ProjectCreation(!force, keepProtoModel)
 	if err != nil {
 		er(err)
 	}

@@ -12,7 +12,13 @@ OS_NAME=$(shell go env GOOS)
 OS_ARCH=$(shell go env GOARCH)
 
 DB_TYPES={{ .DbTypes | join "," }}
-
+{{ range .DbTypes }}
+DB_{{ upper . }}_TEST_USERNAME = gomeet
+DB_{{ upper . }}_TEST_PASSWORD = toto{{ lower . }}
+DB_{{ upper . }}_TEST_SERVER   = localhost
+DB_{{ upper . }}_TEST_PORT     = 3306
+DB_{{ upper . }}_TEST_DATABASE = {{ lowerSnakeCase $.Name }}_test
+{{ end }}
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
 DOCKER_IMAGE_NAME = {{ .ProjectGroupName }}/$(NAME)
 DOCKER_REGISTRY?=docker.io
@@ -366,8 +372,10 @@ tools-upgrade: tools
 test: build
 	cd service && go test
 	if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test; fi
-	_build/$(NAME) functest -e --random-port
-
+	{{ if not .DbTypes }}_build/$(NAME) functest -e --random-port
+	{{ else }}{{ range .DbTypes }}{{ upperSnakeCase $.Name }}_{{ upper . }}_DSN="$(DB_{{ upper . }}_TEST_USERNAME):$(DB_{{ upper . }}_TEST_PASSWORD)@tcp($(DB_{{ upper . }}_TEST_SERVER):$(DB_{{ upper . }}_TEST_PORT))/$(DB_{{ upper . }}_TEST_DATABASE)" && \
+	{{ end }}	_build/$(NAME) functest -e --random-port{{ range .DbTypes }} --{{ lower . }}-migrate --{{ lower . }}-dsn $${{ upperSnakeCase $.Name }}_{{ upper . }}_DSN{{ end }}
+{{ end }}
 .PHONY: docker-test
 docker-test: docker
 	docker run -v $(shell pwd):/go/src/$(GO_PACKAGE_NAME) --rm golang:1.8.3-alpine3.6 /bin/sh -c "cd /go/src/$(GO_PACKAGE_NAME)/service && go test"
