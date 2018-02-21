@@ -4,17 +4,21 @@ import (
 {{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
 )
 
-func testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request() (reqs []*{{ messageGoType .GrpcMethod.Method.GetInputType }}) {
+func testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request(
+	config FunctionalTestConfig,
+) (reqs []*{{ messageGoType .GrpcMethod.Method.GetInputType }}, extras map[string]interface{}, err error) {
 	// return an array of {{ messageGoType .GrpcMethod.Method.GetInputType }} struct pointers,
 	// each of them will be passed as an argument to the grpc {{ upperPascalCase .GrpcMethod.Method.Name }} method
 
 	reqs = append(reqs, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
-	return reqs
+	return reqs, extras, err
 }
 
 func test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(
+	config FunctionalTestConfig,
 	testsType string,
 	testCaseResults []*TestCaseResult,
+	extras map[string]interface{},
 ) (failures []TestFailure) {
 	// Do something useful functional test with
 	// testCaseResults[n].Request, testCaseResults[n].Response and testCaseResults[n].Error

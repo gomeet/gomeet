@@ -15,10 +15,16 @@ func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTestConf
 	defer client.Close()
 
 	var testCaseResults []*TestCaseResult
-	for _, req := range testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request() {
+  reqs, extras, err := testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request(config)
+	if err != nil {
+		failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: fmt.Sprintf("HTTP testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request error (%v)", err)})
+		return failures
+	}
+
+	for _, req := range reqs {
 		res, err := client.GetGRPCClient().{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
 		testCaseResults = append(testCaseResults, &TestCaseResult{req, res, err})
 	}
 
-	return test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(FUNCTEST_GRPC, testCaseResults)
+	return test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(config, FUNCTEST_GRPC, testCaseResults, extras)
 }

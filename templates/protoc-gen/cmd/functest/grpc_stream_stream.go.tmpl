@@ -16,6 +16,6 @@ func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTestConf
 
 	// TODO in gomeet generators
 
-	//return test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(FUNCTEST_GRPC, testCaseResults)
+  //return test{{ upperPascalCase .GrpcMethod.Method.Name }}Response(config, FUNCTEST_GRPC, testCaseResults, map[string]interface{}{})
 	return failures
 }
