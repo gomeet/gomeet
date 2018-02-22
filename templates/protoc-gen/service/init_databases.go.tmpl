@@ -14,6 +14,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type GormLogger struct {}
+
+func (*GormLogger) Print(v ...interface{}) {
+    if v[0] == "sql" {
+        log.WithFields(log.Fields{"module": "gorm", "type": "sql"}).Debug(v[3])
+    }
+    if v[0] == "log" {
+        log.WithFields(log.Fields{"module": "gorm", "type": "log"}).Warn(v[2])
+    }
+}
+
 // initDatabaseHandle initializes the databases handles of the server.
 {{ if eq (len .DbTypes) 1 }}func (s *{{ lowerPascalCase .ShortName }}Server) initDatabaseHandle() error {
 	{{ range .DbTypes }}// establish the connection if it's not ready
@@ -32,6 +43,8 @@ import (
 			}).Infof("database connection error: %v", err)
 			return err
 		}
+		{{ lowerPascalCase . }}Handle.SetLogger(&GormLogger{})
+		{{ lowerPascalCase . }}Handle.LogMode(true)
 		s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 	}
 
@@ -62,6 +75,8 @@ import (
 					}).Infof("database connection error: %v", err)
 					return err
 				}
+			{{ lowerPascalCase . }}Handle.SetLogger(&GormLogger{})
+			{{ lowerPascalCase . }}Handle.LogMode(true)
 				s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 			}
 

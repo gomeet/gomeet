@@ -5,7 +5,9 @@ package functest
 import (
 {{ grpcFunctestHttpExtraImport .GrpcMethod.Method -}}
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"encoding/json"
 
 	"github.com/golang/protobuf/jsonpb"
 
@@ -46,8 +48,35 @@ func TestHttp{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTest
 		}
 		defer resp.Body.Close()
 
+		body,err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			testCaseResults = append(
+				testCaseResults,
+				&TestCaseResult{
+					req,
+					nil,
+					fmt.Errorf("{{ upperPascalCase .GrpcMethod.Method.Name }}/HTTP {{ httpVerb .GrpcMethod.Method }} error on %s (%v) - %v - readAll body", url, err, req),
+				},
+			)
+			continue
+		}
+
+		var httpError HttpError
+		err = json.Unmarshal(body, &httpError)
+		if err == nil && (httpError.Code != 0 || httpError.Error != "") {
+			testCaseResults = append(
+					testCaseResults,
+					&TestCaseResult{
+						req,
+						nil,
+						fmt.Errorf("{{ upperPascalCase .GrpcMethod.Method.Name }}/HTTP {{ httpVerb .GrpcMethod.Method }} error on %s (Code: %d, Error: %s) - %v", url, httpError.Code, httpError.Error, req),
+					},
+				)
+				continue
+		}
+
 		res := &{{ messageGoType .GrpcMethod.Method.GetOutputType }}{}
-		err = jsonpb.Unmarshal(resp.Body, res)
+		err = jsonpb.UnmarshalString(string(body), res)
 		testCaseResults = append(testCaseResults, &TestCaseResult{req, res, err})
 	}
 

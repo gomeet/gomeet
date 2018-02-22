@@ -36,3 +36,8 @@ type TestCaseResult struct {
 	Error    error
 }
 
+// HttpError is for catch HttpError with the json unmarshiling
+type HttpError struct {
+	Code  uint32
+	Error string
+}
