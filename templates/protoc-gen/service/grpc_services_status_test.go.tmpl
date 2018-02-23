@@ -24,7 +24,7 @@ func TestServicesStatus(t *testing.T) {
 	// SUB-SERVICES DEFINITION : test-unit
 	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{name, version, {{ .GoProtoPkgAlias }}.ServiceStatus_OK, ""})
 	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}", "unknow", {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
-	{{ range .SubServices }}expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow", {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
+	{{ range .SubServices }}expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow", {{ $.GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
 	{{ end }} // END SUB-SERVICES DEFINITION : test-unit
 
 	sort.Sort(servicesStatusByName(expected))

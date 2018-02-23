@@ -23,7 +23,7 @@ func testServicesStatusReponse(req *{{ messageGoType .GrpcMethod.Method.GetInput
 	// SUB-SERVICES DEFINITION : test-functest
 	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{svc.Name, svc.Version, {{ .GoProtoPkgAlias }}.ServiceStatus_OK, ""})
 	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}, "unknow", {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
-	{{ range .SubServices }}expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow", {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
+	{{ range .SubServices }}expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow", {{ $.GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
 	{{ end }} // END SUB-SERVICES DEFINITION : test-functest
 
 	sort.Sort(servicesStatusByName(expected))

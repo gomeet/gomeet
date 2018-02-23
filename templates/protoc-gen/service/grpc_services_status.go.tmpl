@@ -66,15 +66,15 @@ func svcCurrentStatus(s *{{ lowerPascalCase .ShortName }}Server, ctx context.Con
 //   return serviceStatusSuccessHandler(&{{ .GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
 // }
 
-{{ range .SubServices }}func svc{{ upperPascalCase .ShortName }}Status(s *{{ lowerPascalCase $.ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ .GoProtoPkgAlias }}.ServiceStatus {
+{{ range .SubServices }}func svc{{ upperPascalCase .ShortName }}Status(s *{{ lowerPascalCase $.ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ $.GoProtoPkgAlias }}.ServiceStatus {
 	if err := s.init{{ upperPascalCase .ShortName }}Client(); err != nil {
-		return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Init client error")
+		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Init client error")
 	}
 	ver, err := s.svc{{ upperPascalCase .ShortName }}GrpcClient.Version(svcCtx, &svc{{ upperPascalCase .ShortName }}Pb.EmptyMessage{})
 	if err != nil {
-		return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Version call error")
+		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Version call error")
 	}
-	return serviceStatusSuccessHandler(&{{ .GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
+	return serviceStatusSuccessHandler(&{{ $.GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
 }
 {{ end }}
 // END SUB-SERVICES DEFINITION : func-status
