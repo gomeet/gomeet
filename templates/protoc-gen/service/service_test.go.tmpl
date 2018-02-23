@@ -20,6 +20,8 @@ var (
 	cli {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
 )
 
+// TODO flags or ENV VAR support for dsn databases and sub-service definitions
+// for more information see. https://siongui.github.io/2017/04/28/command-line-argument-in-golang-test/
 
 func TestMain(m *testing.M) {
 	//TODO: need refactoring in gomeet generator
@@ -37,8 +39,8 @@ func TestMain(m *testing.M) {
 		"",
 		"",
 		"",
-		{{ range .DbTypes }}"",
-{{- end }}
+		{{ range .DbTypes }}"", {{ end }} // dsn info come here if exists
+		{{ range .SubServices }}"", {{ end }} // subservices come here if exists
 	)
 	go serve()
 
