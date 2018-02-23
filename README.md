@@ -115,10 +115,13 @@ Which branch should be used for bringing forth production releases?
 - [ ] Units tests
 - [ ] Add an use case see [gomeet-examples](https://github.com/gomeet-examples/)
 - [ ] Add ui generator
-- [ ] Make releases on github or gogs
 - [ ] Use bazel for build?
 - [ ] Improvements
 - [ ] Add `make package-<OS>-<ARCH>` directives
+- [ ] Bug fix colision name for sub services definitions
+- [ ] Support for flags or ENV VAR in service/service_test.go
+- [ ] Make releases on github or gogs
+- [ ] Add hack/run.sh on project generator
 
 ## Similar projects
 
