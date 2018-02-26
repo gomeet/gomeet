@@ -102,7 +102,6 @@ services:
 {{ range .SubServices }}
   console-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
-    image: gomeet/gomeet-svc-bi:${TAG_SVC_BI}
     command: console --address=svc-{{ .ShortName }}:13000
     depends_on:
       - svc-{{ .ShortName }}
