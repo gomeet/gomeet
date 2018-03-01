@@ -114,7 +114,7 @@ func init() {
 	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
 	{{ end }}
 	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerPascalCase .Name }}", "", "{{ .Description }}")
+	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", "", "{{ .Description }}")
 	{{ end }}// END EXTRA : flags
 
 	// SUB-SERVICES DEFINITION : flag-address
