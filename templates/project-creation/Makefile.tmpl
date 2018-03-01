@@ -14,7 +14,7 @@ OS_ARCH=$(shell go env GOARCH)
 # <flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>
 # ex: my-extra-flag@string|My extra flag description|my default value,my-extra-flag2@int|My extra flag2 description|5
 # eg. no comma, no semicolon or no colon
-EXTRA_SERVE_FLAGS="{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}"
+EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}
 
 DB_TYPES={{ .DbTypes | join "," }}
 {{ range .DbTypes }}
@@ -401,6 +401,6 @@ gomeet-regenerate-project: tools
 		--proto-name=${GO_PROTO_PACKAGE_ALIAS} \
 		--sub-services=${SUB_SERVICES} \
 		--db-types=${DB_TYPES} \
-		--extra-serve-flags=${EXTRA_SERVE_FLAGS} \
+		--extra-serve-flags="${EXTRA_SERVE_FLAGS}" \
 		--force{{ if not .IsGogoGen }} --no-gogo{{ end }}
 
