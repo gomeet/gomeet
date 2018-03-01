@@ -49,6 +49,7 @@ func main() {
 		projectPkg      string
 		defaultPrefixes string
 		dbTypes         string
+		extraServeFlags string
 	)
 	if parameter := g.Request.GetParameter(); parameter != "" {
 		for _, param := range strings.Split(parameter, ";") {
@@ -66,6 +67,8 @@ func main() {
 				defaultPrefixes = parts[1]
 			case "project_pkg":
 				projectPkg = parts[1]
+			case "extra_serve_flags":
+				extraServeFlags = parts[1]
 			default:
 				log.Printf("warning: unknown parameter: %q", param)
 			}
@@ -86,6 +89,13 @@ func main() {
 		err := p.SetDbTypes(dbTypes)
 		if err != nil {
 			g.Error(err, "bad db_types parameter")
+		}
+	}
+
+	if extraServeFlags != "" {
+		err := p.SetExtraServeFlags(extraServeFlags)
+		if err != nil {
+			g.Error(err, "bad extra_serve_flags parameter")
 		}
 	}
 

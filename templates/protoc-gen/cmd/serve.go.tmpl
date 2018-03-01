@@ -48,6 +48,7 @@ var (
 	// EXTRA : var
 	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate        bool
 	{{ lowerPascalCase . }}DataSourceName string
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag string
 	{{ end }}// END EXTRA : var
 
 	// SUB-SERVICES DEFINITION : var-address
@@ -112,6 +113,8 @@ func init() {
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
 	{{ end }}
+	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
+	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerPascalCase .Name }}", "", "{{ .Description }}")
 	{{ end }}// END EXTRA : flags
 
 	// SUB-SERVICES DEFINITION : flag-address
@@ -175,6 +178,7 @@ func grpcServer(
 	jwtKey string,
 	// EXTRA : param
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag string,
 	{{ end }}// END EXTRA : param
 	// SUB-SERVICES DEFINITION : param-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
@@ -246,6 +250,7 @@ func grpcServer(
 		serverKey,
 		// EXTRA : register
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN,
+		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
 		// SUB-SERVICES DEFINITION : register-address
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,
@@ -344,6 +349,7 @@ func serveOnMultipleAddresses(grpcAddr string, httpAddr string) {
 		jwtSecret,
 		// EXTRA : register
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
+		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
 		// SUB-SERVICES DEFINITION : register-address
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,
@@ -442,6 +448,7 @@ func serveOnSingleAddress(addr string) {
 		jwtSecret,
 		// EXTRA : register
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
+		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
 		// SUB-SERVICES DEFINITION : register-address
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,

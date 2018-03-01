@@ -51,6 +51,7 @@ func (svc Service) RegisterGRPCServices(
 	privKey string,
 	// EXTRA : param
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} string,
 	{{ end }}// END EXTRA : param
 	// SUB-SERVICES DEFINITION : param-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
@@ -64,6 +65,7 @@ func (svc Service) RegisterGRPCServices(
 		"privKey":   privKey,
 		// EXTRA : log
 		{{ range .DbTypes }}"{{ lowerPascalCase . }}DSN":  {{ lowerPascalCase . }}DSN,
+		{{ end }}{{ range .ExtraServeFlags }}"{{ lowerPascalCase .Name }}":  {{ lowerPascalCase .Name }},
 		{{ end }}// END EXTRA : log
 		// SUB-SERVICES DEFINITION : log-address
 		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
@@ -77,6 +79,7 @@ func (svc Service) RegisterGRPCServices(
 		privateKey:    privKey,
 		// EXTRA : register server
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName:  {{ lowerPascalCase . }}DSN,
+		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}:  {{ lowerPascalCase .Name }},
 		{{ end }}// END EXTRA : register server
 		// SUB-SERVICES DEFINITION : register-address-to-server
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address: svc{{ "{{SubServiceNamePascalCase}}" }}Address,
