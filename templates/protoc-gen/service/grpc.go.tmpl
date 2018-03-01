@@ -23,7 +23,7 @@ type {{ lowerPascalCase .ShortName }}Server struct {
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName string
 	{{ lowerPascalCase . }}Handle         *gorm.DB
 	{{ end }}
-	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} string
+	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} {{ .Type }}
 	{{ end }}// END EXTRA : var
 
 	// SUB-SERVICES DEFINITION : var-address

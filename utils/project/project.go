@@ -33,8 +33,10 @@ func GomeetAllowedDbTypes() []string {
 }
 
 type serveFlag struct {
-	Name        string
-	Description string
+	Name         string
+	Description  string
+	DefaultValue string
+	Type         string
 }
 
 type Project struct {
@@ -95,13 +97,24 @@ func (p *Project) SetExtraServeFlags(s string) error {
 			if len(part) < 1 {
 				return errors.New("bad extra serve flags parameter")
 			}
-			name, description := part[0], ""
+			name, description, defaultValue, typ := part[0], "", "", "string"
 			if len(part) > 1 {
 				description = part[1]
 			}
+			if len(part) > 2 {
+				defaultValue = part[2]
+			}
+			namePart := strings.Split(name, "@")
+			if len(namePart) > 1 {
+				name = namePart[0]
+				typ = strings.ToLower(namePart[1])
+			}
+
 			aServeFlag := &serveFlag{
-				Name:        name,
-				Description: description,
+				Name:         name,
+				Description:  description,
+				DefaultValue: defaultValue,
+				Type:         typ,
 			}
 
 			p.extraServeFlags = append(p.extraServeFlags, aServeFlag)

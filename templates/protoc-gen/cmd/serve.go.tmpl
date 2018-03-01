@@ -48,7 +48,7 @@ var (
 	// EXTRA : var
 	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate        bool
 	{{ lowerPascalCase . }}DataSourceName string
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag string
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}// END EXTRA : var
 
 	// SUB-SERVICES DEFINITION : var-address
@@ -114,7 +114,7 @@ func init() {
 	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
 	{{ end }}
 	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", "", "{{ .Description }}")
+	serveCmd.PersistentFlags().{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
 	{{ end }}// END EXTRA : flags
 
 	// SUB-SERVICES DEFINITION : flag-address
@@ -178,7 +178,7 @@ func grpcServer(
 	jwtKey string,
 	// EXTRA : param
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag string,
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }},
 	{{ end }}// END EXTRA : param
 	// SUB-SERVICES DEFINITION : param-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,

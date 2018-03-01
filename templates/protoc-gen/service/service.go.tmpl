@@ -51,7 +51,7 @@ func (svc Service) RegisterGRPCServices(
 	privKey string,
 	// EXTRA : param
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} string,
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} {{ .Type }},
 	{{ end }}// END EXTRA : param
 	// SUB-SERVICES DEFINITION : param-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
