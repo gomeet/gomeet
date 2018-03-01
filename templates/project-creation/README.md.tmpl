@@ -10,7 +10,7 @@ $ gomeet new {{ .GoPkg }} \
   --proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
   --no-gogo{{ end }}{{ if .SubServices }} \
   --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
-  --extra-serve-flags="{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}" \
+  --extra-serve-flags='{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}' \
 ```
 
 ## Up and running
