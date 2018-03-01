@@ -14,6 +14,7 @@ $ gomeet new {{ .GoPkg }} \
   --default-prefixes={{ .PkgNfo.DefaultPrefixes }} \
   --proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
   --no-gogo{{ end }}{{ if .SubServices }} \
+  --extra-serve-flags="{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}" \
   --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
 ```
 

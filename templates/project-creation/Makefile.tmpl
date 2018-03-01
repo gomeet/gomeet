@@ -401,5 +401,6 @@ gomeet-regenerate-project: tools
 		--proto-name=${GO_PROTO_PACKAGE_ALIAS} \
 		--sub-services=${SUB_SERVICES} \
 		--db-types=${DB_TYPES} \
+		--extra-serve-flags=${EXTRA_SERVE_FLAGS} \
 		--force{{ if not .IsGogoGen }} --no-gogo{{ end }}
 
