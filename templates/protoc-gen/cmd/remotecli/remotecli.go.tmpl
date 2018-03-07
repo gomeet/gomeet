@@ -24,6 +24,8 @@ const (
 
 type RemoteCli interface {
 	GetActionsMap() map[string]func([]string) (string, error)
+	GetExtraActionsMap() map[string]func([]string) (string, error)
+	GetExtraHelp() string
 	Eval(line string) (string, error)
 	Close()
 	RemoteVersion() (*{{ .GoProtoPkgAlias }}.VersionResponse, error)
@@ -107,7 +109,7 @@ func (c *remoteCli) RemoteVersion() (*{{ .GoProtoPkgAlias }}.VersionResponse, er
 }
 
 func (c *remoteCli) GetActionsMap() map[string]func([]string) (string, error) {
-	return map[string]func([]string) (string, error){
+	actionsMap := map[string]func([]string) (string, error){
 		//grpc method
 {{- remoteCliGetActionMap .Name .ProtoFiles -}}
 		// global method
@@ -117,6 +119,12 @@ func (c *remoteCli) GetActionsMap() map[string]func([]string) (string, error) {
 		"tls_config":                c.cmdTLSConfig,
 		"help":                      c.cmdHelp,
 	}
+
+	for k, fn := range c.GetExtraActionsMap() {
+		actionsMap[k] = fn
+	}
+
+	return actionsMap
 }
 
 // Eval string to gRPC call

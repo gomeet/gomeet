@@ -23,7 +23,7 @@ func (s *{{ lowerPascalCase .ShortName }}Server) AuthFuncOverride(ctx context.Co
 			return ctx, nil
 		}
 
-		log.Error(ctx, "Authentification failed", err, log.Fields{})
+		log.Error(ctx, "Authentication failed", err, log.Fields{})
 
 		return nil, err
 	}
