@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+
 func mapToArray(m map[int32]string) []string {
 	res := make([]string, len(m))
 	i := 0
@@ -27,4 +28,12 @@ func parseParams(s string) []string {
 		res[k] = mod
 	}
 	return res
+}
+
+func (c remoteCli) GetExtraActionsMap() map[string]func([]string) (string, error) {
+	return map[string]func([]string) (string, error){}
+}
+
+func (c remoteCli) GetExtraHelp() string {
+	return ""
 }

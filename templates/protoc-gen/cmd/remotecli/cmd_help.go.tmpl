@@ -2,6 +2,8 @@
 // source:{{ range .ProtoFiles }} {{.Name}}{{ end }}
 package remotecli
 
+import "fmt"
+
 func (c *remoteCli) cmdHelp(args []string) (string, error) {
 	h := `HELP :
 {{ remoteCliHelp .Name .ProtoFiles }}
@@ -20,6 +22,11 @@ func (c *remoteCli) cmdHelp(args []string) (string, error) {
 	┌─ help
 	└─ display this help
 `
+
+	if c.GetExtraHelp() != "" {
+		h += fmt.Sprintf("\n%s\n", c.GetExtraHelp())
+	}
+
 	if c.ctxCall == ConsoleCall {
 		h += `
 	┌─ exit

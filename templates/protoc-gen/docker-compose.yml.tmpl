@@ -1,8 +1,7 @@
 version: "3"
 
 volumes:
-  # db_user_data: {}
-  # db_device_data: {}
+  # db_{{ .ShortName }}_data: {}
   prometheus_data: {}
   grafana_data: {}
 
@@ -22,7 +21,7 @@ services:
   #############
   # Databases #
   #############
-  # db-device:
+  # db-{{ .ShortName }}:
   #   image: mariadb
   #   restart: always
   #   environment:
@@ -32,19 +31,6 @@ services:
   #     MYSQL_RANDOM_ROOT_PASSWORD: "yes"
   #   volumes:
   #     - db_device_data:/var/lib/mysql
-  #   networks:
-  #     - db
-
-  # db-user:
-  #   image: mariadb
-  #   restart: always
-  #   environment:
-  #     MYSQL_USER: ${MYSQL_USER}
-  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  #     MYSQL_DATABASE: ${MYSQL_SVC_USER_DATABASE}
-  #     MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-  #   volumes:
-  #     - db_user_data:/var/lib/mysql
   #   networks:
   #     - db
 
@@ -102,7 +88,6 @@ services:
 {{ range .SubServices }}
   console-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
-    image: gomeet/gomeet-svc-bi:${TAG_SVC_BI}
     command: console --address=svc-{{ .ShortName }}:13000
     depends_on:
       - svc-{{ .ShortName }}

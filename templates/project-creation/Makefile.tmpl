@@ -11,6 +11,11 @@ VERSION = $(shell cat VERSION)
 OS_NAME=$(shell go env GOOS)
 OS_ARCH=$(shell go env GOARCH)
 
+# <flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>
+# ex: my-extra-flag@string|My extra flag description|my default value,my-extra-flag2@int|My extra flag2 description|5
+# eg. no comma, no semicolon or no colon
+EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}
+
 DB_TYPES={{ .DbTypes | join "," }}
 {{ range .DbTypes }}
 DB_{{ upper . }}_TEST_USERNAME?=gomeet
@@ -149,7 +154,7 @@ proto: tools proto-gen-doc
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
 				--gomeetfaker_out="${GOPATH}/src" \
-				--gomeet-service_out="project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \
+				--gomeet-service_out="project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \
 			$$f; \
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \
@@ -396,5 +401,6 @@ gomeet-regenerate-project: tools
 		--proto-name=${GO_PROTO_PACKAGE_ALIAS} \
 		--sub-services=${SUB_SERVICES} \
 		--db-types=${DB_TYPES} \
+		--extra-serve-flags="${EXTRA_SERVE_FLAGS}" \
 		--force{{ if not .IsGogoGen }} --no-gogo{{ end }}
 

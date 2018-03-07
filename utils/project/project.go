@@ -3,6 +3,7 @@ package project
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -31,11 +32,19 @@ func GomeetAllowedDbTypes() []string {
 	return allowedDbTypes
 }
 
+type serveFlag struct {
+	Name         string
+	Description  string
+	DefaultValue string
+	Type         string
+}
+
 type Project struct {
 	*helpers.PkgNfo
 
 	SubServices          []*helpers.PkgNfo
 	dbTypes              []string
+	extraServeFlags      []*serveFlag
 	folder               *folder
 	protoRegistry        *ggdescriptor.Registry
 	protoFiles           []*descriptor.FileDescriptorProto
@@ -54,7 +63,7 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, false}
+	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -76,6 +85,45 @@ func (p *Project) SetDefaultPrefixes(s string) error {
 
 	return nil
 }
+
+func (p *Project) SetExtraServeFlags(s string) error {
+	if s != "" {
+		allFlags := strings.Split(s, ",")
+		for _, myFlag := range allFlags {
+			if myFlag == "" {
+				continue
+			}
+			part := strings.Split(myFlag, "|")
+			if len(part) < 1 {
+				return errors.New("bad extra serve flags parameter")
+			}
+			name, description, defaultValue, typ := part[0], "", "", "string"
+			if len(part) > 1 {
+				description = part[1]
+			}
+			if len(part) > 2 {
+				defaultValue = part[2]
+			}
+			namePart := strings.Split(name, "@")
+			if len(namePart) > 1 {
+				name = namePart[0]
+				typ = strings.ToLower(namePart[1])
+			}
+
+			aServeFlag := &serveFlag{
+				Name:         name,
+				Description:  description,
+				DefaultValue: defaultValue,
+				Type:         typ,
+			}
+
+			p.extraServeFlags = append(p.extraServeFlags, aServeFlag)
+		}
+	}
+
+	return nil
+}
+
 func (p *Project) SetDbTypes(s string) error {
 	if s != "" {
 		dbTypes := strings.Split(s, ",")
@@ -113,6 +161,7 @@ func (p Project) IsGogoGen() bool                               { return p.isGog
 func (p Project) GomeetGeneratorUrl() string                    { return "https://" + p.GomeetPkg() }
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
+func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
 func (p *Project) UseGogoGen(b bool) {
 	p.isGogoGen = b

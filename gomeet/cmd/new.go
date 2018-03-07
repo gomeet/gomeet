@@ -38,6 +38,7 @@ var (
 	force           bool
 	noGogo          bool
 	dbTypes         string
+	extraServeFlags string
 	out             = colorable.NewColorableStdout()
 )
 
@@ -48,6 +49,7 @@ func init() {
 	newCmd.PersistentFlags().BoolVar(&force, "force", false, "Replace files if exists")
 	newCmd.PersistentFlags().BoolVar(&noGogo, "no-gogo", false, "if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file")
 	newCmd.PersistentFlags().StringVar(&dbTypes, "db-types", "", fmt.Sprintf("DB types [%s] (comma separated)", strings.Join(project.GomeetAllowedDbTypes(), ",")))
+	newCmd.PersistentFlags().StringVar(&extraServeFlags, "extra-serve-flags", "", "extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)")
 
 	RootCmd.AddCommand(newCmd)
 }
@@ -87,6 +89,13 @@ func new(cmd *cobra.Command, args []string) {
 
 	if dbTypes != "" {
 		err := p.SetDbTypes(dbTypes)
+		if err != nil {
+			er(err)
+		}
+	}
+
+	if extraServeFlags != "" {
+		err := p.SetExtraServeFlags(extraServeFlags)
 		if err != nil {
 			er(err)
 		}

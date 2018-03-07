@@ -7,6 +7,7 @@ This service is generated with [gomeet]({{ .GomeetGeneratorUrl }}). The initial 
 ```shell
 $ gomeet new {{ .GoPkg }} \
   --default-prefixes={{ .PkgNfo.DefaultPrefixes }} \
+  --extra-serve-flags='{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}' \
   --proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
   --no-gogo{{ end }}{{ if .SubServices }} \
   --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
@@ -46,9 +47,10 @@ $ gomeet new {{ .GoPkg }} \
 - [x] Add docker environement (docker file, docker-compose)
 - [x] Add prometheus to docker environement (docker-compose)
 - [ ] Add Kubernetes
-- [ ] Add a data store
+- [x] Add a data store
 - [x] Add unit tests
 - [x] Add functional testing
 - [x] Add load testing
 - [ ] Add some clients examples (multilang: PHP, RUBY, Node.js, Python ...)
 - [x] Add git workflow ([git flow](https://danielkummer.github.io/git-flow-cheatsheet/))
+- [ ] Add a web ui

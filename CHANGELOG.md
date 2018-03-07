@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.2 - 2018-03-07
+
+- Bug fix
+
 ## 0.0.1 - 2018-02-26
 
 - Added gomeet services proto generator
