@@ -18,6 +18,6 @@ echo $BASE_DIR/service/grpc_"$fn_underscore".go
 echo $BASE_DIR/cmd/remotecli/cmd_"$fn_underscore".go
 echo $BASE_DIR/service/grpc_"$fn_underscore"_test.go
 echo $BASE_DIR/cmd/functest/helpers_"$fn_underscore".go
-echo $BASE_DIR/cmd/functest/grpc_"$fn_underscore".go
-echo $BASE_DIR/cmd/functest/http_"$fn_underscore".go
+#echo $BASE_DIR/cmd/functest/grpc_"$fn_underscore".go
+#echo $BASE_DIR/cmd/functest/http_"$fn_underscore".go
 
