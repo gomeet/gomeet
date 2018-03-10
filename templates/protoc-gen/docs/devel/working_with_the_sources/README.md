@@ -11,6 +11,7 @@
 - [git flow](https://danielkummer.github.io/git-flow-cheatsheet/)
 - [docker](https://docs.docker.com/engine/installation/)
 - [docker-compose](https://docs.docker.com/compose/install/)
+- [Unzip](http://www.info-zip.org/UnZip.html)
 {{ range .DbTypes }}{{ if eq . "mysql" }}- [{{ lower . }}](https://www.{{ lower . }}.com/) or [mariaDB clone](https://mariadb.com/)
 {{ else if eq . "postgres" }}- [postgreSQL](https://www.postgresql.org/)
 {{ else if eq . "sqlite" }}- [sqlite3](https://www.sqlite.org/)
@@ -25,6 +26,7 @@ sudo add-apt-repository -y ppa:longsleep/golang-backports
 sudo add-apt-repository -y ppa:maarten-fonville/protobuf
 sudo apt-get update
 sudo apt-get install -y golang-go protobuf-compiler git-flow
+sudo apt-get install unzip
 
 echo -e "export GOPATH=\$(go env GOPATH)\nexport PATH=\${PATH}:\${GOPATH}/bin" >> ~/.bashrc
 source ~/.bashrc
