@@ -51,7 +51,7 @@ func init() {
 	newCmd.PersistentFlags().StringVar(&dbTypes, "db-types", "", fmt.Sprintf("DB types [%s] (comma separated)", strings.Join(project.GomeetAllowedDbTypes(), ",")))
 	newCmd.PersistentFlags().StringVar(&extraServeFlags, "extra-serve-flags", "", "extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)")
 
-	RootCmd.AddCommand(newCmd)
+	rootCmd.AddCommand(newCmd)
 }
 
 func new(cmd *cobra.Command, args []string) {
