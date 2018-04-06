@@ -32,7 +32,7 @@ var (
 )
 
 func init() {
-	RootCmd.AddCommand(tokenCmd)
+	rootCmd.AddCommand(tokenCmd)
 
 	// JSON Web Token secret signing key
 	tokenCmd.PersistentFlags().StringVarP(&secretSigningKey, "secret-key", "k", "", "JSON Web Token secret signing key")

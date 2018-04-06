@@ -7,14 +7,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// RootCmd is the root command line
-var RootCmd = &cobra.Command{
+// rootCmd is the root command line
+var rootCmd = &cobra.Command{
 	Use: "gomeet",
 }
 
 // Execute the commands
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}

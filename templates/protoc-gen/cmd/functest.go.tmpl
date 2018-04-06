@@ -37,7 +37,7 @@ var (
 )
 
 func init() {
-	RootCmd.AddCommand(funcTestCmd)
+	rootCmd.AddCommand(funcTestCmd)
 
 	// force debug mode
 	funcTestCmd.PersistentFlags().BoolVarP(&debugMode, "debug", "d", false, "Force debug mode")
