@@ -5,9 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -39,10 +41,19 @@ type serveFlag struct {
 	Type         string
 }
 
+type subService struct {
+	*helpers.PkgNfo
+
+	dbTypes         []string
+	extraServeFlags []*serveFlag
+}
+
 type Project struct {
 	*helpers.PkgNfo
 
-	SubServices          []*helpers.PkgNfo
+	//SubServices          []*helpers.PkgNfo
+	//SubServices          []*subService
+	SubServices          []*Project
 	dbTypes              []string
 	extraServeFlags      []*serveFlag
 	folder               *folder
@@ -86,6 +97,36 @@ func (p *Project) SetDefaultPrefixes(s string) error {
 	return nil
 }
 
+func extraFlag(myFlag string) (*serveFlag, error) {
+	if myFlag == "" {
+		return nil, nil
+	}
+	part := strings.Split(myFlag, "|")
+	if len(part) < 1 {
+		return nil, errors.New("bad extra serve flags parameter")
+	}
+	name, description, defaultValue, typ := part[0], "", "", "string"
+	if len(part) > 1 {
+		description = part[1]
+	}
+	if len(part) > 2 {
+		defaultValue = part[2]
+	}
+	namePart := strings.Split(name, "@")
+	if len(namePart) > 1 {
+		name = namePart[0]
+		typ = strings.ToLower(namePart[1])
+	}
+
+	return &serveFlag{
+		Name:         name,
+		Description:  description,
+		DefaultValue: defaultValue,
+		Type:         typ,
+	}, nil
+
+}
+
 func (p *Project) SetExtraServeFlags(s string) error {
 	if s != "" {
 		allFlags := strings.Split(s, ",")
@@ -93,30 +134,13 @@ func (p *Project) SetExtraServeFlags(s string) error {
 			if myFlag == "" {
 				continue
 			}
-			part := strings.Split(myFlag, "|")
-			if len(part) < 1 {
-				return errors.New("bad extra serve flags parameter")
+			aServeFlag, err := extraFlag(myFlag)
+			if err != nil {
+				return err
 			}
-			name, description, defaultValue, typ := part[0], "", "", "string"
-			if len(part) > 1 {
-				description = part[1]
+			if aServeFlag == nil {
+				continue
 			}
-			if len(part) > 2 {
-				defaultValue = part[2]
-			}
-			namePart := strings.Split(name, "@")
-			if len(namePart) > 1 {
-				name = namePart[0]
-				typ = strings.ToLower(namePart[1])
-			}
-
-			aServeFlag := &serveFlag{
-				Name:         name,
-				Description:  description,
-				DefaultValue: defaultValue,
-				Type:         typ,
-			}
-
 			p.extraServeFlags = append(p.extraServeFlags, aServeFlag)
 		}
 	}
@@ -167,19 +191,74 @@ func (p *Project) UseGogoGen(b bool) {
 	p.isGogoGen = b
 }
 
+func parseSubService(s string) []string {
+	r := regexp.MustCompile(`'.*?'|\[.*?\]|\S+`)
+	res := r.FindAllString(s, -1)
+	for k, v := range res {
+		mod := strings.Trim(v, " ")
+		mod = strings.Trim(mod, "[")
+		mod = strings.Trim(mod, `]`)
+		mod = strings.Trim(mod, " ")
+
+		res[k] = mod
+	}
+	return res
+}
+
 func (p *Project) SetSubServices(subServices []string) error {
 	if len(subServices) > 0 {
 		for _, subSvcPkg := range subServices {
-			subSvcPkg = strings.TrimSpace(subSvcPkg)
+			log.Printf("subSvcPkg: %v", subSvcPkg)
+			part := strings.Split(subSvcPkg, "[")
+			if len(part) < 1 {
+				continue
+			}
+			subSvcPkg = strings.TrimSpace(part[0])
 			if subSvcPkg == "" {
 				continue
 			}
-			//ss, err := sub_service.NewSubSevice(subSvcPkg, p.DefaultPrefixes())
-			pkgNfo, err := helpers.NewPkgNfo(subSvcPkg, p.DefaultPrefixes())
+
+			subSvc, err := New(subSvcPkg)
 			if err != nil {
 				return err
 			}
-			p.SubServices = append(p.SubServices, pkgNfo)
+			subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+			ssParams := parseSubService("[" + strings.Join(part[1:], "["))
+
+			var (
+				ssDbTypes []string
+				ssFlags   []string
+			)
+			for _, ssFlag := range ssParams {
+				log.Println("ssFlag", ssFlag)
+				switch {
+				case strings.HasPrefix(ssFlag, "db_types@"):
+					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
+				default:
+					ssFlags = append(ssFlags, ssFlag)
+				}
+			}
+			if len(ssFlags) > 0 {
+				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
+				log.Println(strings.Join(ssFlags, ","))
+			}
+			if len(ssDbTypes) > 0 {
+				subSvc.SetDbTypes(strings.Join(ssDbTypes, ","))
+				log.Println(strings.Join(ssDbTypes, ","))
+			}
+
+			p.SubServices = append(p.SubServices, subSvc)
+
+			//pkgNfo, err := helpers.NewPkgNfo(subSvcPkg, p.DefaultPrefixes())
+			//if err != nil {
+			//return err
+			//}
+
+			//subServicesFlags := parseSubService("[" + strings.Join(part[1:], "["))
+			//for _, subServiceFlag := range subServicesFlags {
+			//log.Println("subServiceFlag", subServiceFlag)
+			//}
+			//subSvc := &subService{PkgNfo: pkgNfo}
 		}
 	}
 
@@ -390,6 +469,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	cmd.addFile("cli.go", "protoc-gen/cmd/cli.go.tmpl", nil, false)
 	cmd.addFile("root.go", "protoc-gen/cmd/root.go.tmpl", nil, false)
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
+	cmd.addFile("micro.go", "protoc-gen/cmd/micro.go.tmpl", nil, false)
+	cmd.addFile("monolith.go", "protoc-gen/cmd/monolith.go.tmpl", nil, false)
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
 	functest := cmd.addFolder("functest")
