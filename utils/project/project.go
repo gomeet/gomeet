@@ -24,7 +24,7 @@ import (
 
 const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
-var allowedDbTypes = []string{"mysql", "postgres", "sqllite", "mssql"}
+var allowedDbTypes = []string{"mysql", "postgres", "sqlite", "mssql"}
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes

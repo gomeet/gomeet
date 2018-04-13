@@ -31,7 +31,7 @@ DOCKER_NETWORK = network-grpc-{{ .ProjectGroupName }}
 DOCKER_SVC_CONTAINER = svc-$(NAME)
 DOCKER_CONSOLE_CONTAINER = console-$(NAME)
 
-SUB_SERVICES={{ subSvcPkgString .SubServices }}
+SUB_SERVICES={{ range $i, $e := .SubServices }}{{ if $i }},{{ end }}{{ $e.GoPkg }}{{ if $e.DbTypes }}[db_types@{{ $e.DbTypes | join "|" }}]{{ end }}{{ if $e.ExtraServeFlags }}{{ range $ii, $ee := .ExtraServeFlags -}}[{{ if $ii }}[{{ end }}{{ $ee.Name }}@{{ $ee.Type }}|{{ $ee.Description }}|{{ $ee.DefaultValue }}]{{ end }}{{ end }}{{ end }}
 # SUB-SERVICES DEFINITION : make-tag-docker-compose
 # DOCKER_TAG_SVC_{{ "{{SubServiceNameUpperSnakeCase}}" }} = $(shell cat ./vendor/{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/VERSION | tr +- __)
 # END SUB-SERVICES DEFINITION : make-tag-docker-compose
@@ -398,7 +398,7 @@ gomeet-regenerate-project: tools
 	@echo "$(NAME): gomeet-regenerate-project task"
 	_tools/bin/gomeet new ${GO_PACKAGE_NAME} \
 		--default-prefixes='${DEFAULT_PREFIXES}' \
-		--proto-name=${GO_PROTO_PACKAGE_ALIAS} \
+		--proto-name='${GO_PROTO_PACKAGE_ALIAS}' \
 		--sub-services='${SUB_SERVICES}' \
 		--db-types='${DB_TYPES}' \
 		--extra-serve-flags='${EXTRA_SERVE_FLAGS}' \
