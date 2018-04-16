@@ -14,6 +14,7 @@ import (
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/cockroachdb/cmux"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/fullstorydev/grpchan"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -143,6 +144,8 @@ func grpcMonolithServer(
 ) *grpc.Server {
 	var grpcS *grpc.Server
 
+	reg := grpchan.HandlerMap{}
+
 	//middlewares definition
 	recoveryOpt := grpc_recovery.WithRecoveryHandler(recoverFromPanic)
 	logrusEntry := log.NewEntry(log.StandardLogger())
@@ -198,8 +201,8 @@ func grpcMonolithServer(
 		grpcS = grpc.NewServer(sMdl, uMdl)
 	}
 
-	svc.RegisterGRPCServices(
-		grpcS,
+	svc.RegisterGRPCServicesReg(
+		reg,
 		jwtKey,
 		caCert,
 		serverCert,
@@ -214,6 +217,8 @@ func grpcMonolithServer(
 		{{ end }}// END SUB-SERVICES DEFINITION : register-address
 	)
 	grpc_prometheus.Register(grpcS)
+
+	reg.ForEach(grpcS.RegisterService)
 
 	return grpcS
 }

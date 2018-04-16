@@ -3,6 +3,7 @@
 package service
 
 import (
+	"github.com/fullstorydev/grpchan"
 	{{ if .DbTypes }}"github.com/jinzhu/gorm"
 	{{ end }}
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
@@ -14,10 +15,11 @@ import (
 
 // Implements of {{ lowerPascalCase .ShortName }}Server
 type {{ lowerPascalCase .ShortName }}Server struct {
-	jwtSecret     string
-	caCertificate string
-	certificate   string
-	privateKey    string
+	subServicesRegistry grpchan.ServiceRegistry
+	jwtSecret           string
+	caCertificate       string
+	certificate         string
+	privateKey          string
 
 	// EXTRA : var
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName string

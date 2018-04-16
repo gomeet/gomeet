@@ -150,6 +150,7 @@ proto: tools proto-gen-doc
 			protoc -I. \
 				-I$(shell pwd)/third_party \
 				--go{{ if .IsGogoGen }}go{{ end }}_out=plugins="grpc:${GOPATH}/src" \
+				--grpchan_out="${GOPATH}/src" \
 				--govalidators_out="${GOPATH}/src" \
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
