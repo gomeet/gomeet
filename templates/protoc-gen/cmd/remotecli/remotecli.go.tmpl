@@ -3,12 +3,13 @@
 package remotecli
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
+	"golang.org/x/net/context"
 	gomeetContext "{{ .GomeetPkg }}/utils/context"
 
 	"{{ .GoPkg }}/client"
@@ -32,9 +33,10 @@ type RemoteCli interface {
 }
 
 type remoteCli struct {
-	name    string
-	version string
-	ctxCall ContextCall
+	name           string
+	version        string
+	ctxCall        ContextCall
+	defaultTimeout int
 	*client.GomeetClient
 	c              {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
 	ctx            context.Context
@@ -70,6 +72,7 @@ func NewRemoteCli(
 		name,
 		version,
 		ctxCall,
+		timeout,
 		cli,
 		cli.GetGRPCClient(),
 		ctx,
@@ -81,6 +84,26 @@ func NewRemoteCli(
 // Close : close grpc connection `cc`
 func (c *remoteCli) Close() {
 	c.GomeetClient.Close()
+}
+
+func (c *remoteCli) SetDefaultTimeout(t int) {
+	c.defaultTimeout = t
+}
+
+func (c *remoteCli) UnsetDefaultTimeout() {
+	c.SetDefaultTimeout(0)
+}
+
+func (c *remoteCli) GetDefaultTimeout() int {
+	return c.defaultTimeout
+}
+
+func (c *remoteCli) GetTimeoutContext(t int) (context.Context, context.CancelFunc) {
+	if t > 0 {
+		return context.WithTimeout(c.ctx, time.Duration(t)*time.Second)
+	}
+
+	return c.ctx, func() {}
 }
 
 // GetGRPCClient : getter on internal gRPC client
@@ -115,6 +138,7 @@ func (c *remoteCli) GetActionsMap() map[string]func([]string) (string, error) {
 		// global method
 		"console_version":           c.cmdConsoleVersion,
 		"jwt":                       c.cmdJWT,
+		"default_timeout":           c.cmdDefaultTimeout,
 		"service_address":           c.cmdServiceAddress,
 		"tls_config":                c.cmdTLSConfig,
 		"help":                      c.cmdHelp,

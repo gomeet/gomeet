@@ -11,7 +11,10 @@ func (c *remoteCli) cmdHelp(args []string) (string, error) {
 	└─ return service address
 
 	┌─ jwt [<token>]
-	└─ display current jwt or save none if it's set
+	└─ display current jwt or save one if it's set
+
+	┌─ default_timeout [<timeout in second (int)>]
+	└─ display current client default timeout or save one if it's set (0 to disable)
 
 	┌─ console_version
 	└─ return console version
