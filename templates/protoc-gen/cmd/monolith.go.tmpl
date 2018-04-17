@@ -15,6 +15,7 @@ import (
 	"github.com/cockroachdb/cmux"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/fullstorydev/grpchan"
+	"github.com/fullstorydev/grpchan/inprocgrpc"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -34,9 +35,8 @@ import (
 
 	grpc_acl "{{ .GomeetPkg }}/utils/grpc-middlewares/acl"
 	grpc_cid "{{ .GomeetPkg }}/utils/grpc-middlewares/cid"
-	{{ range .SubServices }}{{ if .DbTypes }}svc_{{ lowerSnakeCase .ShortName }}_models "{{ .GoPkg }}/models"{{ end }}
-	{{ end }}
-
+	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}Models "{{ .GoPkg }}/models"{{ end }}
+	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
 )
 
 var (
@@ -96,8 +96,8 @@ func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
 			log.Errorf("The --svc-{{ lowerPascalCase $ss.ShortName }}-{{ lower . }}-dsn flag is required for automatic schema migration")
 			os.Exit(1)
 		}
-		{{ if eq (len $ss.DbTypes) 1 }}err := svc_{{ lowerSnakeCase $ss.ShortName }}_models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName)
-		{{ else }}err := svc_{{ lowerSnakeCase $ss.ShortName }}_models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName){{ end }}
+		{{ if eq (len $ss.DbTypes) 1 }}err := svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName)
+		{{ else }}err := svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName){{ end }}
 		if err != nil {
 			log.Errorf("svc{{ upperPascalCase $ss.ShortName }} Database schema migration failure: %v\n", err)
 			os.Exit(1)
@@ -137,20 +137,19 @@ func grpcMonolithServer(
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
 	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }},
 	{{ end }}// END EXTRA : param
-	// SUB-SERVICES DEFINITION : param-address
-	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}MonolithAddress string,
-	{{ end }}// END SUB-SERVICES DEFINITION : param-address
+	// SUB-SERVICES DEFINITION : full-params
+	{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
+	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string,
+	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }},
+	{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : full-params
 ) *grpc.Server {
 	var grpcS *grpc.Server
-
-	reg := grpchan.HandlerMap{}
 
 	//middlewares definition
 	recoveryOpt := grpc_recovery.WithRecoveryHandler(recoverFromPanic)
 	logrusEntry := log.NewEntry(log.StandardLogger())
 	// stream middlewares
-	sMdl := grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+	sInterceptors := grpc_middleware.ChainStreamServer(
 		grpc_prometheus.StreamServerInterceptor,
 		grpc_cid.StreamServerInterceptor(false),
 		grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
@@ -159,9 +158,10 @@ func grpcMonolithServer(
 		grpc_validator.StreamServerInterceptor(),
 		grpc_acl.StreamServerInterceptor(nil),
 		grpc_recovery.StreamServerInterceptor(recoveryOpt),
-	))
+	)
+	sMdl := grpc.StreamInterceptor(sInterceptors)
 	// unary middlewares
-	uMdl := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+	uInterceptors := grpc_middleware.ChainUnaryServer(
 		grpc_prometheus.UnaryServerInterceptor,
 		grpc_cid.UnaryServerInterceptor(false),
 		grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
@@ -170,7 +170,8 @@ func grpcMonolithServer(
 		grpc_validator.UnaryServerInterceptor(),
 		grpc_acl.UnaryServerInterceptor(nil),
 		grpc_recovery.UnaryServerInterceptor(recoveryOpt),
-	))
+	)
+	uMdl := grpc.UnaryInterceptor(uInterceptors)
 
 	if caCert != "" && serverCert != "" && serverKey != "" {
 		// load the server's key pair
@@ -201,8 +202,32 @@ func grpcMonolithServer(
 		grpcS = grpc.NewServer(sMdl, uMdl)
 	}
 
+	inProcessChannel := new(inprocgrpc.Channel)
+	{{ if .SubServices }}
+	// sub-services can be loaded in this process
+	subServiceshandlers := grpchan.HandlerMap{}
+	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
+	{{ range .SubServices }}{{ $ss := . }}if svc{{ upperPascalCase .ShortName }}Address == "" {
+		svc{{ upperPascalCase .ShortName }}Address = "inprocgrpc"
+		svc{{ upperPascalCase .ShortName }}Service.SetVersion(svc{{ upperPascalCase .ShortName }}Address)
+		svc{{ upperPascalCase .ShortName }} := svc{{ upperPascalCase .ShortName }}Service.NewService()
+		svc{{ upperPascalCase .ShortName }}.RegisterGRPCServicesReg(
+			reg,
+			inProcessChannel,
+			jwtKey,
+			caCert,
+			serverCert,
+			serverKey,
+			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN,
+			{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
+		{{ end }})
+	}{{ end }}
+	{{ end }}
+	//Real server
+	mainHandlers := grpchan.HandlerMap{}
 	svc.RegisterGRPCServicesReg(
-		reg,
+		mainHandlers,
+		inProcessChannel,
 		jwtKey,
 		caCert,
 		serverCert,
@@ -212,14 +237,14 @@ func grpcMonolithServer(
 		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
 		// SUB-SERVICES DEFINITION : register-address
-		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,
 		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address,
 		{{ end }}// END SUB-SERVICES DEFINITION : register-address
 	)
 	grpc_prometheus.Register(grpcS)
 
-	reg.ForEach(grpcS.RegisterService)
-
+	mainHandlers.ForEach(grpcS.RegisterService)
+	{{ if .SubServices }}subServiceshandlers.ForEach(inProcessChannel.RegisterService)
+	{{ end }}
 	return grpcS
 }
 
@@ -312,10 +337,11 @@ func monolithOnMultipleAddresses(grpcAddr string, httpAddr string) {
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
 		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
-		// SUB-SERVICES DEFINITION : register-address
-		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : register-address
+		// SUB-SERVICES DEFINITION : register-full-params
+		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}MonolithAddress,
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
+		{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag,
+		{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : register-full-params
 	)
 
 	// create the gRPC listener
@@ -411,10 +437,11 @@ func monolithOnSingleAddress(addr string) {
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
 		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}// END EXTRA : register
-		// SUB-SERVICES DEFINITION : register-address
-		// svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : register-address
+		// SUB-SERVICES DEFINITION : register-full-params
+		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}MonolithAddress,
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
+		{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag,
+		{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : register-full-params
 	)
 
 	// create the HTTP/1.1 server (we reuse the gRPC server's key pair for the gRPC gateway client)

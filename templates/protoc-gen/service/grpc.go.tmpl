@@ -16,6 +16,7 @@ import (
 // Implements of {{ lowerPascalCase .ShortName }}Server
 type {{ lowerPascalCase .ShortName }}Server struct {
 	subServicesRegistry grpchan.ServiceRegistry
+	inProcessChannel    grpchan.Channel
 	jwtSecret           string
 	caCertificate       string
 	certificate         string

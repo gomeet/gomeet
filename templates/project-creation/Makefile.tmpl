@@ -31,7 +31,7 @@ DOCKER_NETWORK = network-grpc-{{ .ProjectGroupName }}
 DOCKER_SVC_CONTAINER = svc-$(NAME)
 DOCKER_CONSOLE_CONTAINER = console-$(NAME)
 
-SUB_SERVICES={{ range $i, $e := .SubServices }}{{ if $i }},{{ end }}{{ $e.GoPkg }}{{ if $e.DbTypes }}[db_types@{{ $e.DbTypes | join "|" }}]{{ end }}{{ if $e.ExtraServeFlags }}{{ range $ii, $ee := .ExtraServeFlags -}}[{{ if $ii }}[{{ end }}{{ $ee.Name }}@{{ $ee.Type }}|{{ $ee.Description }}|{{ $ee.DefaultValue }}]{{ end }}{{ end }}{{ end }}
+SUB_SERVICES={{ range $i, $e := .SubServices }}{{ if $i }},{{ end }}{{ $e.GoPkg }}{{ if $e.DbTypes }}[db_types@{{ $e.DbTypes | join "|" }}]{{ end }}{{ if $e.ExtraServeFlags }}{{ range $ii, $ee := .ExtraServeFlags -}}[{{ $ee.Name }}@{{ $ee.Type }}|{{ $ee.Description }}|{{ $ee.DefaultValue }}]{{ end }}{{ end }}{{ end }}
 # SUB-SERVICES DEFINITION : make-tag-docker-compose
 # DOCKER_TAG_SVC_{{ "{{SubServiceNameUpperSnakeCase}}" }} = $(shell cat ./vendor/{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/VERSION | tr +- __)
 # END SUB-SERVICES DEFINITION : make-tag-docker-compose

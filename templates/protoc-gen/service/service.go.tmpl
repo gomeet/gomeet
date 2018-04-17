@@ -35,6 +35,10 @@ type Service struct {
 	Version string `json:"version"`
 }
 
+func SetVersion(v string) {
+	version = v
+}
+
 // NewService return new {{ .Name }} service
 func NewService() *Service {
 	return &Service{
@@ -46,6 +50,7 @@ func NewService() *Service {
 // RegisterGRPCServicesReg register all grpc services in reg
 func (svc Service) RegisterGRPCServicesReg(
 	reg grpchan.ServiceRegistry,
+	inProcessChannel grpchan.Channel,
 	jwtSecret string,
 	caCert string,
 	cert string,
@@ -72,9 +77,10 @@ func (svc Service) RegisterGRPCServicesReg(
 		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
 		{{ range .SubServices }}"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
 		{{ end }}// END SUB-SERVICES DEFINITION : log-address
-	}).Debug("RegisterGRPCServices")
+	}).Debug("RegisterGRPCServicesReg {{ .ShortName }}")
 	{{ .GoProtoPkgAlias }}.RegisterHandler{{ upperPascalCase .ShortName }}(reg, &{{ lowerPascalCase .ShortName }}Server{
 		subServicesRegistry: reg,
+		inProcessChannel:    inProcessChannel,
 		jwtSecret:           jwtSecret,
 		caCertificate:       caCert,
 		certificate:         cert,
@@ -119,7 +125,7 @@ func (svc Service) RegisterGRPCServices(
 		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
 		{{ range .SubServices }}"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
 		{{ end }}// END SUB-SERVICES DEFINITION : log-address
-	}).Debug("RegisterGRPCServices")
+	}).Debug("RegisterGRPCServices {{ .ShortName }}")
 	{{ .GoProtoPkgAlias }}.Register{{ upperPascalCase .ShortName }}Server(s, &{{ lowerPascalCase .ShortName }}Server{
 		jwtSecret:     jwtSecret,
 		caCertificate: caCert,
