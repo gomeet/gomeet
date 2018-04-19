@@ -10,7 +10,7 @@ $ gomeet new {{ .GoPkg }} \
   --extra-serve-flags='{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}' \
   --proto-name='{{ .GoProtoPkgAlias }}'{{ if not .IsGogoGen }} \
   --no-gogo{{ end }}{{ if .SubServices }} \
-  --sub-services='{{ range $i, $e := .SubServices }}{{ if $i }},{{ end }}{{ $e.GoPkg }}{{ if $e.DbTypes }}[db_types@{{ $e.DbTypes | join "|" }}]{{ end }}{{ if $e.ExtraServeFlags }}{{ range $ii, $ee := .ExtraServeFlags -}}[{{ if $ii }}[{{ end }}{{ $ee.Name }}@{{ $ee.Type }}|{{ $ee.Description }}|{{ $ee.DefaultValue }}]{{ end }}{{ end }}{{ end }}'{{ end }}
+  --sub-services='{{ .SubServicesDef }}'{{ end }}
 ```
 
 ## Up and running

@@ -41,19 +41,10 @@ type serveFlag struct {
 	Type         string
 }
 
-type subService struct {
-	*helpers.PkgNfo
-
-	dbTypes         []string
-	extraServeFlags []*serveFlag
-}
-
 type Project struct {
 	*helpers.PkgNfo
 
-	//SubServices          []*helpers.PkgNfo
-	//SubServices          []*subService
-	SubServices          []*Project
+	SubServices          map[string]*Project
 	dbTypes              []string
 	extraServeFlags      []*serveFlag
 	folder               *folder
@@ -205,8 +196,50 @@ func parseSubService(s string) []string {
 	return res
 }
 
+func (p *Project) SubServicesDef() string {
+	ssStrings := []string{}
+	for _, ss := range p.SubServices {
+		ssString := ss.GoPkg()
+		if len(ss.DbTypes()) > 0 {
+			ssString = fmt.Sprintf(
+				"%s[db_types@%s]",
+				ssString,
+				strings.Join(ss.DbTypes(), "|"),
+			)
+		}
+		if len(ss.SubServices) > 0 {
+			sssPkg := []string{}
+			for _, sss := range ss.SubServices {
+				sssPkg = append(sssPkg, sss.GoPkg())
+			}
+			ssString = fmt.Sprintf(
+				"%s[sub_services@%s]",
+				ssString,
+				strings.Join(sssPkg, "|"),
+			)
+		}
+		if len(ss.ExtraServeFlags()) > 0 {
+			for _, ssf := range ss.ExtraServeFlags() {
+				ssString = fmt.Sprintf(
+					"%s[%s@%s|%s|%s]",
+					ssString,
+					ssf.Name,
+					ssf.Type,
+					ssf.Description,
+					ssf.DefaultValue,
+				)
+			}
+		}
+		ssStrings = append(ssStrings, ssString)
+	}
+	return strings.Join(ssStrings, ",")
+}
+
 func (p *Project) SetSubServices(subServices []string) error {
 	if len(subServices) > 0 {
+		neededSubServices := []string{}
+		dependenciesTree := map[string][]string{}
+		p.SubServices = make(map[string]*Project)
 		for _, subSvcPkg := range subServices {
 			log.Printf("subSvcPkg: %v", subSvcPkg)
 			part := strings.Split(subSvcPkg, "[")
@@ -226,40 +259,58 @@ func (p *Project) SetSubServices(subServices []string) error {
 			ssParams := parseSubService("[" + strings.Join(part[1:], "["))
 
 			var (
-				ssDbTypes []string
-				ssFlags   []string
+				ssDbTypes     []string
+				ssFlags       []string
+				ssSubServices []string
 			)
 			for _, ssFlag := range ssParams {
 				log.Println("ssFlag", ssFlag)
 				switch {
 				case strings.HasPrefix(ssFlag, "db_types@"):
 					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
+				case strings.HasPrefix(ssFlag, "sub_services@"):
+					ssSubServices = strings.Split(strings.TrimPrefix(ssFlag, "sub_services@"), "|")
+					dependenciesTree[subSvc.GoPkg()] = ssSubServices
 				default:
 					ssFlags = append(ssFlags, ssFlag)
 				}
 			}
 			if len(ssFlags) > 0 {
 				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
-				log.Println(strings.Join(ssFlags, ","))
 			}
 			if len(ssDbTypes) > 0 {
 				subSvc.SetDbTypes(strings.Join(ssDbTypes, ","))
-				log.Println(strings.Join(ssDbTypes, ","))
+			}
+			if len(ssSubServices) > 0 {
+				neededSubServices = append(neededSubServices, ssSubServices...)
 			}
 
-			p.SubServices = append(p.SubServices, subSvc)
-
-			//pkgNfo, err := helpers.NewPkgNfo(subSvcPkg, p.DefaultPrefixes())
-			//if err != nil {
-			//return err
-			//}
-
-			//subServicesFlags := parseSubService("[" + strings.Join(part[1:], "["))
-			//for _, subServiceFlag := range subServicesFlags {
-			//log.Println("subServiceFlag", subServiceFlag)
-			//}
-			//subSvc := &subService{PkgNfo: pkgNfo}
+			p.SubServices[subSvc.GoPkg()] = subSvc
 		}
+		for _, needed := range neededSubServices {
+			if _, ok := p.SubServices[needed]; !ok {
+				subSvc, err := New(needed)
+				if err != nil {
+					return err
+				}
+				subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+				p.SubServices[subSvc.GoPkg()] = subSvc
+			}
+		}
+
+		for pkg, deps := range dependenciesTree {
+			for _, dep := range deps {
+				log.Println(pkg, " subServices ", dep)
+				if p.SubServices[pkg].SubServices == nil {
+					p.SubServices[pkg].SubServices = make(map[string]*Project)
+				}
+				p.SubServices[pkg].SubServices[dep] = p.SubServices[dep]
+			}
+		}
+	}
+
+	for pkg, ss := range p.SubServices {
+		log.Printf("N1 --- %s -- len %d", pkg, len(ss.SubServices))
 	}
 
 	return nil

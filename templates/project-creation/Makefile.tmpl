@@ -31,7 +31,9 @@ DOCKER_NETWORK = network-grpc-{{ .ProjectGroupName }}
 DOCKER_SVC_CONTAINER = svc-$(NAME)
 DOCKER_CONSOLE_CONTAINER = console-$(NAME)
 
-SUB_SERVICES={{ range $i, $e := .SubServices }}{{ if $i }},{{ end }}{{ $e.GoPkg }}{{ if $e.DbTypes }}[db_types@{{ $e.DbTypes | join "|" }}]{{ end }}{{ if $e.ExtraServeFlags }}{{ range $ii, $ee := .ExtraServeFlags -}}[{{ $ee.Name }}@{{ $ee.Type }}|{{ $ee.Description }}|{{ $ee.DefaultValue }}]{{ end }}{{ end }}{{ end }}
+# <sub-services-go-package>[db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
+# ex: github.com/my-project/prj-svc-aaa[db_types@mysql][my-extra-flag@string|My extra flag description|my default value][my-extra-flag2@int|My extra flag2 description|5],github.com/my-project/prj-svc-bbb[sub_services@github.com/my-project/prj-svc-aaa|github.com/my-project/prj-svc-ccc][db_types@mysql]
+SUB_SERVICES={{ .SubServicesDef }}
 # SUB-SERVICES DEFINITION : make-tag-docker-compose
 # DOCKER_TAG_SVC_{{ "{{SubServiceNameUpperSnakeCase}}" }} = $(shell cat ./vendor/{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/VERSION | tr +- __)
 # END SUB-SERVICES DEFINITION : make-tag-docker-compose

@@ -39,6 +39,8 @@ import (
 	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
 )
 
+const DEFAULT_INPROCESS_ADDRESS = "inprocgrpc"
+
 var (
 	// SUB-SERVICES DEFINITION : var-monolith
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}MonolithAddress string
@@ -67,8 +69,7 @@ func init() {
 
 	// SUB-SERVICES DEFINITION : flag-address
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
-	// EXTRA : flags
-	monolithCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}MonolithAddress, "svc-{{ lowerKebabCase .ShortName }}-address", "", "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
+	monolithCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}MonolithAddress, "svc-{{ lowerKebabCase .ShortName }}-address", DEFAULT_INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
 	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	monolithCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
@@ -79,16 +80,25 @@ func init() {
 	monolithCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	monolithCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
-	{{ end }}{{ end }}{{ range .ExtraServeFlags }}// extra embed flag for $ss.ShortName
+	{{ end }}{{ end }}{{ range .ExtraServeFlags }}
 	monolithCmd.PersistentFlags().{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
-	{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : flag-address
+	{{ end }}{{ end }}
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// monolithCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-{{ range .SubServices }}{{ if .DbTypes }}{{ $ss := . }}
+func fixSvcAddress(s string) string {
+	s = strings.ToLower(strings.Trim(s, " "))
+	if s == "" {
+		return DEFAULT_INPROCESS_ADDRESS
+	}
+
+	return s
+}
+
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}
 func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
 	{{ range .DbTypes }}// {{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate {
@@ -104,7 +114,28 @@ func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
 		}
 	}{{ end }}
 }
-{{ end }}{{ end }}
+{{ end }}
+func svc{{ upperPascalCase .ShortName }}Register(
+	address string,
+	reg grpchan.ServiceRegistry, inProcessChannel grpchan.Channel,
+	jwtKey, caCert, serverCert, serverKey string,
+	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, {{ end }}
+) {
+	if strings.ToLower(address) == strings.ToLower(DEFAULT_INPROCESS_ADDRESS) {
+		svc{{ upperPascalCase .ShortName }}Service.SetVersion(DEFAULT_INPROCESS_ADDRESS)
+		svc := svc{{ upperPascalCase .ShortName }}Service.NewService()
+		svc.RegisterGRPCServicesReg(
+			reg, inProcessChannel,
+			jwtKey, caCert, serverCert, serverKey,
+			{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
+		)
+	}
+}
+{{ end }}
 
 func monolith() {
 	if strings.HasSuffix(svc.Version, "+dev") || debugMode {
@@ -118,6 +149,7 @@ func monolith() {
 
 	log.Infof("%s version %s - %s", svc.Name, svc.Version, svcName)
 
+	//SubServices databasMigration
 	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
 	{{ end }}databaseMigration()
 
@@ -129,20 +161,13 @@ func monolith() {
 }
 
 func grpcMonolithServer(
-	caCert string,
-	serverCert string,
-	serverKey string,
-	jwtKey string,
-	// EXTRA : param
-	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }},
-	{{ end }}// END EXTRA : param
-	// SUB-SERVICES DEFINITION : full-params
-	{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
-	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string,
-	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }},
-	{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : full-params
-) *grpc.Server {
+	caCert string, serverCert string, serverKey string, jwtKey string,
+	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
+	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
+	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
+	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
+{{ end }}) *grpc.Server {
 	var grpcS *grpc.Server
 
 	//middlewares definition
@@ -204,41 +229,28 @@ func grpcMonolithServer(
 
 	inProcessChannel := new(inprocgrpc.Channel)
 	{{ if .SubServices }}
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address = fixSvcAddress(svc{{ upperPascalCase .ShortName }}Address)
+	{{ end }}
 	// sub-services can be loaded in this process
 	subServiceshandlers := grpchan.HandlerMap{}
 	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
-	{{ range .SubServices }}{{ $ss := . }}if svc{{ upperPascalCase .ShortName }}Address == "" {
-		svc{{ upperPascalCase .ShortName }}Address = "inprocgrpc"
-		svc{{ upperPascalCase .ShortName }}Service.SetVersion(svc{{ upperPascalCase .ShortName }}Address)
-		svc{{ upperPascalCase .ShortName }} := svc{{ upperPascalCase .ShortName }}Service.NewService()
-		svc{{ upperPascalCase .ShortName }}.RegisterGRPCServicesReg(
-			reg,
-			inProcessChannel,
-			jwtKey,
-			caCert,
-			serverCert,
-			serverKey,
-			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN,
-			{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
-		{{ end }})
-	}{{ end }}
-	{{ end }}
+	{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Register(
+		svc{{ upperPascalCase .ShortName }}Address,
+		reg, inProcessChannel,
+		jwtKey, caCert, serverCert, serverKey,
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
+		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
+	)
+	{{ end }}{{ end }}
 	//Real server
 	mainHandlers := grpchan.HandlerMap{}
 	svc.RegisterGRPCServicesReg(
-		mainHandlers,
-		inProcessChannel,
-		jwtKey,
-		caCert,
-		serverCert,
-		serverKey,
-		// EXTRA : register
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN,
-		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
-		{{ end }}// END EXTRA : register
-		// SUB-SERVICES DEFINITION : register-address
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : register-address
+		mainHandlers, inProcessChannel,
+		jwtKey, caCert, serverCert, serverKey,
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
+		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
 	)
 	grpc_prometheus.Register(grpcS)
 
@@ -329,19 +341,12 @@ func httpMonolithServer(httpServerAddr string, grpcServerAddr string, ctx contex
 func monolithOnMultipleAddresses(grpcAddr string, httpAddr string) {
 	// create the gRPC server
 	grpcS := grpcMonolithServer(
-		caCertificate,
-		serverCertificate,
-		serverPrivateKey,
-		jwtSecret,
-		// EXTRA : register
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
-		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
-		{{ end }}// END EXTRA : register
-		// SUB-SERVICES DEFINITION : register-full-params
+		caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}MonolithAddress,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
-		{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag,
-		{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : register-full-params
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag, {{ end }}{{ end }}
 	)
 
 	// create the gRPC listener
@@ -429,19 +434,12 @@ func monolithOnSingleAddress(addr string) {
 
 	// create the gRPC server
 	grpcS := grpcMonolithServer(
-		caCertificate,
-		serverCertificate,
-		serverPrivateKey,
-		jwtSecret,
-		// EXTRA : register
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName,
-		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag,
-		{{ end }}// END EXTRA : register
-		// SUB-SERVICES DEFINITION : register-full-params
+		caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}MonolithAddress,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
-		{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag,
-		{{ end }}{{ end }}// END SUB-SERVICES DEFINITION : register-full-params
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}MonolithExtraFlag, {{ end }}{{ end }}
 	)
 
 	// create the HTTP/1.1 server (we reuse the gRPC server's key pair for the gRPC gateway client)
