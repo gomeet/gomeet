@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -196,6 +195,68 @@ func parseSubService(s string) []string {
 	return res
 }
 
+func (p *Project) SubServicesMonolithHelp() string {
+	ssStrings := []string{}
+	for _, ss := range p.SubServices {
+		ssString := fmt.Sprintf(
+			"  - if \"svc-%s-address\" is empty or is equal to \"inprocgrpc\" the",
+			tmplHelpers.LowerKebabCase(ss.ShortName()),
+		)
+		ssFlags := []string{}
+		if len(ss.DbTypes()) > 0 {
+			for _, dbType := range ss.DbTypes() {
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s-dsn\"",
+						ss.ShortName(),
+						strings.ToLower(dbType),
+					),
+				)
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s-migrate\"",
+						ss.ShortName(),
+						strings.ToLower(dbType),
+					),
+				)
+			}
+		}
+		if len(ss.ExtraServeFlags()) > 0 {
+			for _, ssf := range ss.ExtraServeFlags() {
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s\"",
+						tmplHelpers.LowerKebabCase(ss.ShortName()),
+						tmplHelpers.LowerKebabCase(ssf.Name),
+					),
+				)
+			}
+		}
+		ssString = fmt.Sprintf(
+			"%s %s",
+			ssString,
+			strings.Join(ssFlags, ", "),
+		)
+		if len(ss.DbTypes()) > 0 || len(ss.ExtraServeFlags()) > 0 {
+			ssString = fmt.Sprintf(
+				"%s flags are used to launch \"svc-%s\" server in the main process",
+				ssString,
+				tmplHelpers.LowerKebabCase(ss.ShortName()),
+			)
+		} else {
+			ssString = fmt.Sprintf(
+				"%s\"svc-%s\" server is launched in the main process",
+				ssString,
+				tmplHelpers.LowerKebabCase(ss.ShortName()),
+			)
+		}
+		ssStrings = append(ssStrings, ssString)
+	}
+	return strings.Join(ssStrings, "\n")
+}
 func (p *Project) SubServicesDef() string {
 	ssStrings := []string{}
 	for _, ss := range p.SubServices {
@@ -241,7 +302,6 @@ func (p *Project) SetSubServices(subServices []string) error {
 		dependenciesTree := map[string][]string{}
 		p.SubServices = make(map[string]*Project)
 		for _, subSvcPkg := range subServices {
-			log.Printf("subSvcPkg: %v", subSvcPkg)
 			part := strings.Split(subSvcPkg, "[")
 			if len(part) < 1 {
 				continue
@@ -264,7 +324,6 @@ func (p *Project) SetSubServices(subServices []string) error {
 				ssSubServices []string
 			)
 			for _, ssFlag := range ssParams {
-				log.Println("ssFlag", ssFlag)
 				switch {
 				case strings.HasPrefix(ssFlag, "db_types@"):
 					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
@@ -300,17 +359,12 @@ func (p *Project) SetSubServices(subServices []string) error {
 
 		for pkg, deps := range dependenciesTree {
 			for _, dep := range deps {
-				log.Println(pkg, " subServices ", dep)
 				if p.SubServices[pkg].SubServices == nil {
 					p.SubServices[pkg].SubServices = make(map[string]*Project)
 				}
 				p.SubServices[pkg].SubServices[dep] = p.SubServices[dep]
 			}
 		}
-	}
-
-	for pkg, ss := range p.SubServices {
-		log.Printf("N1 --- %s -- len %d", pkg, len(ss.SubServices))
 	}
 
 	return nil
@@ -520,8 +574,6 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	cmd.addFile("cli.go", "protoc-gen/cmd/cli.go.tmpl", nil, false)
 	cmd.addFile("root.go", "protoc-gen/cmd/root.go.tmpl", nil, false)
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
-	cmd.addFile("micro.go", "protoc-gen/cmd/micro.go.tmpl", nil, false)
-	cmd.addFile("monolith.go", "protoc-gen/cmd/monolith.go.tmpl", nil, false)
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
 	functest := cmd.addFolder("functest")

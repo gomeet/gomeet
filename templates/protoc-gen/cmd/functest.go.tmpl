@@ -120,9 +120,9 @@ func runFunctionalTests() {
 			}
 		}
 		if grpcServerAddress != "" && httpServerAddress != "" {
-			go microOnMultipleAddresses(grpcServerAddress, httpServerAddress)
+			go serveOnMultipleAddresses(grpcServerAddress, httpServerAddress)
 		} else {
-			go microOnSingleAddress(serverAddress)
+			go serveOnSingleAddress(serverAddress)
 		}
 	}
 
