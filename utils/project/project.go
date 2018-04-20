@@ -593,6 +593,7 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	svc.addFile("init_subservice_clients.go", "protoc-gen/service/init_subservice_clients.go.tmpl", nil, false)
 	svc.addFile("init_databases.go", "protoc-gen/service/init_databases.go.tmpl", nil, false)
 	f.addTree("infra", "protoc-gen/infra", nil, false)
+	f.addTree("hack", "protoc-gen/hack", nil, false)
 	protoPkg, err := p.GoProtoPkgAlias()
 	if err != nil {
 		return err
@@ -655,7 +656,21 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	}
 
 	p.folder = f
-	return p.folder.render(*p)
+	if err = p.folder.render(*p); err != nil {
+		return err
+	}
+
+	err = filepath.Walk(p.Path()+"/hack/", func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chmod(name, 0755)
+		}
+		return err
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func streamFromBool(streaming bool) string {
