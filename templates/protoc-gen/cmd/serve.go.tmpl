@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 	"{{ .GoPkg }}/server"
 )
 
