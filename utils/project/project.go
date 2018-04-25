@@ -266,7 +266,11 @@ func (p *Project) SubServicesMonolithHelp() string {
 func (p *Project) SubServicesDef() string {
 	ssStrings := []string{}
 	for _, ss := range p.SubServices {
-		ssString := ss.GoPkg()
+		ssString := fmt.Sprintf(
+			"%s[version@%s]",
+			ss.GoPkg(),
+			ss.Version(),
+		)
 		if len(ss.DbTypes()) > 0 {
 			ssString = fmt.Sprintf(
 				"%s[db_types@%s]",
