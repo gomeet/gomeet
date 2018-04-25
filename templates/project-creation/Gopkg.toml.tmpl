@@ -115,6 +115,7 @@
 {{ range .SubServices }}[[constraint]]
   branch = "develop"
   name = "{{ .GoPkg }}"
+  #version = "{{ .Version }}"
 
 {{ end }}# END SUB-SERVICES DEFINITION : dep
 

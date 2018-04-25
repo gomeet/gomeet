@@ -17,19 +17,80 @@ OS_ARCH=$(shell go env GOARCH)
 EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}
 
 DB_TYPES={{ .DbTypes | join "," }}
-{{ range .DbTypes }}
-DB_{{ upper . }}_TEST_USERNAME?=gomeet
-DB_{{ upper . }}_TEST_PASSWORD?=toto{{ lower . }}
-DB_{{ upper . }}_TEST_SERVER?=localhost
-DB_{{ upper . }}_TEST_PORT?=3306
-DB_{{ upper . }}_TEST_DATABASE?={{ lowerSnakeCase $.Name }}_test
-{{ end }}
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
+{{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?={{ .Version }}
+{{ end -}}
 DOCKER_IMAGE_NAME = {{ .ProjectGroupName }}/$(NAME)
 DOCKER_REGISTRY?=docker.io
 DOCKER_NETWORK = network-grpc-{{ .ProjectGroupName }}
 DOCKER_SVC_CONTAINER = svc-$(NAME)
 DOCKER_CONSOLE_CONTAINER = console-$(NAME)
+
+{{ $envPrefixes := dict "DOCKER_ENV" "" "TEST_ENV" "_test" }}
+{{ range $envPrefix, $dbSuffixName := $envPrefixes }}
+{{ range $.DbTypes -}}{{ if eq . "mysql" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT?=3306
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN?=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)@tcp($({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT))/$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)
+{{ else if eq . "postgres" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT?=5432
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN?=host=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER) port=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT) user=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME) dbname=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE) password=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)
+{{ else if eq . "sqlite" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE?={{ lowerSnakeCase $.Name }}{{ lowerSnakeCase $dbSuffixName }}.sqlite3.db
+{{- if eq $envPrefix "TEST_ENV" }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN?=/tmp/$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)
+{{- end }}
+{{ else if eq . "mssql" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT?=1433
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN?=sqlserver://$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)@$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)?database=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)
+{{- end }}{{- end }}
+{{ range $.SubServices -}}{{ $ss := . }}{{ range .DbTypes -}}
+{{ if eq . "mysql" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT?=3306
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $ss.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN?=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)@tcp($({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT))/$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)
+{{ else if eq . "postgres" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT?=5432
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $ss.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN?=host=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER) port=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT) user=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME) dbname=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE) password=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)
+{{ else if eq . "sqlite" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE?={{ lowerSnakeCase $ss.Name }}{{ lowerSnakeCase $dbSuffixName }}.sqlite3.db
+{{- if eq $envPrefix "TEST_ENV" }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN?=/tmp/$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)
+{{- end }}
+{{ else if eq . "mssql" -}}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER?=localhost
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT?=1433
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE?={{ lowerSnakeCase $ss.Name }}{{ lowerSnakeCase $dbSuffixName }}
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN?=sqlserver://$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)@$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER):$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)?database=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)
+{{- end }}{{- end -}}{{ end }}
+
+{{ range $.ExtraServeFlags }}{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}?={{ .DefaultValue }}
+{{ end -}}
+{{ range $.SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}?={{ .DefaultValue }}
+{{ end -}}
+{{ end }}
+{{ end }}
+
 
 # <sub-services-go-package>[db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
 # ex: github.com/my-project/prj-svc-aaa[db_types@mysql][my-extra-flag@string|My extra flag description|my default value][my-extra-flag2@int|My extra flag2 description|5],github.com/my-project/prj-svc-bbb[sub_services@github.com/my-project/prj-svc-aaa|github.com/my-project/prj-svc-ccc][db_types@mysql]
@@ -264,10 +325,51 @@ endif
 .PHONY: docker
 docker:
 	echo "TAG=$(DOCKER_TAG)" > .env
-	# SUB-SERVICES DEFINITION : make-tag-docker-compose-to-env
-	# echo "TAG_SVC_{{ "{{SubServiceNameUpperSnakeCase}}" }}=$(DOCKER_TAG_SVC_{{ "{{SubServiceNameUpperSnakeCase}}" }})" >> .env
-	# END SUB-SERVICES DEFINITION : make-tag-docker-compose-to-env
-	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
+{{ range .SubServices }}	echo "TAG_SVC_{{ upperSnakeCase .ShortName }}=$(DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }})" >> .env
+{{ end -}}
+{{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}
+	{{ range $.DbTypes -}}{{ if eq . "mysql" -}}
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{ else if eq . "postgres" -}}
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{ else if eq . "sqlite" -}}
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+	{{ else if eq . "mssql" -}}
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{- end }}{{- end }}
+	{{ range $.SubServices -}}{{ $ss := . }}{{ range .DbTypes -}}
+	{{ if eq . "mysql" -}}
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{ else if eq . "postgres" -}}
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{ else if eq . "sqlite" -}}
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+	{{ else if eq . "mssql" -}}
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
+	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
+	{{- end }}{{- end -}}{{ end }}
+{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
+{{ end -}}
+{{ range $.SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})' >> .env
+{{ end }}{{ end -}}
+{{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
 
 .PHONY: docker-push
 docker-push: docker
@@ -382,10 +484,8 @@ test: build
 	@echo "$(NAME): test task"
 	@cd service && go test
 	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test; fi
-	{{ if not .DbTypes }}@_build/$(NAME) functest -e --random-port
-	{{ else }}@{{ range .DbTypes }}{{ upperSnakeCase $.Name }}_{{ upper . }}_DSN="$(DB_{{ upper . }}_TEST_USERNAME):$(DB_{{ upper . }}_TEST_PASSWORD)@tcp($(DB_{{ upper . }}_TEST_SERVER):$(DB_{{ upper . }}_TEST_PORT))/$(DB_{{ upper . }}_TEST_DATABASE)" && \
-	{{ end }}	_build/$(NAME) functest -e --random-port{{ range .DbTypes }} --{{ lower . }}-migrate --{{ lower . }}-dsn $${{ upperSnakeCase $.Name }}_{{ upper . }}_DSN{{ end }}
-{{ end }}
+	@_build/$(NAME) functest -e --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+
 .PHONY: docker-test
 docker-test: docker
 	docker run -v $(shell pwd):/go/src/$(GO_PACKAGE_NAME) --rm golang:1.8.3-alpine3.6 /bin/sh -c "cd /go/src/$(GO_PACKAGE_NAME)/service && go test"

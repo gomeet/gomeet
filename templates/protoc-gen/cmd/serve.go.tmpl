@@ -3,42 +3,13 @@
 package cmd
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"fmt"
-	"io/ioutil"
-	"net"
-	"net/http"
 	"os"
 	"strings"
 
-	"github.com/auth0/go-jwt-middleware"
-	"github.com/cockroachdb/cmux"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/fullstorydev/grpchan"
-	"github.com/fullstorydev/grpchan/inprocgrpc"
-	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
-	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
-	nlog "github.com/meatballhat/negroni-logrus"
-	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/urfave/negroni"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
-	grpc_acl "{{ .GomeetPkg }}/utils/grpc-middlewares/acl"
-	grpc_cid "{{ .GomeetPkg }}/utils/grpc-middlewares/cid"
-	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
-	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}Models "{{ .GoPkg }}/models"{{ end }}
-	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
+	"{{ .GoPkg }}/server"
 )
 
 const DEFAULT_INPROCESS_ADDRESS = "inprocgrpc"
@@ -119,31 +90,30 @@ func init() {
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	serveCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:3306)/DBNAME)")
+	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
 	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
+	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
 	{{ end }}
 	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
 	serveCmd.PersistentFlags().{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
-	{{ end }}// END EXTRA : flags
+	{{ end }}
 
-	// SUB-SERVICES DEFINITION : flag-address
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
 	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", DEFAULT_INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
 	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	serveCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:3306)/DBNAME)")
+	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
 	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
+	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
 	{{ end }}{{ end }}{{ range .ExtraServeFlags }}
 	serveCmd.PersistentFlags().{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
 	{{ end }}{{ end }}
@@ -151,21 +121,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func recoverFromPanic(p interface{}) error {
-	log.Infof("recovering from panic: %s", p)
-
-	return fmt.Errorf("panic in gRPC procedure: %v", p)
-}
-
-func fixSvcAddress(s string) string {
-	s = strings.ToLower(strings.Trim(s, " "))
-	if s == "" {
-		return DEFAULT_INPROCESS_ADDRESS
-	}
-
-	return s
 }
 
 func databaseMigration() {
@@ -201,28 +156,7 @@ func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
 		}
 	}{{ end }}
 }
-{{ end }}
-func svc{{ upperPascalCase .ShortName }}Register(
-	address string,
-	reg grpchan.ServiceRegistry, inProcessChannel grpchan.Channel,
-	jwtKey, caCert, serverCert, serverKey string,
-	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
-	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, {{ end }}
-) {
-	if strings.ToLower(address) == strings.ToLower(DEFAULT_INPROCESS_ADDRESS) {
-		svc{{ upperPascalCase .ShortName }}Service.SetVersion(DEFAULT_INPROCESS_ADDRESS)
-		svc := svc{{ upperPascalCase .ShortName }}Service.NewService()
-		svc.RegisterGRPCServicesReg(
-			reg, inProcessChannel,
-			jwtKey, caCert, serverCert, serverKey,
-			{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
-			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
-		)
-	}
-}
-{{ end }}
+{{ end }}{{ end }}
 
 func serve() {
 	if strings.HasSuffix(svc.Version, "+dev") || debugMode {
@@ -239,334 +173,32 @@ func serve() {
 	//SubServices databaseMigration
 	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
 	{{ end }}databaseMigration()
-
+	var ok bool
 	if grpcServerAddress != "" && httpServerAddress != "" {
-		serveOnMultipleAddresses(grpcServerAddress, httpServerAddress)
+		ok = server.OnMultipleAddresses(
+			grpcServerAddress, httpServerAddress,
+			corsAllowedOrigins,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+		{{ end }})
 	} else {
-		serveOnSingleAddress(serverAddress)
+		ok = server.OnSingleAddress(
+			serverAddress,
+			corsAllowedOrigins,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+		{{ end }})
 	}
-}
-
-func grpcServer(
-	caCert string, serverCert string, serverKey string, jwtKey string,
-	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
-	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
-	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
-	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
-	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
-{{ end }}) *grpc.Server {
-	var grpcS *grpc.Server
-
-	//middlewares definition
-	recoveryOpt := grpc_recovery.WithRecoveryHandler(recoverFromPanic)
-	logrusEntry := log.NewEntry(log.StandardLogger())
-	// stream middlewares
-	sInterceptors := grpc_middleware.ChainStreamServer(
-		grpc_prometheus.StreamServerInterceptor,
-		grpc_cid.StreamServerInterceptor(false),
-		grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-		grpc_logrus.StreamServerInterceptor(logrusEntry),
-		grpc_auth.StreamServerInterceptor(nil),
-		grpc_validator.StreamServerInterceptor(),
-		grpc_acl.StreamServerInterceptor(nil),
-		grpc_recovery.StreamServerInterceptor(recoveryOpt),
-	)
-	sMdl := grpc.StreamInterceptor(sInterceptors)
-	// unary middlewares
-	uInterceptors := grpc_middleware.ChainUnaryServer(
-		grpc_prometheus.UnaryServerInterceptor,
-		grpc_cid.UnaryServerInterceptor(false),
-		grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-		grpc_logrus.UnaryServerInterceptor(logrusEntry),
-		grpc_auth.UnaryServerInterceptor(nil),
-		grpc_validator.UnaryServerInterceptor(),
-		grpc_acl.UnaryServerInterceptor(nil),
-		grpc_recovery.UnaryServerInterceptor(recoveryOpt),
-	)
-	uMdl := grpc.UnaryInterceptor(uInterceptors)
-
-	if caCert != "" && serverCert != "" && serverKey != "" {
-		// load the server's key pair
-		serverKeyPair, err := tls.LoadX509KeyPair(serverCert, serverKey)
-		if err != nil {
-			log.Fatalf("failed to load gateway key pair: %v", err)
-		}
-
-		// create a certificate pool from the CA
-		certPool := x509.NewCertPool()
-		ca, err := ioutil.ReadFile(caCert)
-		if err != nil {
-			log.Fatalf("failed to read CA certificate: %v", err)
-		}
-		if ok := certPool.AppendCertsFromPEM(ca); !ok {
-			log.Fatalf("failed to build certificate pool")
-		}
-
-		// set up the TLS credentials
-		serverCredentials := credentials.NewTLS(&tls.Config{
-			ClientAuth:   tls.RequireAndVerifyClientCert,
-			Certificates: []tls.Certificate{serverKeyPair},
-			ClientCAs:    certPool,
-		})
-
-		grpcS = grpc.NewServer(grpc.Creds(serverCredentials), sMdl, uMdl)
-	} else {
-		grpcS = grpc.NewServer(sMdl, uMdl)
-	}
-
-	inProcessChannel := new(inprocgrpc.Channel)
-	{{ if .SubServices }}
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address = fixSvcAddress(svc{{ upperPascalCase .ShortName }}Address)
-	{{ end }}
-	// sub-services can be loaded in this process
-	subServiceshandlers := grpchan.HandlerMap{}
-	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
-	{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Register(
-		svc{{ upperPascalCase .ShortName }}Address,
-		reg, inProcessChannel,
-		jwtKey, caCert, serverCert, serverKey,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
-		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
-	)
-	{{ end }}{{ end }}
-	//Real server
-	mainHandlers := grpchan.HandlerMap{}
-	svc.RegisterGRPCServicesReg(
-		mainHandlers, inProcessChannel,
-		jwtKey, caCert, serverCert, serverKey,
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
-		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
-	)
-	grpc_prometheus.Register(grpcS)
-
-	mainHandlers.ForEach(grpcS.RegisterService)
-	{{ if .SubServices }}subServiceshandlers.ForEach(inProcessChannel.RegisterService)
-	{{ end }}
-	return grpcS
-}
-
-func httpServer(httpServerAddr string, grpcServerAddr string, ctx context.Context, caCert string, gatewayCert string, gatewayKey string, jwtKey string) *http.Server {
-	// create the HTTP request router
-	h := mux.NewRouter()
-
-	// register the gRPC gateway
-	var opts []grpc.DialOption
-	if caCert != "" && gatewayCert != "" && gatewayKey != "" {
-		// load the gateway's key pair
-		gatewayKeyPair, err := tls.LoadX509KeyPair(gatewayCert, gatewayKey)
-		if err != nil {
-			log.Fatalf("failed to load client key pair: %v", err)
-		}
-
-		// create a certificate pool from the CA
-		certPool := x509.NewCertPool()
-		ca, err := ioutil.ReadFile(caCert)
-		if err != nil {
-			log.Fatalf("failed to read CA certificate: %v", err)
-		}
-		if ok := certPool.AppendCertsFromPEM(ca); !ok {
-			log.Fatalf("failed to build certificate pool")
-		}
-
-		// set up the TLS credentials
-		serverHost, _, err := net.SplitHostPort(grpcServerAddr)
-		if err != nil {
-			log.Fatalf("failed to parse server hostname in %s: %v", grpcServerAddr, err)
-		}
-		if serverHost == "" {
-			serverHost = "localhost"
-		}
-		gatewayCredentials := credentials.NewTLS(&tls.Config{
-			ServerName:   serverHost,
-			Certificates: []tls.Certificate{gatewayKeyPair},
-			RootCAs:      certPool,
-		})
-
-		opts = []grpc.DialOption{grpc.WithTransportCredentials(gatewayCredentials)}
-	} else {
-		opts = []grpc.DialOption{grpc.WithInsecure()}
-	}
-
-	// register other HTTP handlers
-	if jwtKey != "" {
-		// setup the JWT authentication middleware
-		jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
-			ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-				return []byte(jwtKey), nil
-			},
-			SigningMethod: jwt.SigningMethodHS256,
-		})
-
-		svc.RegisterHTTPServices(ctx, h, grpcServerAddr, opts, jwtMiddleware)
-	} else {
-		svc.RegisterHTTPServices(ctx, h, grpcServerAddr, opts, nil)
-	}
-
-	// setup the negroni middleware for request logging
-	n := negroni.New(
-		// no crash with 500
-		negroni.NewRecovery(),
-		// global logrus logger
-		nlog.NewMiddlewareFromLogger(log.StandardLogger(), "{{ .Name }}"),
-	)
-
-	// CORS support
-	if corsAllowedOrigins != "" {
-		log.Infof("HTTP with Cross Origin Resource Sharing, AllowedOrigins: %s", corsAllowedOrigins)
-		n.Use(cors.New(cors.Options{
-			AllowedOrigins: strings.Split(corsAllowedOrigins, "|"),
-		}))
-	}
-
-	n.UseHandler(h)
-
-	return &http.Server{Handler: n}
-}
-
-func serveOnMultipleAddresses(grpcAddr string, httpAddr string) {
-	// create the gRPC server
-	grpcS := grpcServer(
-		caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
-		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
-		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
-	)
-
-	// create the gRPC listener
-	grpcL, err := net.Listen("tcp", grpcAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// create the HTTP/1.1 server (we reuse the gRPC server's key pair for the gRPC gateway client)
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	httpS := httpServer(httpAddr, grpcAddr, ctx, caCertificate, serverCertificate, serverPrivateKey, jwtSecret)
-
-	// create the HTTP listener
-	httpL, err := net.Listen("tcp", httpAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// HTTPS support
-	if caCertificate != "" && serverCertificate != "" && serverPrivateKey != "" {
-		// load the server's key pair
-		serverKeyPair, err := tls.LoadX509KeyPair(serverCertificate, serverPrivateKey)
-		if err != nil {
-			log.Fatalf("failed to load HTTPS server key pair: %v", err)
-		}
-
-		tlsConfig := &tls.Config{
-			Certificates: []tls.Certificate{serverKeyPair},
-			ClientAuth:   tls.NoClientCert,
-		}
-
-		httpsL := tls.NewListener(httpL, tlsConfig)
-		httpL = httpsL
-	}
-
-	// collect on this channel the exits of each protocol's .Serve() call
-	eps := make(chan error, 2)
-	// start the listeners for each protocol
-	go func() { eps <- grpcS.Serve(grpcL) }()
-	go func() { eps <- httpS.Serve(httpL) }()
-
-	grpcSecurity := "insecure"
-	if caCertificate != "" && serverCertificate != "" && serverPrivateKey != "" {
-		grpcSecurity = "secure"
-	}
-	jwtSupport := "disabled"
-	if jwtSecret != "" {
-		jwtSupport = "enabled"
-	}
-	log.Infof("serving %s gRPC on %s and %s HTTP/1.1 on %s (JWT %s)", grpcSecurity, grpcAddr, grpcSecurity, httpAddr, jwtSupport)
-
-	// handle listener errors
-	failed := false
-	i := 0
-	for err := range eps {
-		if err != nil {
-			log.Errorf("protocol serve error: %v", err)
-			failed = true
-		}
-		i++
-		if i == cap(eps) {
-			close(eps)
-			break
-		}
-	}
-	if failed {
-		os.Exit(1)
-	}
-}
-
-func serveOnSingleAddress(addr string) {
-	// listen on the specified address
-	l, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// create the cmux object that will multiplex 2 protocols on the same port
-	m := cmux.New(l)
-	// match HTTP/1.1 requests and gRPC requests
-	httpL := m.Match(cmux.HTTP1())
-	grpcL := m.Match(cmux.Any())
-
-	// create the gRPC server
-	grpcS := grpcServer(
-		caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
-		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
-		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
-	)
-
-	// create the HTTP/1.1 server (we reuse the gRPC server's key pair for the gRPC gateway client)
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-	httpS := httpServer(addr, addr, ctx, caCertificate, serverCertificate, serverPrivateKey, jwtSecret)
-
-	// collect on this channel the exits of each protocol's .Serve() call
-	eps := make(chan error, 2)
-	// start the listeners for each protocol
-	go func() { eps <- grpcS.Serve(grpcL) }()
-	go func() { eps <- httpS.Serve(httpL) }()
-
-	grpcSecurity := "insecure"
-	if caCertificate != "" && serverCertificate != "" && serverPrivateKey != "" {
-		grpcSecurity = "secure"
-	}
-	jwtSupport := "disabled"
-	if jwtSecret != "" {
-		jwtSupport = "enabled"
-	}
-	log.Infof("serving on %s (multiplexed, %s gRPC, JWT %s)", addr, grpcSecurity, jwtSupport)
-	err = m.Serve()
-
-	// the rest of the code handles exit errors of the muxes
-	failed := false
-	i := 0
-	for err := range eps {
-		if err != nil {
-			log.Errorf("protocol serve error: %v", err)
-			failed = true
-		}
-		i++
-		if i == cap(eps) {
-			close(eps)
-			break
-		}
-	}
-	if failed {
+	if !ok {
+		log.Errorf("{{ upperPascalCase .Name }} starting failure: grpcServerAddress: %s, httpServerAddress: %s\n", grpcServerAddress, httpServerAddress)
 		os.Exit(1)
 	}
 }

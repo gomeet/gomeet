@@ -28,13 +28,13 @@ func init() {
 	rootCmd.AddCommand(migrateCmd)
 
 	{{ range .DbTypes }}{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:3306)/DBNAME)")
+	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
 	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
+	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
 	{{ end }}{{ end -}}
 }
 

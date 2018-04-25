@@ -51,6 +51,7 @@ type Project struct {
 	protoFiles           []*descriptor.FileDescriptorProto
 	defaultProtoPkgAlias *string
 	isGogoGen            bool
+	version              string
 }
 
 func New(inputPath string) (*Project, error) {
@@ -64,10 +65,14 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false}
+	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
+}
+
+func (p *Project) SetVersion(v string) {
+	p.version = v
 }
 
 func (p Project) PrettyPrint() {
@@ -173,6 +178,7 @@ func (p Project) PrintTreeFolder()                              { p.folder.print
 func (p Project) GomeetPkg() string                             { return helpers.GomeetPkg() }
 func (p Project) IsGogoGen() bool                               { return p.isGogoGen }
 func (p Project) GomeetGeneratorUrl() string                    { return "https://" + p.GomeetPkg() }
+func (p Project) Version() string                               { return p.version }
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
@@ -319,6 +325,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 			ssParams := parseSubService("[" + strings.Join(part[1:], "["))
 
 			var (
+				ssVersion     string
 				ssDbTypes     []string
 				ssFlags       []string
 				ssSubServices []string
@@ -327,12 +334,17 @@ func (p *Project) SetSubServices(subServices []string) error {
 				switch {
 				case strings.HasPrefix(ssFlag, "db_types@"):
 					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
+				case strings.HasPrefix(ssFlag, "version@"):
+					ssVersion = strings.TrimPrefix(ssFlag, "version@")
 				case strings.HasPrefix(ssFlag, "sub_services@"):
 					ssSubServices = strings.Split(strings.TrimPrefix(ssFlag, "sub_services@"), "|")
 					dependenciesTree[subSvc.GoPkg()] = ssSubServices
 				default:
 					ssFlags = append(ssFlags, ssFlag)
 				}
+			}
+			if ssVersion != "" {
+				subSvc.SetVersion(ssVersion)
 			}
 			if len(ssFlags) > 0 {
 				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
@@ -585,6 +597,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	rcli.addFile("cmd_help.go", "protoc-gen/cmd/remotecli/cmd_help.go.tmpl", nil, false)
 	rcli.addFile("remotecli.go", "protoc-gen/cmd/remotecli/remotecli.go.tmpl", nil, false)
 	f.addTree("models", "protoc-gen/models", nil, false)
+	srv := f.addFolder("server")
+	srv.addFile("server.go", "protoc-gen/server/server.go.tmpl", nil, false)
 	svc := f.addFolder("service")
 	svc.addFile("grpc.go", "protoc-gen/service/grpc.go.tmpl", nil, false)
 	svc.addFile("http.go", "protoc-gen/service/http.go.tmpl", nil, false)

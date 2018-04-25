@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
-  {{ range .DbTypes }}{{ if eq . "mysql" }}"strings"{{ end }}{{ end }}
+	{{ range .DbTypes }}{{ if eq . "mysql" }}"strings"{{ end }}{{ end }}
 
 	{{ if .DbTypes }}"github.com/jinzhu/gorm"
 	{{ range .DbTypes }}_ "github.com/jinzhu/gorm/dialects/{{ lower . }}"
@@ -16,6 +16,7 @@ import (
 
 	"{{ .GomeetPkg }}/utils/jwt"
 
+	"{{ .GoPkg }}/server"
 	"{{ .GoPkg }}/cmd/functest"
 	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 )
@@ -75,17 +76,39 @@ func init() {
 	// random port server flag
 	funcTestCmd.PersistentFlags().BoolVar(&useRandomPort, "random-port", false, "Use a random port for the embedded server")
 
+	// cors flag
+	funcTestCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
+
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	funcTestCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}FunctestMigrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:3306)/DBNAME)")
+	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
 	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:1433)?database=DBNAME)")
-	{{ end }}{{ end -}}
+	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
+	{{ end }}
+	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
+	funcTestCmd.PersistentFlags().{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
+	{{ end }}
+
+	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
+	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", DEFAULT_INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
+	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
+	funcTestCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
+	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
+	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
+	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
+	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
+	{{ end }}{{ end }}{{ range .ExtraServeFlags }}
+	funcTestCmd.PersistentFlags().{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
+	{{ end }}{{ end }}
 }
 
 // getFreePort asks the kernel for a free open port that is ready to use.
@@ -119,11 +142,35 @@ func runFunctionalTests() {
 				httpServerAddress = ""
 			}
 		}
-		if grpcServerAddress != "" && httpServerAddress != "" {
-			go serveOnMultipleAddresses(grpcServerAddress, httpServerAddress)
-		} else {
-			go serveOnSingleAddress(serverAddress)
-		}
+		go func() {
+			var ok bool
+			if grpcServerAddress != "" && httpServerAddress != "" {
+				ok = server.OnMultipleAddresses(
+					grpcServerAddress, httpServerAddress,
+					corsAllowedOrigins,
+					caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+					{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+				{{ end }})
+			} else {
+				ok = server.OnSingleAddress(
+					serverAddress,
+					corsAllowedOrigins,
+					caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+					{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+				{{ end }})
+			}
+			if !ok {
+				log.Errorf("{{ upperPascalCase .Name }} starting failure: grpcServerAddress: %s, httpServerAddress: %s\n", grpcServerAddress, httpServerAddress)
+			}
+		}()
 	}
 
 	// if the embedded server is JWT-enabled, test clients require a valid token
@@ -181,8 +228,18 @@ func runFunctionalTests() {
 		ClientPrivateKey:  serverPrivateKey,
 		TimeoutSeconds:    timeoutSeconds,
 		JsonWebToken:      jwtToken,
+
+		//extra parameters
+
 		{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName: {{ lowerPascalCase . }}DataSourceName,
 		{{ end }}
+		{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,
+		{{ end }}
+		{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
+		{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
+		{{ end }}
+		{{ range .ExtraServeFlags }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
+		{{ end }}{{ end }}{{ end }}
 	}
 
 	failures := runFunctionalTestSession(testConfig)
