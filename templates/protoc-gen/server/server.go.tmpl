@@ -287,10 +287,10 @@ func OnMultipleAddresses(
 	// create the gRPC server
 	grpcS := grpcServer(
 		caCert, serverCert, serverKey, jwtKey,
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 	)
 
@@ -376,10 +376,10 @@ func OnSingleAddress(
 	// create the gRPC server
 	grpcS := grpcServer(
 		caCert, serverCert, serverKey, jwtKey,
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 	)
 
