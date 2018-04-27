@@ -16,39 +16,62 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
+  {{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"{{ end }}
+	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
+	gomeetService "{{ .GomeetPkg }}/utils/service"{{ end }}
+
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
 )
 
 var (
 	name       = "{{ lowerKebabCase .Name }}" // injected with -ldflags in Makefile
 	version    = "latest" // injected with -ldflags in Makefile
-	controller *{{ lowerPascalCase .ShortName }}HTTPController // HTTP/1.1 controller
 )
-
-func init() {
-	controller = new{{ upperPascalCase .ShortName }}HTTPController()
-}
 
 // Service is the echo
 type Service struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-}
-
-func SetVersion(v string) {
-	version = v
+	Name       string `json:"name"`
+	Version    string `json:"version"`
+	httpController *{{ lowerPascalCase .ShortName }}HTTPController `json:"-"`
+	serverImpl {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Server `json:"-"`
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }} *svc{{ upperPascalCase .ShortName }}Service.Service `json:"-"`
+{{ end -}}
 }
 
 // NewService return new {{ .Name }} service
-func NewService() *Service {
+func NewService(opts ...string) *Service {
+	ver := version
+	if len(opts) > 0 {
+		ver = opts[0]
+	}
 	return &Service{
 		Name:    name,
-		Version: version,
+		Version: ver,
 	}
 }
 
-// RegisterGRPCServicesReg register all grpc services in reg
-func (svc Service) RegisterGRPCServicesReg(
+func (svc Service) GetServerImpl() {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Server { return svc.serverImpl }
+
+{{ range .SubServices }}{{ $ss := . }}func (svc *Service) RegisterSvc{{ upperPascalCase .ShortName }}GRPCServicesInprocess(
+	reg grpchan.ServiceRegistry, inProcessChannel grpchan.Channel,
+	jwtKey, caCert, serverCert, serverKey string,
+	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, {{ end }}
+) {
+	svc.svc{{ upperPascalCase .ShortName }} = svc{{ upperPascalCase .ShortName }}Service.NewService(gomeetService.INPROCESS_ADDRESS)
+	svc.svc{{ upperPascalCase .ShortName }}.RegisterGRPCServices(
+		reg, inProcessChannel,
+		jwtKey, caCert, serverCert, serverKey,
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
+	)
+}
+{{ end }}
+
+// RegisterGRPCServices register all grpc services in reg
+func (svc *Service) RegisterGRPCServices(
 	reg grpchan.ServiceRegistry,
 	inProcessChannel grpchan.Channel,
 	jwtSecret string,
@@ -77,8 +100,9 @@ func (svc Service) RegisterGRPCServicesReg(
 		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
 		{{ range .SubServices }}"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
 		{{ end }}// END SUB-SERVICES DEFINITION : log-address
-	}).Debug("RegisterGRPCServicesReg {{ .ShortName }}")
-	{{ .GoProtoPkgAlias }}.RegisterHandler{{ upperPascalCase .ShortName }}(reg, &{{ lowerPascalCase .ShortName }}Server{
+	}).Debug("{{ .Name }}: RegisterGRPCServices")
+	svc.serverImpl = &{{ lowerPascalCase .ShortName }}Server{
+		version:             svc.Version,
 		subServicesRegistry: reg,
 		inProcessChannel:    inProcessChannel,
 		jwtSecret:           jwtSecret,
@@ -93,57 +117,20 @@ func (svc Service) RegisterGRPCServicesReg(
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address: svc{{ "{{SubServiceNamePascalCase}}" }}Address,
 		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
 		{{ end }}// END SUB-SERVICES DEFINITION : register-address-to-server
-	})
-}
-
-// RegisterGRPCServices register all grpc services
-func (svc Service) RegisterGRPCServices(
-	s *grpc.Server,
-	jwtSecret string,
-	caCert string,
-	cert string,
-	privKey string,
-	// EXTRA : param
-	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string,
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} {{ .Type }},
-	{{ end }}// END EXTRA : param
-	// SUB-SERVICES DEFINITION : param-address
-	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string,
-	{{ end }}// END SUB-SERVICES DEFINITION : param-address
-) {
-	log.WithFields(log.Fields{
-		"jwtSecret": jwtSecret,
-		"caCert":    caCert,
-		"cert":      cert,
-		"privKey":   privKey,
-		// EXTRA : log
-		{{ range .DbTypes }}"{{ lowerPascalCase . }}DSN":  {{ lowerPascalCase . }}DSN,
-		{{ end }}{{ range .ExtraServeFlags }}"{{ lowerPascalCase .Name }}":  {{ lowerPascalCase .Name }},
-		{{ end }}// END EXTRA : log
-		// SUB-SERVICES DEFINITION : log-address
-		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : log-address
-	}).Debug("RegisterGRPCServices {{ .ShortName }}")
-	{{ .GoProtoPkgAlias }}.Register{{ upperPascalCase .ShortName }}Server(s, &{{ lowerPascalCase .ShortName }}Server{
-		jwtSecret:     jwtSecret,
-		caCertificate: caCert,
-		certificate:   cert,
-		privateKey:    privKey,
-		// EXTRA : register server
-		{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName:  {{ lowerPascalCase . }}DSN,
-		{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}:  {{ lowerPascalCase .Name }},
-		{{ end }}// END EXTRA : register server
-		// SUB-SERVICES DEFINITION : register-address-to-server
-		// svc{{ "{{SubServiceNamePascalCase}}" }}Address: svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : register-address-to-server
-	})
+	}
+	{{ .GoProtoPkgAlias }}.RegisterHandler{{ upperPascalCase .ShortName }}(reg, svc.serverImpl)
 }
 
 // RegisterHTTPServices register all http services
-func (svc Service) RegisterHTTPServices(ctx context.Context, mux *mux.Router, addr string, opts []grpc.DialOption, jwtMiddleware *jwtmiddleware.JWTMiddleware) {
+func (svc *Service) RegisterHTTPServices(
+	ctx context.Context,
+	mux *mux.Router, addr string,
+	opts []grpc.DialOption,
+	jwtMiddleware *jwtmiddleware.JWTMiddleware,
+) {
+	svc.httpController = &{{ lowerPascalCase .ShortName }}HTTPController{
+		version: svc.Version,
+	}
 	// get server mux
 	gwmux := runtime.NewServeMux()
 	err := {{ .GoProtoPkgAlias }}.Register{{ upperPascalCase .ShortName }}HandlerFromEndpoint(ctx, gwmux, addr, opts)
@@ -157,10 +144,10 @@ func (svc Service) RegisterHTTPServices(ctx context.Context, mux *mux.Router, ad
 	// HTTP/1.1 routes
 	// status handler
 	mux.
-		HandleFunc("/status", instrf("Http.Status", controller.Status))
+		HandleFunc("/status", instrf("Http.Status", svc.httpController.Status))
 
 	mux.
-		HandleFunc("/version", instrf("Http.Version", controller.Version))
+		HandleFunc("/version", instrf("Http.Version", svc.httpController.Version))
 
 	mux.
 		HandleFunc("/", instrf("Http.Root", func(w http.ResponseWriter, r *http.Request) {
@@ -171,19 +158,19 @@ func (svc Service) RegisterHTTPServices(ctx context.Context, mux *mux.Router, ad
 	// swagger doc handler
 	mux.
 		PathPrefix("/api/v1/swagger.json").
-		Handler(instrf("Api.Swagger", controller.Swagger))
+		Handler(instrf("Api.Swagger", svc.httpController.Swagger))
 
 	// to declare an authenticated handler do something like this
 	// if jwtMiddleware == nil {
 	//   mux.
 	//     PathPrefix("/<URL>").
-	//     Handler(instrf("<METRICS_KEY>", controller.<HTTP_HANDLER>))
+	//     Handler(instrf("<METRICS_KEY>", svc.httpController.<HTTP_HANDLER>))
 	// } else {
 	//   mux.
 	//     PathPrefix("/<URL>").
 	//     Handler(negroni.New(
 	//       negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-	//       negroni.Wrap(instrf("<METRICS_KEY>", controller.<HTTP_HANDLER>)),
+	//       negroni.Wrap(instrf("<METRICS_KEY>", svc.httpController.<HTTP_HANDLER>)),
 	//     ))
 	// }
 

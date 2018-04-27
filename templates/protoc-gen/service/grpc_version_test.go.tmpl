@@ -11,9 +11,7 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	server := new{{ upperPascalCase .ShortName }}Server()
-
-	versionResponse, err := server.Version(context.Background(), &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
+	versionResponse, err := cli.Version(context.Background(), &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
 
 	if err != nil {
 		t.Errorf("Error on calling Version: %v", err)
@@ -23,7 +21,7 @@ func TestVersion(t *testing.T) {
 		t.Errorf("Expected \"%s\" in Name field, got \"%s\"", name, versionResponse.GetName())
 	}
 
-	if versionResponse.GetVersion() != version {
-		t.Errorf("Expected \"%s\" in Version field, got \"%s\"", version, versionResponse.GetName())
+	if versionResponse.GetVersion() != svc.Version {
+		t.Errorf("Expected \"%s\" in Version field, got \"%s\"", svc.Version, versionResponse.GetVersion())
 	}
 }

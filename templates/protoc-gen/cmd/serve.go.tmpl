@@ -9,11 +9,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	{{ if .SubServices }}gomeetService "{{ .GomeetPkg }}/utils/service"
+	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
+	{{ end }}{{ end }}
+  {{- end -}}
 	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 	"{{ .GoPkg }}/server"
 )
-
-const DEFAULT_INPROCESS_ADDRESS = "inprocgrpc"
 
 var (
 	debugMode          bool
@@ -23,13 +25,12 @@ var (
 	corsAllowedOrigins string
 	jwtSecret          string
 
-  //Main server database and extra flags
-	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate        bool
+	//Main server database and extra flags
+	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate bool
 	{{ lowerPascalCase . }}DataSourceName string
 	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}
-
-	// SUB-SERVICES DEFINITION
+	// SubService databases and extra flags
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string
 	{{ $ss := . }}{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate bool
 	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
@@ -104,7 +105,7 @@ func init() {
 	{{ end }}
 
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", DEFAULT_INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
+	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
 	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	serveCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name

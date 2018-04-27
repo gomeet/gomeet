@@ -15,10 +15,8 @@ import (
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
 )
 
-type {{ lowerPascalCase .ShortName }}HTTPController struct{}
-
-func new{{ upperPascalCase .ShortName }}HTTPController() *{{ lowerPascalCase .ShortName }}HTTPController {
-	return new({{ lowerPascalCase .ShortName }}HTTPController)
+type {{ lowerPascalCase .ShortName }}HTTPController struct{
+	version string `json:"version"`
 }
 
 func (s {{ lowerPascalCase .ShortName }}HTTPController) Status(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +34,7 @@ func (s {{ lowerPascalCase .ShortName }}HTTPController) Version(w http.ResponseW
 	log.Info("{{ lowerPascalCase .ShortName }}HTTPController.Version")
 	v := {{ .GoProtoPkgAlias }}.VersionResponse{
 		Name:    name,
-		Version: version,
+		Version: s.version,
 	}
 	output, err := json.Marshal(v)
 	if err != nil {

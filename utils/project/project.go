@@ -618,6 +618,7 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	}
 	f.addTree(protoPkg, "protoc-gen/pb", nil, false)
 	f.addFile("docker-compose.yml", "protoc-gen/docker-compose.yml.tmpl", nil, false)
+	f.addFile(".travis.yml", "protoc-gen/.travis.yml.tmpl", nil, false)
 
 	var hasVersion, hasServicesStatus bool
 	for _, file := range p.ProtoFiles() {

@@ -6,15 +6,14 @@ import (
 	"github.com/fullstorydev/grpchan"
 	{{ if .DbTypes }}"github.com/jinzhu/gorm"
 	{{ end }}
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
-	// SUB-SERVICES DEFINITION : import-pb
-	// svc{{ "{{SubServiceNamePascalCase}}" }}Pb "{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/pb"
+
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Pb "{{ .GoPkg }}/pb"
 	{{ end }}// END SUB-SERVICES DEFINITION : import-pb
 )
 
 // Implements of {{ lowerPascalCase .ShortName }}Server
 type {{ lowerPascalCase .ShortName }}Server struct {
+	version             string
 	subServicesRegistry grpchan.ServiceRegistry
 	inProcessChannel    grpchan.Channel
 	jwtSecret           string
@@ -40,6 +39,3 @@ type {{ lowerPascalCase .ShortName }}Server struct {
 	{{ end }}// END SUB-SERVICES DEFINITION : var-client
 }
 
-func new{{ upperPascalCase .ShortName }}Server() {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Server {
-	return new({{ lowerPascalCase .ShortName }}Server)
-}

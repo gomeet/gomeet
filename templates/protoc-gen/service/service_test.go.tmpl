@@ -4,53 +4,149 @@
 package service
 
 import (
+	"flag"
+	"fmt"
 	"os"
 	"testing"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"google.golang.org/grpc"
+	"github.com/fullstorydev/grpchan"
+	"github.com/fullstorydev/grpchan/inprocgrpc"
+	log "github.com/sirupsen/logrus"
 
-	"github.com/gomeet/gomeet/utils/tests/helpers"
+	gomeetService "github.com/gomeet/gomeet/utils/service"
 
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+	"{{ .GoPkg }}/client"
 )
 
 var (
-	svc *Service
-	cli {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
+	debugMode  bool
+	svc        *Service
+	cli        {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
+	jwtKey     string
+	caCert     string
+	serverCert string
+	serverKey  string
+	// Main server database and extra flags
+	{{ range .DbTypes }}
+	{{ lowerPascalCase . }}DSN string
+	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
+	{{ end }}
+	// SubService databases and extra flags
+	{{ range .SubServices }}
+	{{ $ss := . }}{{ range .DbTypes }}
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string
+	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
+	{{ end }}{{ end }}
 )
 
-// TODO flags or ENV VAR support for dsn databases and sub-service definitions
-// for more information see. https://siongui.github.io/2017/04/28/command-line-argument-in-golang-test/
+func init() {
+	// force debug mode
+	flag.BoolVar(&debugMode, "debug", false, "Force debug mode")
+	// JWT secret signing key
+	flag.StringVar(&jwtKey, "jwt-secret", "", "JSON Web Token secret signing key (required for JWT support)")
+	// CA certificate
+	flag.StringVar(&caCert, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
+	// gRPC server certificate
+	flag.StringVar(&serverCert, "cert", "", "X.509 certificate of the gRPC server (required for gRPC TLS support)")
+	// gRPC server private key
+	flag.StringVar(&serverKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
+
+	{{ range .DbTypes }}
+	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
+	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
+	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
+	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
+	{{ end }}
+	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
+	flag.{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
+	{{ end }}
+	{{ range .SubServices }}
+	{{ $ss := . }}{{ range .DbTypes }}
+	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	flag.StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
+	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
+	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
+	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	flag.StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
+	{{ end }}{{ end }}{{ range .ExtraServeFlags }}
+	flag.{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
+	{{ end }}{{ end }}
+
+	flag.Parse()
+
+	svc = NewService(gomeetService.INPROCESS_ADDRESS)
+	log.SetLevel(log.PanicLevel)
+	if debugMode {
+		log.SetLevel(log.DebugLevel)
+		log.WithFields(log.Fields{
+			"Name":     svc.Name,
+			"Version":  svc.Version,
+		}).Debug("set log debug level")
+	}
+
+	{{ range .DbTypes }}
+	log.WithFields(log.Fields{
+		"{{ lowerPascalCase . }}DSN": {{ lowerPascalCase . }}DSN,
+	}).Debug("{{ lowerPascalCase . }}DSN flag")
+	{{ end }}{{ range .ExtraServeFlags }}
+	log.WithFields(log.Fields{
+		"{{ lowerPascalCase .Name }}ExtraFlag": {{ lowerPascalCase .Name }}ExtraFlag,
+	}).Debug("{{ lowerPascalCase .Name }}ExtraFlag flag")
+	{{ end }}
+	{{ range .SubServices }}
+	{{ $ss := . }}{{ range .DbTypes }}
+	log.WithFields(log.Fields{
+		"svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN": svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN,
+	}).Debug("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN flag")
+	{{ end }}{{ range .ExtraServeFlags }}
+	log.WithFields(log.Fields{
+		"svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag": svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
+	}).Debug("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag flag")
+	{{ end }}{{ end }}
+}
 
 func TestMain(m *testing.M) {
-	//TODO: need refactoring in gomeet generator
-	sMdl := grpc.StreamInterceptor(grpc_middleware.ChainStreamServer())
-	uMdl := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer())
-	svc = NewService()
+	sInterceptors, uInterceptors := gomeetService.Interceptors()
+	subServiceshandlers := grpchan.HandlerMap{}
 
-	// get grpc server
-	grpcS := grpc.NewServer(sMdl, uMdl)
-	addr, serve := helpers.NewTestServer(grpcS)
-
-	svc.RegisterGRPCServices(
-		grpcS,
-		"",
-		"",
-		"",
-		"",
-		{{ range .DbTypes }}"", {{ end }}// dsn info come here if exists
-		{{ range .ExtraServeFlags }}{{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, {{ end }}// extra serve flag come here if exists
-		{{ range .SubServices }}"", {{ end }}// subservices come here if exists
+	inProcessChannel := new(inprocgrpc.Channel)
+	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
+	{{ if .SubServices }}
+	// sub-services can be loaded in this process
+	{{ range .SubServices }}{{ $ss := . }}
+	svc.RegisterSvc{{ upperPascalCase .ShortName }}GRPCServicesInprocess(
+		reg, inProcessChannel,
+		jwtKey, caCert, serverCert, serverKey,
+		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
+		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
 	)
-	go serve()
+	{{ end }}{{ end }}
+	//Real server
+	svc.RegisterGRPCServices(
+		reg, inProcessChannel,
+		jwtKey, caCert, serverCert, serverKey,
+		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
+		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
+	)
 
-	cli = {{ .GoProtoPkgAlias }}.New{{ upperPascalCase .ShortName }}Client(helpers.TestConn(addr))
+	subServiceshandlers.ForEach(inProcessChannel.RegisterService)
 
+	gCli, err := client.NewGomeetInProcessClient(inProcessChannel)
+	if err != nil {
+		fmt.Printf("Test fail : %s\n", err.Error())
+		os.Exit(1)
+	}
+	cli = gCli.GetGRPCClient()
 	r := m.Run()
-
-	// removing unix socket in addr variable - /tmp/...
-	os.Remove(addr)
 
 	os.Exit(r)
 }

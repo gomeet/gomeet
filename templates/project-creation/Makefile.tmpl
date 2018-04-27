@@ -149,23 +149,6 @@ ifeq (release,$(firstword $(MAKECMDGOALS)))
   endif
 endif
 
-# dep-update-{{ .ProjectGroupName }} arguments mangement
-# usage :
-#    make dep-update-{{ .ProjectGroupName }} <SUB_SERVICES_NAME>
-ifeq (dep-update-{{ .ProjectGroupName }},$(firstword $(MAKECMDGOALS)))
-  ASKED_SVC := $(word 2,$(MAKECMDGOALS))
-  ifeq ($(ASKED_SVC),)
-    SUB_SVC := $(ALL_SVC),
-  else
-    ifneq ($(filter $(ASKED_SVC),$(ALL_SVC)),)
-      SUB_SVC := $(ASKED_SVC)
-      $(eval $(ASKED_SVC):;@:)
-    else
-      $(error unknow $(ASKED_SVC) in ($(ALL_SVC)))
-    endif
-  endif
-endif
-
 define package_builder
 	@echo "$(NAME): build $(1) - $(2) on $(3)"
 	-mkdir -p $(3)
@@ -414,14 +397,20 @@ dep: tools
 dep-prune: tools
 	_tools/bin/dep prune
 
-.PHONY: dep-update-{{ .ProjectGroupName }}
-dep-update-{{ .ProjectGroupName }}: tools
-	@echo "dep-update-{{ .ProjectGroupName }} $(ASKED_SVC)"
-	$(foreach svc, $(SUB_SVC), _tools/bin/dep ensure -update "$(GO_PACKAGE_BASE)/$(SVC_PREFIX)$(svc)";)
-
+{{ if .SubServices }}.PHONY: dep-update-svc
+dep-update-svc: tools
+	@echo "$(NAME): dep-update-svc task"
+{{ range .SubServices }}	@$(MAKE) dep-update-svc-{{ lowerKebabCase .Name }}
+{{ end }}
+{{ range .SubServices }}.PHONY: dep-update-svc-{{ lowerKebabCase .Name }}
+dep-update-svc-{{ lowerKebabCase .Name }}: tools
+	@echo "dep-update-svc-{{ lowerKebabCase .Name }} task"
+	_tools/bin/dep ensure -update "{{ .GoPkg }}"
+{{ end }}
+{{ end }}
 .PHONY: dep-update-gomeet-utils
 dep-update-gomeet-utils: tools
-	@echo "dep-update-gomeet-utils $(ASKED_SVC)"
+	@echo "$(NAME): dep-update-gomeet-utils task"
 	_tools/bin/dep ensure -update "$(GOMEET_GO_PACKAGE_NAME)"
 
 .PHONY: tools
@@ -479,12 +468,29 @@ tools-upgrade: tools
 	GOPATH=$(shell pwd)/_tools/ && \
 		for tool in $(shell cat tools.json | grep "Repository" | awk '{print $$2}' | sed 's/,//g' | sed 's/"//g' ); do $$GOPATH/bin/retool upgrade $$tool origin/master ; done
 
-.PHONY: test
-test: build
-	@echo "$(NAME): test task"
-	@cd service && go test
-	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test; fi
+.PHONY: test-func
+test-func: build
+	@echo "$(NAME): test-func task"
 	@_build/$(NAME) functest -e --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+
+.PHONY: test-unit
+test-unit:
+	@echo "$(NAME): test-unit task"
+	@cd service && go test{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test; fi
+
+.PHONY: test-race
+test-race:
+	@echo "$(NAME): test-race task"
+	@cd service && go test -race {{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test -race; fi
+
+.PHONY: test
+test:
+	@echo "$(NAME): test task"
+	@$(MAKE) test-unit
+	@$(MAKE) test-race
+	@$(MAKE) test-func
 
 .PHONY: docker-test
 docker-test: docker

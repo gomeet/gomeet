@@ -5,7 +5,6 @@ package server
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -17,13 +16,7 @@ import (
 	"github.com/fullstorydev/grpchan"
 	"github.com/fullstorydev/grpchan/inprocgrpc"
 	"github.com/gorilla/mux"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
-	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	nlog "github.com/meatballhat/negroni-logrus"
 	"github.com/rs/cors"
 	log "github.com/sirupsen/logrus"
@@ -32,52 +25,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	grpc_acl "{{ .GomeetPkg }}/utils/grpc-middlewares/acl"
-	grpc_cid "{{ .GomeetPkg }}/utils/grpc-middlewares/cid"
+	gomeetService "{{ .GomeetPkg }}/utils/service"
 
 	"{{ .GoPkg }}/service"
-	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}Models "{{ .GoPkg }}/models"{{ end }}
-	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
 )
-
-const DEFAULT_INPROCESS_ADDRESS = "inprocgrpc"
-
-func recoverFromPanic(p interface{}) error {
-	log.Infof("recovering from panic: %s", p)
-
-	return fmt.Errorf("panic in gRPC procedure: %v", p)
-}
-
-func fixSvcAddress(s string) string {
-	s = strings.ToLower(strings.Trim(s, " "))
-	if s == "" {
-		return DEFAULT_INPROCESS_ADDRESS
-	}
-
-	return s
-}
-
-{{ range .SubServices }}{{ $ss := . }}func svc{{ upperPascalCase .ShortName }}Register(
-	address string,
-	reg grpchan.ServiceRegistry, inProcessChannel grpchan.Channel,
-	jwtKey, caCert, serverCert, serverKey string,
-	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
-	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, {{ end }}
-) {
-	if strings.ToLower(address) == strings.ToLower(DEFAULT_INPROCESS_ADDRESS) {
-		svc{{ upperPascalCase .ShortName }}Service.SetVersion(DEFAULT_INPROCESS_ADDRESS)
-		svc := svc{{ upperPascalCase .ShortName }}Service.NewService()
-		svc.RegisterGRPCServicesReg(
-			reg, inProcessChannel,
-			jwtKey, caCert, serverCert, serverKey,
-			{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
-			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
-		)
-	}
-}
-{{ end }}
 
 func grpcServer(
 	caCert string, serverCert string, serverKey string, jwtKey string,
@@ -89,33 +40,9 @@ func grpcServer(
 {{ end }}) *grpc.Server {
 	var grpcS *grpc.Server
 
-	//middlewares definition
-	recoveryOpt := grpc_recovery.WithRecoveryHandler(recoverFromPanic)
-	logrusEntry := log.NewEntry(log.StandardLogger())
-	// stream middlewares
-	sInterceptors := grpc_middleware.ChainStreamServer(
-		grpc_prometheus.StreamServerInterceptor,
-		grpc_cid.StreamServerInterceptor(false),
-		grpc_ctxtags.StreamServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-		grpc_logrus.StreamServerInterceptor(logrusEntry),
-		grpc_auth.StreamServerInterceptor(nil),
-		grpc_validator.StreamServerInterceptor(),
-		grpc_acl.StreamServerInterceptor(nil),
-		grpc_recovery.StreamServerInterceptor(recoveryOpt),
-	)
-	sMdl := grpc.StreamInterceptor(sInterceptors)
-	// unary middlewares
-	uInterceptors := grpc_middleware.ChainUnaryServer(
-		grpc_prometheus.UnaryServerInterceptor,
-		grpc_cid.UnaryServerInterceptor(false),
-		grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
-		grpc_logrus.UnaryServerInterceptor(logrusEntry),
-		grpc_auth.UnaryServerInterceptor(nil),
-		grpc_validator.UnaryServerInterceptor(),
-		grpc_acl.UnaryServerInterceptor(nil),
-		grpc_recovery.UnaryServerInterceptor(recoveryOpt),
-	)
+	sInterceptors, uInterceptors := gomeetService.Interceptors()
 	uMdl := grpc.UnaryInterceptor(uInterceptors)
+	sMdl := grpc.StreamInterceptor(sInterceptors)
 
 	if caCert != "" && serverCert != "" && serverKey != "" {
 		// load the server's key pair
@@ -146,26 +73,28 @@ func grpcServer(
 		grpcS = grpc.NewServer(sMdl, uMdl)
 	}
 
+	svc := service.NewService()
 	inProcessChannel := new(inprocgrpc.Channel)
 	{{ if .SubServices }}
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address = fixSvcAddress(svc{{ upperPascalCase .ShortName }}Address)
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address = gomeetService.FixSvcAddress(svc{{ upperPascalCase .ShortName }}Address)
 	{{ end }}
 	// sub-services can be loaded in this process
 	subServiceshandlers := grpchan.HandlerMap{}
 	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
-	{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Register(
-		svc{{ upperPascalCase .ShortName }}Address,
-		reg, inProcessChannel,
-		jwtKey, caCert, serverCert, serverKey,
-		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
-		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
-	)
+	{{ range .SubServices }}{{ $ss := . }}
+	if strings.ToLower(svc{{ upperPascalCase .ShortName }}Address) == strings.ToLower(gomeetService.INPROCESS_ADDRESS) {
+		svc.RegisterSvc{{ upperPascalCase .ShortName }}GRPCServicesInprocess(
+			reg, inProcessChannel,
+			jwtKey, caCert, serverCert, serverKey,
+			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
+			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
+		)
+	}
 	{{ end }}{{ end }}
 	//Real server
 	mainHandlers := grpchan.HandlerMap{}
-	svc := service.NewService()
-	svc.RegisterGRPCServicesReg(
+	svc.RegisterGRPCServices(
 		mainHandlers, inProcessChannel,
 		jwtKey, caCert, serverCert, serverKey,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
