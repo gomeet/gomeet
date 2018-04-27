@@ -11,35 +11,86 @@ import (
 	"strings"
 
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	{{ if .DbTypes }}"github.com/jinzhu/gorm"
 	{{ range .DbTypes }}_ "github.com/jinzhu/gorm/dialects/{{ lower . }}"
 	{{ end }}{{ end -}}
 )
 
+type Logger struct {}
+
+func (*Logger) Print(v ...interface{}) {
+    if v[0] == "sql" {
+        log.WithFields(log.Fields{"module": "gorm", "type": "sql"}).Debug(v[3])
+    }
+    if v[0] == "log" {
+        log.WithFields(log.Fields{"module": "gorm", "type": "log"}).Warn(v[2])
+    }
+}
+
 {{ if eq (len .DbTypes) 1 }}func MigrateSchema(dsn string) error {
 	{{ range .DbTypes }}
-		{{ if eq . "mysql" }}if strings.Contains(dsn, "?") {
-			return fmt.Errorf("database connection error: data source name cannot contain options")
-		}
-		dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn)
-		{{ end }}
-		db, err := gorm.Open("{{ lower . }}", dsn)
-		if err != nil {
-			return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
-		}
-		mdls := {{ lowerPascalCase . }}Models()
-		if len(mdls) > 0 {
-			{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
-			{{ else }}db.AutoMigrate(mdls...){{ end }}
-            for _, mdl := range mdls {
-				if !db.HasTable(mdl) {
-					return fmt.Errorf("Schema migration error: the %v table does not exist", mdl)
-				}
+	{{ if eq . "mysql" }}if strings.Contains(dsn, "?") {
+		return fmt.Errorf("database connection error: data source name cannot contain options")
+	}
+	dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn)
+	{{ end }}
+	db, err := gorm.Open("{{ lower . }}", dsn)
+	if err != nil {
+		return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
+	}
+	db.SetLogger(&Logger{})
+	db.LogMode(true)
+	mdls := {{ lowerPascalCase . }}Models()
+	if len(mdls) > 0 {
+		{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
+		{{ else }}db.AutoMigrate(mdls...){{ end }}
+		for _, mdl := range mdls {
+			if !db.HasTable(mdl) {
+				return fmt.Errorf("Schema migration error: the %v table does not exist", mdl)
 			}
 		}
+	}
 	{{ end }}
 	return nil
 }
+
+func Flush(dsn string) error {
+	{{ range .DbTypes }}
+	{{ if eq . "mysql" }}if strings.Contains(dsn, "?") {
+		return fmt.Errorf("database connection error: data source name cannot contain options")
+	}
+	dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn)
+	{{ end }}
+	db, err := gorm.Open("{{ lower . }}", dsn)
+	if err != nil {
+		return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
+	}
+	db.SetLogger(&Logger{})
+	db.LogMode(true)
+	mdls := {{ lowerPascalCase . }}Models()
+	errs := []error{}
+	if len(mdls) > 0 {
+		for _, mdl := range mdls {
+			scope := db.NewScope(mdl)
+			quotedTableName := scope.QuotedTableName()
+			if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil {
+				errs = append(errs, err)
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		sErrs := []string{}
+		for _, e := range errs {
+			sErrs = append(sErrs, e.Error())
+		}
+		return fmt.Errorf("some errors occured :\n  %s", strings.Join(sErrs, "\n  "))
+	}
+	{{ end }}
+	return nil
+}
+
 {{ else }}func MigrateSchema(dbType, dsn string) error {
 	if len(dbType) > 0 {
 		switch strings.ToLower(dbType) {
@@ -52,11 +103,13 @@ import (
 			if err != nil {
 				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
 			}
+			db.SetLogger(&Logger{})
+			db.LogMode(true)
 			mdls := {{ lowerPascalCase . }}Models()
 			if len(mdls) > 0 {
 				{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
 				{{ else }}db.AutoMigrate(mdls...){{ end }}
-		        for _, mdl := range mdls {
+				for _, mdl := range mdls {
 					if !db.HasTable(mdl) {
 						return fmt.Errorf("Schema migration error: the %v table does not exist", mdl)
 					}
@@ -70,5 +123,47 @@ import (
 	}
 
 	return errors.New("Empty dbType")
+}
+
+func Flush(dsn string) error {
+	if len(dbType) > 0 {
+		switch strings.ToLower(dbType) {
+		{{ range .DbTypes }}case "{{ lower . }}":{{ if eq . "mysql" }}
+			if strings.Contains(dsn, "?") {
+				return fmt.Errorf("database connection error: data source name cannot contain options")
+			}
+			dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn){{ end }}
+			db, err := gorm.Open("{{ lower . }}", dsn)
+			if err != nil {
+				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
+			}
+			db.SetLogger(&Logger{})
+			db.LogMode(true)
+			mdls := {{ lowerPascalCase . }}Models()
+			errs := []error{}
+			if len(mdls) > 0 {
+				for _, mdl := range mdls {
+					scope := db.NewScope(mdl)
+					quotedTableName := scope.QuotedTableName()
+					if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil {
+						errs = append(errs, err)
+					}
+				}
+			}
+
+			if len(errs) > 0 {
+				sErrs := []string{}
+				for _, e := range errs {
+					sErrs = append(sErrs, e.Error())
+				}
+				return fmt.Errorf("some errors occured :\n  %s", strings.Join(sErrs, "\n  "))
+			}
+
+		{{ end }}default:
+			return fmt.Errorf("%s unknow dbType", dbType)
+		}
+	}
+
+	return nil
 }
 {{ end }}{{ end }}

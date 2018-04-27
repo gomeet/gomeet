@@ -183,6 +183,19 @@ func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.proto
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
+func (p Project) HasDb() bool {
+	if len(p.DbTypes()) > 0 {
+		return true
+	}
+	for _, ss := range p.SubServices {
+		if ss.HasDb() {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (p *Project) UseGogoGen(b bool) {
 	p.isGogoGen = b
 }

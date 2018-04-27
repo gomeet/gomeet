@@ -6,12 +6,17 @@ package cmd
 // Empty DB_TYPES in Makefile nothing to generate
 {{ else }}
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strings"
+	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 
 	"{{ .GoPkg }}/models"
 
 	"github.com/spf13/cobra"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -20,14 +25,23 @@ var (
 		Short: "Migrates the user database schema",
 		Run:   migrateSchema,
 	}
+	migrateSkipPrompt bool
 	{{ range .DbTypes }}{{ lowerPascalCase . }}MigrateDataSourceName string
+	{{ lowerPascalCase . }}MigrateFlush bool
 	{{ end }}
+	migrateOut = colorable.NewColorableStdout()
 )
 
 func init() {
 	rootCmd.AddCommand(migrateCmd)
 
-	{{ range .DbTypes }}{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	// force debug mode
+	migrateCmd.PersistentFlags().BoolVarP(&debugMode, "debug", "d", false, "Force debug mode")
+	migrateCmd.PersistentFlags().BoolVarP(&migrateSkipPrompt, "skip-prompt", "y", false, "Skip interactive prompt if is set default")
+
+	{{ range .DbTypes }}
+	migrateCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}MigrateFlush, "{{ lower . }}-flush-data", false, "Flush {{ upperPascalCase . }} data")
+	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
@@ -38,11 +52,39 @@ func init() {
 	{{ end }}{{ end -}}
 }
 
+func askIsOK(msg string) bool {
+	if os.Getenv("CI") != "" {
+		return true
+	}
+
+	if msg == "" {
+		msg = "Is this OK?"
+	}
+
+	fmt.Fprintf(migrateOut, "%s %ses/%so\n",
+		msg,
+		color.YellowString("[y]"),
+		color.CyanString("[N]"),
+	)
+
+	scan := bufio.NewScanner(os.Stdin)
+	scan.Scan()
+	return strings.Contains(strings.ToLower(scan.Text()), "y")
+}
+
 func migrateSchema(cmd *cobra.Command, args []string) {
 	var (
 		err    error
 		hasOne bool
 	)
+
+	if debugMode {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("set log debug level")
+	} else {
+		// by default for embedded server only panic are logged
+		log.SetLevel(log.PanicLevel)
+	}
 
 	{{ range .DbTypes }}
 	// initialize the {{ lower . }} database schema
@@ -55,6 +97,18 @@ func migrateSchema(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 		fmt.Println("{{ upperPascalCase . }} database schema was successfully migrated")
+
+		if {{ lowerPascalCase . }}MigrateFlush {
+			if migrateSkipPrompt || askIsOK("Are you sure you want flush {{ lower . }} data ?") {
+				{{ if eq (len $.DbTypes) 1 }}err = models.Flush({{ lowerPascalCase . }}MigrateDataSourceName)
+				{{ else }}err = models.Flush("{{ lower . }}", {{ lowerPascalCase . }}MigrateDataSourceName){{ end }}
+				if err != nil {
+					fmt.Printf("{{ upperPascalCase . }} database flush error: %s\n", err)
+					os.Exit(1)
+				}
+				fmt.Println("{{ upperPascalCase . }} database is flushed")
+			}
+		}
 	}
 	{{ end }}
 

@@ -9,12 +9,20 @@ import (
 	"os"
 	"testing"
 
+	{{ if .HasDb }}
+	"github.com/stretchr/testify/assert"
+	{{ end }}
+
 	"github.com/fullstorydev/grpchan"
 	"github.com/fullstorydev/grpchan/inprocgrpc"
 	log "github.com/sirupsen/logrus"
 
 	gomeetService "github.com/gomeet/gomeet/utils/service"
 
+	{{ if .HasDb }}{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
+	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
+	{{ end }}{{ end }}
+	{{- end }}
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
 	"{{ .GoPkg }}/client"
 )
@@ -42,7 +50,7 @@ var (
 
 func init() {
 	// force debug mode
-	flag.BoolVar(&debugMode, "debug", false, "Force debug mode")
+	flag.BoolVar(&debugMode, "d", false, "Force debug mode")
 	// JWT secret signing key
 	flag.StringVar(&jwtKey, "jwt-secret", "", "JSON Web Token secret signing key (required for JWT support)")
 	// CA certificate
@@ -111,6 +119,50 @@ func init() {
 	}).Debug("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag flag")
 	{{ end }}{{ end }}
 }
+
+{{ if .HasDb }}
+func flushAllDbTest(t *testing.T) {
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t)
+{{ end }}
+{{- end }}
+	{{ if .DbTypes }}flushDbTest(t){{ end }}
+}
+{{ end }}
+
+{{ if .DbTypes }}
+func flushDbTest(t *testing.T) {
+	var err error
+	{{ range .DbTypes }}
+	assert.NotEmpty(t, {{ lowerPascalCase . }}DSN, "{{ lowerPascalCase . }}DSN is empty")
+
+	{{ if eq (len $.DbTypes) 1 }}err = models.MigrateSchema({{ lowerPascalCase . }}DSN)
+	{{ else }}err = models.MigrateSchema("{{ lower . }}", {{ lowerPascalCase . }}DSN){{ end }}
+	assert.Nil(t, err, fmt.Sprintf("{{ lowerKebabCase $.Name }} - {{ lower . }} database migration fail - dsn: %s", {{ lowerPascalCase . }}DSN))
+
+	{{ if eq (len $.DbTypes) 1 }}err = models.Flush({{ lowerPascalCase . }}DSN)
+	{{ else }}err = models.Flush("{{ lower . }}", {{ lowerPascalCase . }}DSN){{ end }}
+	assert.Nil(t, err, fmt.Sprintf("{{ lowerKebabCase $.Name }} - {{ lower . }} database migration fail - dsn: %s", {{ lowerPascalCase . }}DSN))
+	{{ end }}
+}
+{{ end }}
+
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}
+func flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t *testing.T) {
+	var err error
+	{{ range $ss.DbTypes }}
+	assert.NotEmpty(t, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN is empty")
+
+	{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN)
+	{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN){{ end }}
+	assert.Nil(t, err, fmt.Sprintf("{{ lowerKebabCase $ss.Name }} - {{ lower . }} database migration fail - dsn: %s", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN))
+
+	{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN)
+	{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN){{ end }}
+	assert.Nil(t, err, fmt.Sprintf("{{ lowerKebabCase $ss.Name }} - {{ lower . }} database migration fail - dsn: %s", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN))
+	{{ end }}
+}
+{{ end }}
+{{ end }}
 
 func TestMain(m *testing.M) {
 	sInterceptors, uInterceptors := gomeetService.Interceptors()

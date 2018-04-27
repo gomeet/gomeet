@@ -14,9 +14,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type GormLogger struct {}
+type gormLogger struct {}
 
-func (*GormLogger) Print(v ...interface{}) {
+func (*gormLogger) Print(v ...interface{}) {
     if v[0] == "sql" {
         log.WithFields(log.Fields{"module": "gorm", "type": "sql"}).Debug(v[3])
     }
@@ -43,7 +43,7 @@ func (*GormLogger) Print(v ...interface{}) {
 			}).Infof("database connection error: %v", err)
 			return err
 		}
-		{{ lowerPascalCase . }}Handle.SetLogger(&GormLogger{})
+		{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
 		{{ lowerPascalCase . }}Handle.LogMode(true)
 		s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 	}
@@ -75,7 +75,7 @@ func (*GormLogger) Print(v ...interface{}) {
 					}).Infof("database connection error: %v", err)
 					return err
 				}
-			{{ lowerPascalCase . }}Handle.SetLogger(&GormLogger{})
+			{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
 			{{ lowerPascalCase . }}Handle.LogMode(true)
 				s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 			}

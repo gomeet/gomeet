@@ -1,3 +1,4 @@
+DEBUG_TEST?=0
 DEFAULT_PREFIXES={{ .DefaultPrefixes }}
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}
@@ -105,6 +106,12 @@ PACKAGE_PROTO_NAME = proto.tar.gz
 PROTOC_VERSION=3.5.1
 PROTOC_REPO_URL=https://github.com/google/protobuf/releases/download/v$(PROTOC_VERSION)
 PROTOC_BIN=_tools/bin/protoc
+
+ifeq ($(DEBUG_TEST),0)
+DEBUG_TEST_FLAG=
+else
+DEBUG_TEST_FLAG=-d
+endif
 
 ifeq ($(OS_NAME),windows)
   PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-win32.zip
@@ -471,18 +478,18 @@ tools-upgrade: tools
 .PHONY: test-func
 test-func: build
 	@echo "$(NAME): test-func task"
-	@_build/$(NAME) functest -e --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@_build/$(NAME) functest $(DEBUG_TEST_FLAG) -e --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test-unit
 test-unit:
 	@echo "$(NAME): test-unit task"
-	@cd service && go test{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@cd service && go test $(DEBUG_TEST_FLAG){{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test; fi
 
 .PHONY: test-race
 test-race:
 	@echo "$(NAME): test-race task"
-	@cd service && go test -race {{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@cd service && go test $(DEBUG_TEST_FLAG) -race {{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} -{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 	@if [ -f $(GO_PROTO_PACKAGE_ALIAS)/*_test.go ]; then cd pb && go test -race; fi
 
 .PHONY: test
