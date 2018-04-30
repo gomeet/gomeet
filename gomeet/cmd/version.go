@@ -8,7 +8,7 @@ import (
 
 var (
 	name    = "gomeet" // injected with -ldflags in Makefile
-	version = "3.5.2"  // injected with -ldflags in Makefile
+	version = "0.0.5"  // injected with -ldflags in Makefile
 )
 
 //
