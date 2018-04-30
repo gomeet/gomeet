@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Nothing
+- Update grpc dependency
 
 ## 0.0.6 - 2018-04-30
 
