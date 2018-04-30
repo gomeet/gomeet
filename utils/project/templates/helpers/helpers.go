@@ -46,7 +46,7 @@ var protoHelpersFuncMap = template.FuncMap{
 	"upperNospaceCase":               upperNospaceCase,
 	"upperPascalCase":                upperPascalCase,
 	"lowerPascalCase":                lowerPascalCase,
-	"lowerKebabCase":                 lowerKebabCase,
+	"lowerKebabCase":                 LowerKebabCase,
 	"upperKebabCase":                 upperKebabCase,
 	"upperSnakeCase":                 upperSnakeCase,
 	"lowerSnakeCase":                 LowerSnakeCase,
@@ -664,7 +664,7 @@ func formatID(base string, formatted string) string {
 
 // string in lowercasewithoutspace
 func lowerNospaceCase(s string) string {
-	s = lowerKebabCase(s)
+	s = LowerKebabCase(s)
 	return strings.Replace(s, "-", "", -1)
 }
 
@@ -695,7 +695,7 @@ func lowerPascalCase(s string) string {
 }
 
 // the service name lower-kebab-case
-func lowerKebabCase(s string) string {
+func LowerKebabCase(s string) string {
 	s = xstrings.ToSnakeCase(s)
 	s = strings.Replace(s, "_", "-", -1)
 	return strings.ToLower(s)

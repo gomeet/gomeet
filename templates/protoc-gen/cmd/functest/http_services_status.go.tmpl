@@ -40,5 +40,5 @@ func TestHttpServicesStatus(config FunctionalTestConfig) []TestFailure {
 		return failures
 	}
 
-	return testServicesStatusReponse(&{{ messageGoType .GrpcMethod.Method.GetInputType }}{}, res)
+	return testServicesStatusReponse(config, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}, res)
 }

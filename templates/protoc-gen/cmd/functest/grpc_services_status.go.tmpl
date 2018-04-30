@@ -33,5 +33,5 @@ func TestServicesStatus(config FunctionalTestConfig) (failures []TestFailure) {
 		}
 	}
 
-	return testServicesStatusReponse(req, res)
+	return testServicesStatusReponse(config, req, res)
 }

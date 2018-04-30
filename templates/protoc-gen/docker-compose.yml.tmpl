@@ -1,14 +1,15 @@
 version: "3"
 
 volumes:
-  # db_{{ .ShortName }}_data: {}
-  prometheus_data: {}
+{{ range .DbTypes }}  db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data: {}
+{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}  db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data: {}
+{{ end }}{{ end }}  prometheus_data: {}
   grafana_data: {}
 
 networks:
-  # db:
-  #   driver: bridge
-  grpc:
+{{ if .DbTypes }}  db:
+    driver: bridge
+{{ end }}  grpc:
     driver: bridge
   http:
     driver: bridge
@@ -21,18 +22,76 @@ services:
   #############
   # Databases #
   #############
-  # db-{{ .ShortName }}:
-  #   image: mariadb
-  #   restart: always
-  #   environment:
-  #     MYSQL_USER: ${MYSQL_USER}
-  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  #     MYSQL_DATABASE: ${MYSQL_SVC_DEVICE_DATABASE}
-  #     MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-  #   volumes:
-  #     - db_device_data:/var/lib/mysql
-  #   networks:
-  #     - db
+{{ range .DbTypes }}
+{{ if eq . "mysql" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:
+      image: mariadb
+      restart: always
+      environment:
+        MYSQL_USER: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}
+        MYSQL_PASSWORD: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+        MYSQL_DATABASE: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+        MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/var/lib/mysql
+      networks:
+        - db
+{{ else if eq . "postgres" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_USER: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}
+        POSTGRES_PASSWORD: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+        POSTGRES_DB: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+        PGDATA: /var/lib/postgresql/data/pgdata
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/var/lib/postgresql/data/pgdata
+      networks:
+        - db
+{{ else if eq . "mssql" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:
+      image: microsoft/mssql-server-linux
+      environment:
+        ACCEPT_EULA: Y
+        SA_PASSWORD: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+      ports:
+        - "1433:1433"
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/var/opt/mssql/data
+{{ end }}{{ end }}
+{{ range .SubServices }}{{ $ss := . }}{{ range $ss.DbTypes }}
+{{ if eq . "mysql" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:
+      image: mariadb
+      restart: always
+      environment:
+        MYSQL_USER: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}
+        MYSQL_PASSWORD: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+        MYSQL_DATABASE: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+        MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/var/lib/mysql
+      networks:
+        - db
+{{ else if eq . "postgres" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:
+      image: postgres
+      restart: always
+      environment:
+        POSTGRES_USER: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}
+        POSTGRES_PASSWORD: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+        POSTGRES_DB: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+        PGDATA: /var/lib/postgresql/data/pgdata
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/var/lib/postgresql/data/pgdata
+      networks:
+        - db
+{{ else if eq . "mssql" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:
+      image: microsoft/mssql-server-linux
+      environment:
+        ACCEPT_EULA: Y
+        SA_PASSWORD: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}
+      ports:
+        - "1433:1433"
+      volumes:
+        - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/var/opt/mssql/data
+{{ end }}{{ end }}{{ end }}
 
   ############
   # Services #
@@ -40,6 +99,12 @@ services:
   svc-{{ .ShortName }}:
     build: ./
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
+    command: serve{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
+{{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
+{{- else if eq . "mssql" }}sqlserver://sa:${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:1433?database=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- end }}"{{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}{{ "}" }}"{{ end }}
     #deploy:
     #  replicas: 5
     #  resources:
@@ -48,20 +113,25 @@ services:
     #      memory: 50M
     #  restart_policy:
     #    condition: on-failure
-    command: serve {{ range .SubServices }}--svc-{{ .ShortName }}-address "svc-{{ .ShortName }}:13000"{{ end }}
     ports:
       - 8383:13000
-{{ if .SubServices }}    depends_on:{{ end }}
-{{ range .SubServices }}      - svc-{{ .ShortName }}{{ end }}
-    networks:
+{{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
+      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/db/{{ end }}{{ end }}{{ end }}{{ if .SubServices }}
+    depends_on:
+{{ range .SubServices }}      - svc-{{ .ShortName }}
+{{ end }}{{ end }}    networks:
       - monitoring-back
       - grpc
       - http
-{{ range .SubServices }}
+{{ range .SubServices }}{{ $ss := . }}
   svc-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
-    command: serve
-    # command: serve --mysql-migrate --mysql-dsn "${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(db-device:3306)/${MYSQL_SVC_DEVICE_DATABASE}"
+    command: serve{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
+{{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
+{{- else if eq . "mssql" }}sqlserver://sa:${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:1433?database=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- end }}"{{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}{{ "}" }}"{{ end }}
     # deploy:
     #   replicas: 5
     #   resources:
@@ -70,7 +140,11 @@ services:
     #       memory: 50M
     #   restart_policy:
     #     condition: on-failure
-    networks:
+{{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
+      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/db/{{ end }}{{ end }}{{ end }}{{ if .SubServices }}
+    depends_on:
+{{ range .SubServices }}      - svc-{{ .ShortName }}
+{{ end }}{{ end }}    networks:
       - monitoring-back
       - grpc
       - http
@@ -134,11 +208,11 @@ services:
       - 9090:9090
     links:
       - alertmanager
-    depends_on:
-      - svc-{{ .ShortName }}
-{{ range .SubServices }}      - svc-{{ .ShortName }}{{ end }}
     networks:
       - monitoring-back
+    depends_on:
+      - svc-{{ .ShortName }}{{ range .SubServices }}
+      - svc-{{ .ShortName }}{{ end }}
 
   grafana:
     image: grafana/grafana:4.6.2

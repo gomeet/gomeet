@@ -3,6 +3,7 @@
 package service
 
 {{ if not .SubServices }}//{{ end }}import (
+{{ if not .SubServices }}//{{ end }}	log "github.com/sirupsen/logrus"
 {{ if not .SubServices }}//{{ end }}	// SUB-SERVICES DEFINITION : import-Client
 {{ if not .SubServices }}//{{ end }}	// svc{{ "{{SubServiceNamePascalCase}}" }}Client "{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/client"
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Client "{{ .GoPkg }}/client"
@@ -11,41 +12,33 @@ package service
 
 const grpcTimeout = 5
 
-// SUB-SERVICES DEFINITION : func-init{{ if not .SubServices }}
-// //init{{ "{{SubServiceNamePascalCase}}" }} Client initializes the gRPC client connecting to the {{ "{{SubServiceNamePascalCase}}" }} service.
-// func (s *{{ lowerPascalCase .ShortName }}Server) init{{ "{{SubServiceNamePascalCase}}" }}Client() error {
-//   if s.svc{{ "{{SubServiceNamePascalCase}}" }}GrpcClient != nil {
-//     return nil
-//   }
-//
-//   cli, err := svc{{ "{{SubServiceNamePascalCase}}" }}Client.NewGomeetClient(s.svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-//     grpcTimeout,
-//     s.caCertificate,
-//     s.certificate,
-//     s.privateKey,
-//   )
-//
-//   if err != nil {
-//     return err
-//   }
-//
-//   s.svc{{ "{{SubServiceNamePascalCase}}" }}GrpcClient = cli.GetGRPCClient()
-//
-//   return nil
-// }{{ end }}
+// SUB-SERVICES DEFINITION : func-init
 {{ range .SubServices }}//init{{ upperPascalCase .ShortName }}Client initializes the gRPC client connecting to the "{{ .Name }}" service.
 func (s *{{ lowerPascalCase $.ShortName }}Server) init{{ upperPascalCase .ShortName }}Client() error {
 	if s.svc{{ upperPascalCase .ShortName }}GrpcClient != nil {
 		return nil
 	}
 
-	cli, err := svc{{ upperPascalCase .ShortName }}Client.NewGomeetClient(
-		s.svc{{ upperPascalCase .ShortName }}Address,
-		grpcTimeout,
-		s.caCertificate,
-		s.certificate,
-		s.privateKey,
+	var (
+		cli *svc{{ upperPascalCase .ShortName }}Client.GomeetClient
+		err error
 	)
+
+	if s.svc{{ upperPascalCase .ShortName }}Address == "inprocgrpc" {
+		log.Debug("Init in process client for svc{{ upperPascalCase .ShortName}}")
+		cli, err = svc{{ upperPascalCase .ShortName }}Client.NewGomeetInProcessClient(
+			s.inProcessChannel,
+		)
+	} else {
+		log.Debug("Init remote client for svc{{ upperPascalCase .ShortName}}")
+		cli, err = svc{{ upperPascalCase .ShortName }}Client.NewGomeetClient(
+			s.svc{{ upperPascalCase .ShortName }}Address,
+			grpcTimeout,
+			s.caCertificate,
+			s.certificate,
+			s.privateKey,
+		)
+	}
 
 	if err != nil {
 		return err

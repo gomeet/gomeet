@@ -10,13 +10,12 @@ import (
 )
 
 func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
-	server := new{{ upperPascalCase .ShortName }}Server()
 	ctx := context.Background()
 
 	req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
 	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
 	// req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
-	res, err := server.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
+	res, err := cli.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
 	assert.Nil(t, err, "{{ upperPascalCase .GrpcMethod.Method.Name }}: error on call")
 	assert.NotNil(t, res, "{{ upperPascalCase .GrpcMethod.Method.Name }}: error on call")
 

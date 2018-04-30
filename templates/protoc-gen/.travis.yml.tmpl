@@ -1,0 +1,27 @@
+language: go
+
+go:
+  - "1.10"
+services:
+{{ range .DbTypes -}}{{ if eq . "mysql" }}  - mysql
+{{ else if eq . "postgres" }}  - postgresql
+{{- end }}{{ end }}
+{{ range .SubServices -}}{{ range .DbTypes }}{{ if eq . "mysql" }}  - mysql
+{{ else if eq . "postgres" }}  - postgresql
+{{- end }}{{- end -}}{{ end }}
+before_install:
+{{ range .DbTypes -}}{{ if eq . "mysql" }}  - sudo mysql -e "CREATE USER IF NOT EXISTS 'gomeet'@'localhost' IDENTIFIED BY 'totomysql';"
+  - sudo mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'gomeet';"
+  - sudo mysql -e "FLUSH PRIVILEGES;"
+  - sudo mysql -e "CREATE DATABASE IF NOT EXISTS {{ lowerSnakeCase $.Name }}_test;"
+  - sudo mysql -e "GRANT ALL PRIVILEGES ON {{ lowerSnakeCase $.Name }}.* TO 'gomeet'@'localhost' IDENTIFIED BY 'totomysql';"
+{{ else if eq . "postgres" }}  # TODO postgreSQL
+{{- end }}{{ end }}
+{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes -}}{{ if eq . "mysql" }}  - sudo mysql -e "CREATE USER IF NOT EXISTS 'gomeet'@'localhost' IDENTIFIED BY 'totomysql';"
+  - sudo mysql -e "GRANT ALL PRIVILEGES ON * . * TO 'gomeet';"
+  - sudo mysql -e "FLUSH PRIVILEGES;"
+  - sudo mysql -e "CREATE DATABASE IF NOT EXISTS {{ lowerSnakeCase $ss.Name }}_test;"
+  - sudo mysql -e "GRANT ALL PRIVILEGES ON {{ lowerSnakeCase $ss.Name }}.* TO 'gomeet'@'localhost' IDENTIFIED BY 'totomysql';"
+{{ else if eq . "postgres" }}  # TODO postgreSQL
+{{- end }}{{ end }}{{ end }}
+script: make test
