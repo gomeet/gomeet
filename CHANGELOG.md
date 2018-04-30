@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.6 - 2018-04-30
+
+- Bug fix
+
 ## 0.0.5 - 2018-04-30
 
 - Added monolith mode to generated projects
