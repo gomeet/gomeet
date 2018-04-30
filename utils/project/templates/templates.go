@@ -1812,7 +1812,7 @@ func projectCreationToolsJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2560, mode: os.FileMode(420), modTime: time.Unix(1525081523, 0)}
+	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2560, mode: os.FileMode(420), modTime: time.Unix(1525081785, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
