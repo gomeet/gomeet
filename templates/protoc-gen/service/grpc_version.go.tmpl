@@ -15,7 +15,7 @@ func (s *{{ lowerPascalCase .ShortName }}Server) {{ upperPascalCase .GrpcMethod.
 
 	v := &{{ messageGoType .GrpcMethod.Method.GetOutputType }}{
 		Name:    name,
-		Version: version,
+		Version: s.version,
 	}
 
 	return v, nil

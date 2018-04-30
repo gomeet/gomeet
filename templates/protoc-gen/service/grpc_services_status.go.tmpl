@@ -5,6 +5,7 @@ package service
 import (
 	"sort"
 	"sync"
+	{{ if .SubServices }}"time"{{ end }}
 
 	"golang.org/x/net/context"
 
@@ -55,22 +56,14 @@ func svcCurrentStatus(s *{{ lowerPascalCase .ShortName }}Server, ctx context.Con
 }
 
 // SUB-SERVICES DEFINITION : func-status
-// func svc{{ "{{SubServiceNamePascalCase}}" }}Status(s *{{ lowerPascalCase .ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ .GoProtoPkgAlias }}.ServiceStatus {
-//   if err := s.init{{ "{{SubServiceNamePascalCase}}" }}Client(); err != nil {
-//     return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}", "unknow"}, err, "Init client error")
-//   }
-//   ver, err := s.svc{{ "{{SubServiceNamePascalCase}}" }}GrpcClient.Version(svcCtx, &svc{{ "{{SubServiceNamePascalCase}}" }}Pb.EmptyMessage{})
-//   if err != nil {
-//     return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}", "unknow"}, err, "Version call error")
-//   }
-//   return serviceStatusSuccessHandler(&{{ .GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
-// }
-
 {{ range .SubServices }}func svc{{ upperPascalCase .ShortName }}Status(s *{{ lowerPascalCase $.ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ $.GoProtoPkgAlias }}.ServiceStatus {
 	if err := s.init{{ upperPascalCase .ShortName }}Client(); err != nil {
 		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Init client error")
 	}
-	ver, err := s.svc{{ upperPascalCase .ShortName }}GrpcClient.Version(svcCtx, &svc{{ upperPascalCase .ShortName }}Pb.EmptyMessage{})
+	subSvcCtx, cancel := context.WithTimeout(svcCtx, time.Duration(grpcTimeout)*time.Second)
+	defer cancel()
+
+	ver, err := s.svc{{ upperPascalCase .ShortName }}GrpcClient.Version(subSvcCtx, &svc{{ upperPascalCase .ShortName }}Pb.EmptyMessage{})
 	if err != nil {
 		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Version call error")
 	}

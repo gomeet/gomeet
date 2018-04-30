@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -22,7 +23,7 @@ import (
 
 const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
-var allowedDbTypes = []string{"mysql", "postgres", "sqllite", "mssql"}
+var allowedDbTypes = []string{"mysql", "postgres", "sqlite", "mssql"}
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
@@ -42,7 +43,7 @@ type serveFlag struct {
 type Project struct {
 	*helpers.PkgNfo
 
-	SubServices          []*helpers.PkgNfo
+	SubServices          map[string]*Project
 	dbTypes              []string
 	extraServeFlags      []*serveFlag
 	folder               *folder
@@ -50,6 +51,7 @@ type Project struct {
 	protoFiles           []*descriptor.FileDescriptorProto
 	defaultProtoPkgAlias *string
 	isGogoGen            bool
+	version              string
 }
 
 func New(inputPath string) (*Project, error) {
@@ -63,10 +65,14 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false}
+	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
+}
+
+func (p *Project) SetVersion(v string) {
+	p.version = v
 }
 
 func (p Project) PrettyPrint() {
@@ -86,6 +92,36 @@ func (p *Project) SetDefaultPrefixes(s string) error {
 	return nil
 }
 
+func extraFlag(myFlag string) (*serveFlag, error) {
+	if myFlag == "" {
+		return nil, nil
+	}
+	part := strings.Split(myFlag, "|")
+	if len(part) < 1 {
+		return nil, errors.New("bad extra serve flags parameter")
+	}
+	name, description, defaultValue, typ := part[0], "", "", "string"
+	if len(part) > 1 {
+		description = part[1]
+	}
+	if len(part) > 2 {
+		defaultValue = part[2]
+	}
+	namePart := strings.Split(name, "@")
+	if len(namePart) > 1 {
+		name = namePart[0]
+		typ = strings.ToLower(namePart[1])
+	}
+
+	return &serveFlag{
+		Name:         name,
+		Description:  description,
+		DefaultValue: defaultValue,
+		Type:         typ,
+	}, nil
+
+}
+
 func (p *Project) SetExtraServeFlags(s string) error {
 	if s != "" {
 		allFlags := strings.Split(s, ",")
@@ -93,30 +129,13 @@ func (p *Project) SetExtraServeFlags(s string) error {
 			if myFlag == "" {
 				continue
 			}
-			part := strings.Split(myFlag, "|")
-			if len(part) < 1 {
-				return errors.New("bad extra serve flags parameter")
+			aServeFlag, err := extraFlag(myFlag)
+			if err != nil {
+				return err
 			}
-			name, description, defaultValue, typ := part[0], "", "", "string"
-			if len(part) > 1 {
-				description = part[1]
+			if aServeFlag == nil {
+				continue
 			}
-			if len(part) > 2 {
-				defaultValue = part[2]
-			}
-			namePart := strings.Split(name, "@")
-			if len(namePart) > 1 {
-				name = namePart[0]
-				typ = strings.ToLower(namePart[1])
-			}
-
-			aServeFlag := &serveFlag{
-				Name:         name,
-				Description:  description,
-				DefaultValue: defaultValue,
-				Type:         typ,
-			}
-
 			p.extraServeFlags = append(p.extraServeFlags, aServeFlag)
 		}
 	}
@@ -159,27 +178,221 @@ func (p Project) PrintTreeFolder()                              { p.folder.print
 func (p Project) GomeetPkg() string                             { return helpers.GomeetPkg() }
 func (p Project) IsGogoGen() bool                               { return p.isGogoGen }
 func (p Project) GomeetGeneratorUrl() string                    { return "https://" + p.GomeetPkg() }
+func (p Project) Version() string                               { return p.version }
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
+
+func (p Project) HasDb() bool {
+	if len(p.DbTypes()) > 0 {
+		return true
+	}
+	for _, ss := range p.SubServices {
+		if ss.HasDb() {
+			return true
+		}
+	}
+
+	return false
+}
 
 func (p *Project) UseGogoGen(b bool) {
 	p.isGogoGen = b
 }
 
+func parseSubService(s string) []string {
+	r := regexp.MustCompile(`'.*?'|\[.*?\]|\S+`)
+	res := r.FindAllString(s, -1)
+	for k, v := range res {
+		mod := strings.Trim(v, " ")
+		mod = strings.Trim(mod, "[")
+		mod = strings.Trim(mod, `]`)
+		mod = strings.Trim(mod, " ")
+
+		res[k] = mod
+	}
+	return res
+}
+
+func (p *Project) SubServicesMonolithHelp() string {
+	ssStrings := []string{}
+	for _, ss := range p.SubServices {
+		ssString := fmt.Sprintf(
+			"  - if \"svc-%s-address\" is empty or is equal to \"inprocgrpc\" the",
+			tmplHelpers.LowerKebabCase(ss.ShortName()),
+		)
+		ssFlags := []string{}
+		if len(ss.DbTypes()) > 0 {
+			for _, dbType := range ss.DbTypes() {
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s-dsn\"",
+						ss.ShortName(),
+						strings.ToLower(dbType),
+					),
+				)
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s-migrate\"",
+						ss.ShortName(),
+						strings.ToLower(dbType),
+					),
+				)
+			}
+		}
+		if len(ss.ExtraServeFlags()) > 0 {
+			for _, ssf := range ss.ExtraServeFlags() {
+				ssFlags = append(
+					ssFlags,
+					fmt.Sprintf(
+						"\"svc-%s-%s\"",
+						tmplHelpers.LowerKebabCase(ss.ShortName()),
+						tmplHelpers.LowerKebabCase(ssf.Name),
+					),
+				)
+			}
+		}
+		ssString = fmt.Sprintf(
+			"%s %s",
+			ssString,
+			strings.Join(ssFlags, ", "),
+		)
+		if len(ss.DbTypes()) > 0 || len(ss.ExtraServeFlags()) > 0 {
+			ssString = fmt.Sprintf(
+				"%s flags are used to launch \"svc-%s\" server in the main process",
+				ssString,
+				tmplHelpers.LowerKebabCase(ss.ShortName()),
+			)
+		} else {
+			ssString = fmt.Sprintf(
+				"%s\"svc-%s\" server is launched in the main process",
+				ssString,
+				tmplHelpers.LowerKebabCase(ss.ShortName()),
+			)
+		}
+		ssStrings = append(ssStrings, ssString)
+	}
+	return strings.Join(ssStrings, "\n")
+}
+func (p *Project) SubServicesDef() string {
+	ssStrings := []string{}
+	for _, ss := range p.SubServices {
+		ssString := fmt.Sprintf(
+			"%s[version@%s]",
+			ss.GoPkg(),
+			ss.Version(),
+		)
+		if len(ss.DbTypes()) > 0 {
+			ssString = fmt.Sprintf(
+				"%s[db_types@%s]",
+				ssString,
+				strings.Join(ss.DbTypes(), "|"),
+			)
+		}
+		if len(ss.SubServices) > 0 {
+			sssPkg := []string{}
+			for _, sss := range ss.SubServices {
+				sssPkg = append(sssPkg, sss.GoPkg())
+			}
+			ssString = fmt.Sprintf(
+				"%s[sub_services@%s]",
+				ssString,
+				strings.Join(sssPkg, "|"),
+			)
+		}
+		if len(ss.ExtraServeFlags()) > 0 {
+			for _, ssf := range ss.ExtraServeFlags() {
+				ssString = fmt.Sprintf(
+					"%s[%s@%s|%s|%s]",
+					ssString,
+					ssf.Name,
+					ssf.Type,
+					ssf.Description,
+					ssf.DefaultValue,
+				)
+			}
+		}
+		ssStrings = append(ssStrings, ssString)
+	}
+	return strings.Join(ssStrings, ",")
+}
+
 func (p *Project) SetSubServices(subServices []string) error {
 	if len(subServices) > 0 {
+		neededSubServices := []string{}
+		dependenciesTree := map[string][]string{}
+		p.SubServices = make(map[string]*Project)
 		for _, subSvcPkg := range subServices {
-			subSvcPkg = strings.TrimSpace(subSvcPkg)
+			part := strings.Split(subSvcPkg, "[")
+			if len(part) < 1 {
+				continue
+			}
+			subSvcPkg = strings.TrimSpace(part[0])
 			if subSvcPkg == "" {
 				continue
 			}
-			//ss, err := sub_service.NewSubSevice(subSvcPkg, p.DefaultPrefixes())
-			pkgNfo, err := helpers.NewPkgNfo(subSvcPkg, p.DefaultPrefixes())
+
+			subSvc, err := New(subSvcPkg)
 			if err != nil {
 				return err
 			}
-			p.SubServices = append(p.SubServices, pkgNfo)
+			subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+			ssParams := parseSubService("[" + strings.Join(part[1:], "["))
+
+			var (
+				ssVersion     string
+				ssDbTypes     []string
+				ssFlags       []string
+				ssSubServices []string
+			)
+			for _, ssFlag := range ssParams {
+				switch {
+				case strings.HasPrefix(ssFlag, "db_types@"):
+					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
+				case strings.HasPrefix(ssFlag, "version@"):
+					ssVersion = strings.TrimPrefix(ssFlag, "version@")
+				case strings.HasPrefix(ssFlag, "sub_services@"):
+					ssSubServices = strings.Split(strings.TrimPrefix(ssFlag, "sub_services@"), "|")
+					dependenciesTree[subSvc.GoPkg()] = ssSubServices
+				default:
+					ssFlags = append(ssFlags, ssFlag)
+				}
+			}
+			if ssVersion != "" {
+				subSvc.SetVersion(ssVersion)
+			}
+			if len(ssFlags) > 0 {
+				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
+			}
+			if len(ssDbTypes) > 0 {
+				subSvc.SetDbTypes(strings.Join(ssDbTypes, ","))
+			}
+			if len(ssSubServices) > 0 {
+				neededSubServices = append(neededSubServices, ssSubServices...)
+			}
+
+			p.SubServices[subSvc.GoPkg()] = subSvc
+		}
+		for _, needed := range neededSubServices {
+			if _, ok := p.SubServices[needed]; !ok {
+				subSvc, err := New(needed)
+				if err != nil {
+					return err
+				}
+				subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+				p.SubServices[subSvc.GoPkg()] = subSvc
+			}
+		}
+
+		for pkg, deps := range dependenciesTree {
+			for _, dep := range deps {
+				if p.SubServices[pkg].SubServices == nil {
+					p.SubServices[pkg].SubServices = make(map[string]*Project)
+				}
+				p.SubServices[pkg].SubServices[dep] = p.SubServices[dep]
+			}
 		}
 	}
 
@@ -401,6 +614,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	rcli.addFile("cmd_help.go", "protoc-gen/cmd/remotecli/cmd_help.go.tmpl", nil, false)
 	rcli.addFile("remotecli.go", "protoc-gen/cmd/remotecli/remotecli.go.tmpl", nil, false)
 	f.addTree("models", "protoc-gen/models", nil, false)
+	srv := f.addFolder("server")
+	srv.addFile("server.go", "protoc-gen/server/server.go.tmpl", nil, false)
 	svc := f.addFolder("service")
 	svc.addFile("grpc.go", "protoc-gen/service/grpc.go.tmpl", nil, false)
 	svc.addFile("http.go", "protoc-gen/service/http.go.tmpl", nil, false)
@@ -409,12 +624,14 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	svc.addFile("init_subservice_clients.go", "protoc-gen/service/init_subservice_clients.go.tmpl", nil, false)
 	svc.addFile("init_databases.go", "protoc-gen/service/init_databases.go.tmpl", nil, false)
 	f.addTree("infra", "protoc-gen/infra", nil, false)
+	f.addTree("hack", "protoc-gen/hack", nil, false)
 	protoPkg, err := p.GoProtoPkgAlias()
 	if err != nil {
 		return err
 	}
 	f.addTree(protoPkg, "protoc-gen/pb", nil, false)
 	f.addFile("docker-compose.yml", "protoc-gen/docker-compose.yml.tmpl", nil, false)
+	f.addFile(".travis.yml", "protoc-gen/.travis.yml.tmpl", nil, false)
 
 	var hasVersion, hasServicesStatus bool
 	for _, file := range p.ProtoFiles() {
@@ -471,7 +688,21 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	}
 
 	p.folder = f
-	return p.folder.render(*p)
+	if err = p.folder.render(*p); err != nil {
+		return err
+	}
+
+	err = filepath.Walk(p.Path()+"/hack/", func(name string, info os.FileInfo, err error) error {
+		if err == nil {
+			err = os.Chmod(name, 0755)
+		}
+		return err
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func streamFromBool(streaming bool) string {

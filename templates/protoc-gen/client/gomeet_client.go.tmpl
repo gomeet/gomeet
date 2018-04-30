@@ -10,19 +10,46 @@ import (
 	"net"
 	"time"
 
+	"github.com/fullstorydev/grpchan"
+	"github.com/fullstorydev/grpchan/inprocgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
 	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
 )
 
+const (
+	CLIENT_TYPE_REMOTE    = "REMOTE"
+	CLIENT_TYPE_INPROCESS = "INPROCESS"
+)
+
 type GomeetClient struct {
+	clientType        string
 	address           string
 	caCertificate     string
 	clientCertificate string
 	clientPrivateKey  string
 	cc                *grpc.ClientConn
+	inProcessChannel  grpchan.Channel
 	c                 {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
+}
+
+func NewGomeetInProcessClient(
+	inProcessChannel grpchan.Channel,
+) (*GomeetClient, error) {
+	// Get {{ upperPascalCase .ShortName }}Client
+	c := {{ .GoProtoPkgAlias }}.New{{ upperPascalCase .ShortName }}ChannelClient(inProcessChannel)
+
+	return &GomeetClient{
+		clientType:        CLIENT_TYPE_INPROCESS,
+		address:           "",
+		caCertificate:     "",
+		clientCertificate: "",
+		clientPrivateKey:  "",
+		cc:                nil,
+		inProcessChannel:  inProcessChannel,
+		c:                 c,
+	}, nil
 }
 
 func NewGomeetClient(
@@ -77,12 +104,23 @@ func NewGomeetClient(
 	// Get {{ upperPascalCase .ShortName }}Client
 	c := {{ .GoProtoPkgAlias }}.New{{ upperPascalCase .ShortName }}Client(cc)
 
-	return &GomeetClient{addr, caCertificate, clientCertificate, clientPrivateKey, cc, c}, nil
+	return &GomeetClient{
+		clientType:        CLIENT_TYPE_REMOTE,
+		address:           addr,
+		caCertificate:     caCertificate,
+		clientCertificate: clientCertificate,
+		clientPrivateKey:  clientPrivateKey,
+		cc:                cc,
+		inProcessChannel:  new(inprocgrpc.Channel),
+		c:                 c,
+	}, nil
 }
 
 // Close : close grpc connection `cc`
 func (c *GomeetClient) Close() {
-	c.cc.Close()
+	if c.cc != nil {
+		c.cc.Close()
+	}
 }
 
 // GetGRPCClient : getter on internal gRPC client

@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ```shell
 $ gomeet new {{ .GoPkg }} \
-  --default-prefixes={{ .PkgNfo.DefaultPrefixes }} \
-  --proto-name={{ .GoProtoPkgAlias }}{{ if not .IsGogoGen }} \
+  --default-prefixes='{{ .PkgNfo.DefaultPrefixes }}' \
+  --extra-serve-flags='{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}' \
+  --proto-name='{{ .GoProtoPkgAlias }}'{{ if not .IsGogoGen }} \
   --no-gogo{{ end }}{{ if .SubServices }} \
-  --extra-serve-flags="{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}" \
-  --sub-services={{ subSvcPkgString .SubServices }}{{ end }}
+  --sub-services='{{ .SubServicesDef }}'{{ end }}
 ```
 

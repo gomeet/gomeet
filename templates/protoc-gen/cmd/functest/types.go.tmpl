@@ -21,6 +21,13 @@ type FunctionalTestConfig struct {
 	TimeoutSeconds      int
 	{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}
+	{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
+	{{ end }}
+	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address string
+	{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
+	{{ end }}
+	{{ range .ExtraServeFlags }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
+	{{ end }}{{ end }}{{ end }}
 }
 
 // TestFailure encodes a functional test failure description.

@@ -10,7 +10,10 @@ import (
 )
 
 func (c *remoteCli) cmdServicesStatus(args []string) (string, error) {
-	l, err := c.c.ServicesStatus(c.ctx, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
+	ctx, cancel := c.GetTimeoutContext(c.GetDefaultTimeout())
+	defer cancel()
+
+	l, err := c.c.ServicesStatus(ctx, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
 	if err != nil {
 		return "", fmt.Errorf("ServicesStatus service call fail - %v", err)
 	}
