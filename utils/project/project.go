@@ -183,6 +183,20 @@ func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.proto
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
+func (p Project) GoCGOEnabled() int {
+	ret := 0
+	if len(p.DbTypes()) > 0 {
+		for _, dbT := range p.DbTypes() {
+			if dbT == "sqlite" {
+				ret = 1
+				break
+			}
+		}
+	}
+
+	return ret
+}
+
 func (p Project) HasDb() bool {
 	if len(p.DbTypes()) > 0 {
 		return true

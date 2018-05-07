@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Nothing
+- Improved generated unit tests
+- Improved generated makefile
+- BUG FIX sqlite declaration
 
 ## 0.0.7 - 2018-04-30
 
