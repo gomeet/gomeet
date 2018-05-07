@@ -632,7 +632,6 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	srv.addFile("server.go", "protoc-gen/server/server.go.tmpl", nil, false)
 	svc := f.addFolder("service")
 	svc.addFile("grpc.go", "protoc-gen/service/grpc.go.tmpl", nil, false)
-	svc.addFile("http.go", "protoc-gen/service/http.go.tmpl", nil, false)
 	svc.addFile("service.go", "protoc-gen/service/service.go.tmpl", nil, false)
 	svc.addFile("service_test.go", "protoc-gen/service/service_test.go.tmpl", nil, false)
 	svc.addFile("init_subservice_clients.go", "protoc-gen/service/init_subservice_clients.go.tmpl", nil, false)
