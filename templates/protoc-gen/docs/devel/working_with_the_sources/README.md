@@ -184,7 +184,7 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make` - Installing all development tools and making specific platform binary. It's equivalent to `make build`
 - `make build` - Installing all development tools and making specific platform binary
 - `make clean` - Removing all generated files (all tools, all compiled files, generated from proto). It's equivalent to `make tools-clean package-clean proto-clean`
-- `make docker-test` - Executing `make test` inside docker
+- `make docker-test` - Executing `make test` inside docker (not yet ready it's doesn't run very well)
 - `make docker` - Building docker image
 - `make docker-push` - Push the docker image to docker registry server - default registry is `docker.io` it can be overloaded via the environment variable `DOCKER_REGISTRY` like this `DOCKER_REGISTRY={{ "{{hostname}}" }}:{{ "{{port}}" }} make docker-push`
 - `make install` - Performing a `go install` command
@@ -196,16 +196,23 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make release` - Making a release (see below)
 - `make start` - Building docker image and performing a `docker-compose up -d` command
 - `make stop` - Performing a `docker-compose down` command
-- `make test` - Runing tests
+- `make test` - Runing tests (shortcut for `make test-funcs test-unit test-race`)
+- `make test-func` - Runing functionals tests
+- `make test-unit` - Runing units tests
+- `make test-race` - Runing units tests with race trace
 - `make tools` - Installing all development tools
 - `make tools-sync` - Re-Syncronizes development tools
+- `make tools-sync-retool` - Re-Syncronizes `retool` tool
+- `make tools-sync-protoc` - Re-Syncronizes `protoc` tool
 - `make tools-upgrade-gomeet` - Upgrading all gomeet's development tools [gomeet-tools-markdown-server](github.com/gomeet/gomeet-tools-markdown-server), [protoc-gen-gomeetfaker](github.com/gomeet/go-proto-gomeetfaker/protoc-gen-gomeetfaker), [gomeet & protoc-gen-gomeet-service](https://github.com/gomeet/gomeet)
 - `make tools-upgrade` - Upgrading all development tools
 - `make tools-clean` - Uninstall all development tools
 - `make dep` - Executes the `dep ensure` command
+- `make dep-init` - Executes the `dep init` command (normaly never)
 - `make dep-prune` - Executes the `dep prune` command
 - `make dep-update-{{ .ProjectGroupName }} [individual svc name without {{ .Prefix }} prefix|default all]` - Executes the `dep ensure -update {{ .ProjectGroupGoPkg }}/{{ .Prefix }}[individual svc name without {{ .Prefix }} prefix|default all]`
 - `make dep-update-gomeet-utils` - Executes the `dep ensure -update github.com/gomeet/gomeet`
+- `make doc-server` - Run a markdown documentation server
 - `make gomeet-regenerate-project` - regenerate the project with [gomeet](https://github.com/gomeet/gomeet) be careful this replaces files except for the protobuf file
 
 #### Add a tool
