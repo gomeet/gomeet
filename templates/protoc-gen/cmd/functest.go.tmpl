@@ -179,7 +179,7 @@ func runFunctionalTests() {
 		var err error
 		jwtToken, err = jwt.Create(
 			"{{ .GomeetPkg }}",
-			secretSigningKey,
+			jwtSecret,
 			tokenLifetimeHours,
 			subjectID,
 			jwt.Claims{},
