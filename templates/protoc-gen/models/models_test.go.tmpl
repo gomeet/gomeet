@@ -3,15 +3,11 @@
 package models
 
 import (
-	"flag"
-	{{ if .HasDb }}"fmt"{{ end }}
+	"flag"{{ if .DbTypes }}
+	"fmt"{{ end }}
 	"os"
-	"testing"
-
-	{{ if .HasDb }}
-	"github.com/stretchr/testify/assert"
-	{{ end }}
-
+	"testing"{{ if .DbTypes }}
+	"github.com/stretchr/testify/assert"{{ end }}
 	log "github.com/sirupsen/logrus"
 )
 

@@ -13,9 +13,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-
-  {{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}
-	svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"{{ end }}
+  {{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}
 	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
 	gomeetService "{{ .GomeetPkg }}/utils/service"{{ end }}
 

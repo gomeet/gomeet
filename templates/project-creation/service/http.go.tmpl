@@ -20,7 +20,7 @@ type {{ lowerPascalCase .ShortName }}HTTPController struct{
 	jwtMiddleware *jwtmiddleware.JWTMiddleware `json:"-"`
 }
 
-func (s wwwHTTPController) RegisterRoutes(mux *mux.Router) {
+func (s {{ lowerPascalCase .ShortName }}HTTPController) RegisterRoutes(mux *mux.Router) {
 	// prometheus instrument handler
 	instrf := prometheus.InstrumentHandlerFunc
 
@@ -46,8 +46,8 @@ func (s wwwHTTPController) RegisterRoutes(mux *mux.Router) {
 
 }
 
-func (s wwwHTTPController) Root(w http.ResponseWriter, r *http.Request) {
-	log.Info("wwwHTTPController.Root")
+func (s {{ lowerPascalCase .ShortName }}HTTPController) Root(w http.ResponseWriter, r *http.Request) {
+	log.Info("{{ lowerPascalCase .ShortName }}HTTPController.Root")
 	fmt.Fprintf(w, "%s-%s OK", name, s.version)
 }
 
