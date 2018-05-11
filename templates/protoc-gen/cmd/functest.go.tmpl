@@ -201,7 +201,7 @@ func runFunctionalTests() {
 		{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
 		{{ else }}{{ lowerPascalCase . }}DSN := {{ lowerPascalCase . }}DataSourceName
 		{{ end }}
-		{{ lowerPascalCase . }}DB, err := gorm.Open("{{ lower . }}", {{ lowerPascalCase . }}DSN)
+		{{ lowerPascalCase . }}DB, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", {{ lowerPascalCase . }}DSN)
 		if err != nil {
 			fmt.Printf("Database connection error (DSN \"%s\"): %v\n", {{ lowerPascalCase . }}DSN, err)
 			os.Exit(1)

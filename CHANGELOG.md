@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.8 - 2018-05-11
+
+- Improved generated unit tests
+- Improved generated makefile
+- BUG FIX sqlite declaration
+- Improved generated httpController
+
 ## 0.0.7 - 2018-04-30
 
 - Update grpc dependency

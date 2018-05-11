@@ -183,6 +183,20 @@ func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.proto
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
+func (p Project) GoCGOEnabled() int {
+	ret := 0
+	if len(p.DbTypes()) > 0 {
+		for _, dbT := range p.DbTypes() {
+			if dbT == "sqlite" {
+				ret = 1
+				break
+			}
+		}
+	}
+
+	return ret
+}
+
 func (p Project) HasDb() bool {
 	if len(p.DbTypes()) > 0 {
 		return true
@@ -618,7 +632,6 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	srv.addFile("server.go", "protoc-gen/server/server.go.tmpl", nil, false)
 	svc := f.addFolder("service")
 	svc.addFile("grpc.go", "protoc-gen/service/grpc.go.tmpl", nil, false)
-	svc.addFile("http.go", "protoc-gen/service/http.go.tmpl", nil, false)
 	svc.addFile("service.go", "protoc-gen/service/service.go.tmpl", nil, false)
 	svc.addFile("service_test.go", "protoc-gen/service/service_test.go.tmpl", nil, false)
 	svc.addFile("init_subservice_clients.go", "protoc-gen/service/init_subservice_clients.go.tmpl", nil, false)

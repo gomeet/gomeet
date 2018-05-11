@@ -7,8 +7,8 @@ package service
 {{ else }}
 import (
 	{{ if gt (len .DbTypes) 1 }}"errors"{{ end }}
-	"fmt"
-	"strings"
+	{{ range .DbTypes }}{{ if eq . "mysql" }}"fmt"
+	"strings"{{ end }}{{ end }}
 
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
@@ -36,7 +36,7 @@ func (*gormLogger) Print(v ...interface{}) {
 		{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
 		{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
 		{{ end }}
-		{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}", dsn)
+    {{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"DSN": s.{{ lowerPascalCase . }}DataSourceName,
@@ -68,7 +68,7 @@ func (*gormLogger) Print(v ...interface{}) {
 				{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
 				{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
 				{{ end }}
-				{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lowerPascalCase . }}", dsn)
+				{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lowerPascalCase . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 				if err != nil {
 					log.WithFields(log.Fields{
 						"DSN": s.{{ lowerPascalCase . }}DataSourceName,
