@@ -35,7 +35,7 @@ DOCKER_CONSOLE_CONTAINER = console-$(NAME)
 
 {{ $envPrefixes := dict "DOCKER_ENV" "" "TEST_ENV" "_test" }}
 {{ range $envPrefix, $dbSuffixName := $envPrefixes }}
-{{ upperSnakeCase $envPrefix }}_JWT_SECRET?=KWJx86/dOuDsNWW6vMYhi0jElZP0fs6S/38e8T8pCCY=
+{{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET?=KWJx86/dOuDsNWW6vMYhi0jElZP0fs6S/38e8T8pCCY=
 {{ range $.DbTypes -}}{{ if eq . "mysql" -}}
 {{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME?=gomeet
 {{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD?=toto{{ lower . }}
@@ -482,7 +482,7 @@ tools-upgrade: tools
 .PHONY: test-func
 test-func: build
 	@echo "$(NAME): test-func task"
-	@_build/$(NAME) functest $(DEBUG_TEST_FLAG) -e --jwt-secret=$(TEST_ENV_JWT_SECRET) --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-migrate --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@_build/$(NAME) functest $(DEBUG_TEST_FLAG) -e --jwt-secret=$(TEST_ENV_{{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET) --random-port{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-migrate --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test-unit
 test-unit:
