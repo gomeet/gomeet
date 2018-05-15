@@ -39,6 +39,7 @@ func (*Logger) Print(v ...interface{}) {
 	if err != nil {
 		return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
 	}
+	defer db.Close()
 	db.SetLogger(&Logger{})
 	db.LogMode(true)
 	mdls := {{ lowerPascalCase . }}Models()
@@ -66,6 +67,7 @@ func Flush(dsn string) error {
 	if err != nil {
 		return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
 	}
+	defer db.Close()
 	db.SetLogger(&Logger{})
 	db.LogMode(true)
 	mdls := {{ lowerPascalCase . }}Models()
@@ -103,6 +105,7 @@ func Flush(dsn string) error {
 			if err != nil {
 				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
 			}
+			defer db.Close()
 			db.SetLogger(&Logger{})
 			db.LogMode(true)
 			mdls := {{ lowerPascalCase . }}Models()
@@ -137,6 +140,7 @@ func Flush(dsn string) error {
 			if err != nil {
 				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
 			}
+			defer db.Close()
 			db.SetLogger(&Logger{})
 			db.LogMode(true)
 			mdls := {{ lowerPascalCase . }}Models()

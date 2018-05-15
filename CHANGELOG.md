@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.9 - 2018-05-15
+
+- BUG FIX and improvements
+
 ## 0.0.8 - 2018-05-11
 
 - Improved generated unit tests
