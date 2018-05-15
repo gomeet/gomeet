@@ -176,6 +176,7 @@ func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 
 func (p Project) PrintTreeFolder()                              { p.folder.print() }
 func (p Project) GomeetPkg() string                             { return helpers.GomeetPkg() }
+func (p Project) GomeetRetoolRev() string                       { return helpers.GomeetRetoolRev }
 func (p Project) IsGogoGen() bool                               { return p.isGogoGen }
 func (p Project) GomeetGeneratorUrl() string                    { return "https://" + p.GomeetPkg() }
 func (p Project) Version() string                               { return p.version }

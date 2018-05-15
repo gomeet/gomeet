@@ -9,12 +9,11 @@ import (
 	"io/ioutil"
 	"log"
 
-	"golang.org/x/sync/errgroup"
-
 	"github.com/golang/dep"
+	"github.com/golang/dep/gps"
 	fb "github.com/golang/dep/internal/feedback"
-	"github.com/golang/dep/internal/gps"
 	"github.com/golang/dep/internal/importers"
+	"golang.org/x/sync/errgroup"
 )
 
 // rootAnalyzer supplies manifest/lock data from both dep and external tool's
@@ -26,10 +25,10 @@ type rootAnalyzer struct {
 	skipTools  bool
 	ctx        *dep.Ctx
 	sm         gps.SourceManager
-	directDeps map[string]bool
+	directDeps map[gps.ProjectRoot]bool
 }
 
-func newRootAnalyzer(skipTools bool, ctx *dep.Ctx, directDeps map[string]bool, sm gps.SourceManager) *rootAnalyzer {
+func newRootAnalyzer(skipTools bool, ctx *dep.Ctx, directDeps map[gps.ProjectRoot]bool, sm gps.SourceManager) *rootAnalyzer {
 	return &rootAnalyzer{
 		skipTools:  skipTools,
 		ctx:        ctx,
@@ -40,10 +39,7 @@ func newRootAnalyzer(skipTools bool, ctx *dep.Ctx, directDeps map[string]bool, s
 
 func (a *rootAnalyzer) InitializeRootManifestAndLock(dir string, pr gps.ProjectRoot) (rootM *dep.Manifest, rootL *dep.Lock, err error) {
 	if !a.skipTools {
-		rootM, rootL, err = a.importManifestAndLock(dir, pr, false)
-		if err != nil {
-			return
-		}
+		rootM, rootL = a.importManifestAndLock(dir, pr, false)
 	}
 
 	if rootM == nil {
@@ -76,7 +72,7 @@ func (a *rootAnalyzer) cacheDeps(pr gps.ProjectRoot) error {
 		return nil
 	}
 
-	deps := make(chan string)
+	deps := make(chan gps.ProjectRoot)
 
 	for i := 0; i < concurrency; i++ {
 		g.Go(func() error {
@@ -106,7 +102,7 @@ func (a *rootAnalyzer) cacheDeps(pr gps.ProjectRoot) error {
 	return nil
 }
 
-func (a *rootAnalyzer) importManifestAndLock(dir string, pr gps.ProjectRoot, suppressLogs bool) (*dep.Manifest, *dep.Lock, error) {
+func (a *rootAnalyzer) importManifestAndLock(dir string, pr gps.ProjectRoot, suppressLogs bool) (*dep.Manifest, *dep.Lock) {
 	logger := a.ctx.Err
 	if suppressLogs {
 		logger = log.New(ioutil.Discard, "", 0)
@@ -117,21 +113,25 @@ func (a *rootAnalyzer) importManifestAndLock(dir string, pr gps.ProjectRoot, sup
 			a.ctx.Err.Printf("Importing configuration from %s. These are only initial constraints, and are further refined during the solve process.", i.Name())
 			m, l, err := i.Import(dir, pr)
 			if err != nil {
-				return nil, nil, err
+				a.ctx.Err.Printf(
+					"Warning: Encountered an unrecoverable error while trying to import %s config from %q: %s",
+					i.Name(), dir, err,
+				)
+				break
 			}
 			a.removeTransitiveDependencies(m)
-			return m, l, err
+			return m, l
 		}
 	}
 
 	var emptyManifest = dep.NewManifest()
 
-	return emptyManifest, nil, nil
+	return emptyManifest, nil
 }
 
 func (a *rootAnalyzer) removeTransitiveDependencies(m *dep.Manifest) {
 	for pr := range m.Constraints {
-		if _, isDirect := a.directDeps[string(pr)]; !isDirect {
+		if _, isDirect := a.directDeps[pr]; !isDirect {
 			delete(m.Constraints, pr)
 		}
 	}
@@ -151,14 +151,14 @@ func (a *rootAnalyzer) DeriveManifestAndLock(dir string, pr gps.ProjectRoot) (gp
 		// The assignment back to an interface prevents interface-based nil checks from failing later
 		var manifest gps.Manifest = gps.SimpleManifest{}
 		var lock gps.Lock
-		im, il, err := a.importManifestAndLock(dir, pr, true)
+		im, il := a.importManifestAndLock(dir, pr, true)
 		if im != nil {
 			manifest = im
 		}
 		if il != nil {
 			lock = il
 		}
-		return manifest, lock, err
+		return manifest, lock, nil
 	}
 
 	return gps.SimpleManifest{}, nil, nil
@@ -167,11 +167,14 @@ func (a *rootAnalyzer) DeriveManifestAndLock(dir string, pr gps.ProjectRoot) (gp
 func (a *rootAnalyzer) FinalizeRootManifestAndLock(m *dep.Manifest, l *dep.Lock, ol dep.Lock) {
 	// Iterate through the new projects in solved lock and add them to manifest
 	// if they are direct deps and log feedback for all the new projects.
+	diff := gps.DiffLocks(&ol, l)
+	bi := fb.NewBrokenImportFeedback(diff)
+	bi.LogFeedback(a.ctx.Err)
 	for _, y := range l.Projects() {
 		var f *fb.ConstraintFeedback
 		pr := y.Ident().ProjectRoot
 		// New constraints: in new lock and dir dep but not in manifest
-		if _, ok := a.directDeps[string(pr)]; ok {
+		if _, ok := a.directDeps[pr]; ok {
 			if _, ok := m.Constraints[pr]; !ok {
 				pp := getProjectPropertiesFromVersion(y.Version())
 				if pp.Constraint != nil {

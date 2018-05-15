@@ -2681,6 +2681,49 @@ func (p *plugin) generateDateRules(variableName string, r *gomeetfaker.FieldFake
 		} else {
 			p.P("// ", fieldName, " ", af, " ", p.fakerPkg.Use(), `.Date().Backward(...) // skipped [(gomeetfaker.field).date.backward = ""]`)
 		}
+	case *gomeetfaker.DateRules_Now:
+		params := date.GetNow()
+		format := date.GetFormat()
+		if format == "" {
+			format = "2006-01-02 15:04:05"
+		}
+		if params {
+			fT := *(field.Type)
+			switch fT {
+			case descriptor.FieldDescriptorProto_TYPE_STRING:
+				if field.IsRepeated() {
+					p.P(fieldVariableName, " = append(", fieldVariableName, ", ", p.timePkg.Use(), `.Now().Format("`, format, `"))`)
+				} else {
+					p.P(variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `")`)
+				}
+			case descriptor.FieldDescriptorProto_TYPE_BYTES:
+				if field.IsRepeated() {
+					p.P(fieldVariableName, " = append(", fieldVariableName, ", []byte(", p.timePkg.Use(), `.Now().Format("`, format, `")))`)
+				} else {
+					p.P(variableName, " ", af, " []byte(", p.timePkg.Use(), `.Now().Format("`, format, `"))`)
+				}
+			case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+				tName := field.GetTypeName()
+				switch tName {
+				case ".google.protobuf.Timestamp":
+					p.P("if t, err := ", p.pbTypesPkg.Use(), ".TimestampProto(", p.timePkg.Use(), ".Now()); err == nil {")
+					p.In()
+					if field.IsRepeated() {
+						p.P(fieldVariableName, " = append(", fieldVariableName, ", t)")
+					} else {
+						p.P(variableName, " ", af, " t")
+					}
+					p.Out()
+					p.P("}")
+				default:
+					p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // bad type conversion unknow message type `, tName)
+				}
+			default:
+				p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // bad type conversion`, fmt.Sprintf("%s", fT))
+			}
+		} else {
+			p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // skipped [(gomeetfaker.field).date.now = false]`)
+		}
 	default:
 		p.P("// ", variableName, " ", af, " ", p.fakerPkg.Use(), ".Date().Unknow() // bad type conversion", fmt.Sprintf("%T", rr))
 	}
@@ -3664,6 +3707,49 @@ func (p *plugin) generateTimeRules(variableName string, r *gomeetfaker.FieldFake
 			}
 		} else {
 			p.P("// ", fieldName, " ", af, " ", p.fakerPkg.Use(), `.Time().Backward(...) // skipped [(gomeetfaker.field).time.backward = ""]`)
+		}
+	case *gomeetfaker.TimeRules_Now:
+		params := ti.GetNow()
+		format := ti.GetFormat()
+		if format == "" {
+			format = "2006-01-02 15:04:05"
+		}
+		if params {
+			fT := *(field.Type)
+			switch fT {
+			case descriptor.FieldDescriptorProto_TYPE_STRING:
+				if field.IsRepeated() {
+					p.P(fieldVariableName, " = append(", fieldVariableName, ", ", p.timePkg.Use(), `.Now().Format("`, format, `"))`)
+				} else {
+					p.P(variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `")`)
+				}
+			case descriptor.FieldDescriptorProto_TYPE_BYTES:
+				if field.IsRepeated() {
+					p.P(fieldVariableName, " = append(", fieldVariableName, ", []byte(", p.timePkg.Use(), `.Now().Format("`, format, `")))`)
+				} else {
+					p.P(variableName, " ", af, " []byte(", p.timePkg.Use(), `.Now().Format("`, format, `"))`)
+				}
+			case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+				tName := field.GetTypeName()
+				switch tName {
+				case ".google.protobuf.Timestamp":
+					p.P("if t, err := ", p.pbTypesPkg.Use(), ".TimestampProto(", p.timePkg.Use(), ".Now()); err == nil {")
+					p.In()
+					if field.IsRepeated() {
+						p.P(fieldVariableName, " = append(", fieldVariableName, ", t)")
+					} else {
+						p.P(variableName, " ", af, " t")
+					}
+					p.Out()
+					p.P("}")
+				default:
+					p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // bad type conversion unknow message type `, tName)
+				}
+			default:
+				p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // bad type conversion`, fmt.Sprintf("%s", fT))
+			}
+		} else {
+			p.P("// ", variableName, " ", af, " ", p.timePkg.Use(), `.Now().Format("`, format, `") // skipped [(gomeetfaker.field).date.now = false]`)
 		}
 	default:
 		p.P("// ", variableName, " ", af, " ", p.fakerPkg.Use(), ".Time().Unknow() // bad type conversion", fmt.Sprintf("%T", rr))
