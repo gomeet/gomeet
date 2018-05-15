@@ -293,7 +293,7 @@ func projectCreationGopkgTomlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1526310414, 0)}
+	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1526376283, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -333,7 +333,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 31685, mode: os.FileMode(420), modTime: time.Unix(1526306047, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 31685, mode: os.FileMode(420), modTime: time.Unix(1526376283, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1853,7 +1853,7 @@ func projectCreationToolsJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2560, mode: os.FileMode(420), modTime: time.Unix(1526310490, 0)}
+	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2560, mode: os.FileMode(420), modTime: time.Unix(1526376636, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2333,7 +2333,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 14293, mode: os.FileMode(420), modTime: time.Unix(1526056140, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 14293, mode: os.FileMode(420), modTime: time.Unix(1526376283, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2813,7 +2813,7 @@ func protocGenModelsMigrate_schemaGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5161, mode: os.FileMode(420), modTime: time.Unix(1526050320, 0)}
+	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5161, mode: os.FileMode(420), modTime: time.Unix(1526376283, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
