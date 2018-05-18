@@ -229,6 +229,25 @@ func parseSubService(s string) []string {
 	return res
 }
 
+func (p Project) CountSubServices() int {
+	return len(p.SubServices)
+}
+
+func (p Project) CountSubServicesWithDbTypes() int {
+	r := 0
+	if len(p.SubServices) > 0 && p.HasDb() {
+		for _, ss := range p.SubServices {
+			if ss.HasDb() {
+				r++
+			}
+		}
+	}
+	if len(p.DbTypes()) > 0 {
+		r++
+	}
+	return r
+}
+
 func (p *Project) SubServicesMonolithHelp() string {
 	ssStrings := []string{}
 	for _, ss := range p.SubServices {
