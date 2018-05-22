@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -249,8 +250,15 @@ func (p Project) CountSubServicesWithDbTypes() int {
 }
 
 func (p *Project) SubServicesMonolithHelp() string {
+	servicesKeys := []string{}
+	for k := range p.SubServices {
+		servicesKeys = append(servicesKeys, k)
+	}
+	sort.Strings(servicesKeys)
+
 	ssStrings := []string{}
-	for _, ss := range p.SubServices {
+	for _, k := range servicesKeys {
+		ss := p.SubServices[k]
 		ssString := fmt.Sprintf(
 			"  - if \"svc-%s-address\" is empty or is equal to \"inprocgrpc\" the",
 			tmplHelpers.LowerKebabCase(ss.ShortName()),
@@ -310,9 +318,17 @@ func (p *Project) SubServicesMonolithHelp() string {
 	}
 	return strings.Join(ssStrings, "\n")
 }
+
 func (p *Project) SubServicesDef() string {
+	servicesKeys := []string{}
+	for k := range p.SubServices {
+		servicesKeys = append(servicesKeys, k)
+	}
+	sort.Strings(servicesKeys)
+
 	ssStrings := []string{}
-	for _, ss := range p.SubServices {
+	for _, k := range servicesKeys {
+		ss := p.SubServices[k]
 		ssString := fmt.Sprintf(
 			"%s[version@%s]",
 			ss.GoPkg(),

@@ -1195,6 +1195,7 @@ func httpMetricsRouteMap(name string, protoFiles []*descriptor.FileDescriptorPro
 	for k, _ := range m {
 		keys = append(keys, k)
 	}
+	sort.Strings(keys)
 	sort.Sort(byPathLengthDesc(keys))
 
 	// sort m keys by count of "/" desc /foo/bar/plop before /foo/bar before /foo
