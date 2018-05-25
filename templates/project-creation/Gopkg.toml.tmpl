@@ -72,7 +72,7 @@
   branch = "master"
   name = "golang.org/x/net"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "google.golang.org/genproto"
 
@@ -111,9 +111,13 @@
 
 {{ if .IsGogoGen }}[[constraint]]
   name = "github.com/gogo/protobuf"
-  version = "1.0.0"
-{{ end }}
+  version = "v1.0.0"
+
 [[constraint]]
+  name = "github.com/gogo/googleapis"
+  version = "v1.0.0"
+
+{{ end }}[[constraint]]
   branch = "master"
   name = "github.com/gomeet/gomeet"
 

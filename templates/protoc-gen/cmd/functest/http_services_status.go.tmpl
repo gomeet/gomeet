@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/golang/protobuf/jsonpb"
+	"github.com/{{ if .IsGogoGen }}gogo{{ else }}golang{{ end }}/protobuf/jsonpb"
 
 {{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
 )

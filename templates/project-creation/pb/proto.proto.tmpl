@@ -11,10 +11,22 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "github.com/gomeet/go-proto-gomeetfaker/gomeetfaker.proto";
 {{ if .IsGogoGen }}import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+// Enable equal generation
 option (gogoproto.equal_all) = true;
+// Enable unit tests generation
 option (gogoproto.populate_all) = true;
 option (gogoproto.testgen_all) = true;
-option (gogoproto.goproto_registration) = true; // for use grpc-gateway with gogo's generator the option goproto_registration is needed
+// WARNING: The following is required for gRPC
+// Enable custom Marshal method.
+option (gogoproto.marshaler_all) = true;
+// Enable custom Unmarshal method.
+option (gogoproto.unmarshaler_all) = true;
+// Enable custom Size method (Required by Marshal and Unmarshal).
+option (gogoproto.sizer_all) = true;
+// Enable registration with golang/protobuf for the grpc-gateway.
+option (gogoproto.goproto_registration) = true;
+// Enable generation of XXX_MessageName methods for grpc-go/status only on master branch on GoPkg.toml.
+//option (gogoproto.messagename_all) = true;
 {{ end }}
 service {{ upperPascalCase .ShortName }} {
   // Version method receives no paramaters and returns a version message.
