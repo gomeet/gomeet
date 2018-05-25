@@ -235,8 +235,7 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 "${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \
-				{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
+				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
 				--grpchan_out="${GOPATH}/src" \
 				--govalidators_out="gogoimport=false:${GOPATH}/src" \
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
