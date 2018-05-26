@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Nothing
+- BUG FIX and improvements
 
 ## 0.0.10 - 2018-05-15
 
-- Nothing
+- BUG FIX and improvements
 
 ## 0.0.9 - 2018-05-15
 
