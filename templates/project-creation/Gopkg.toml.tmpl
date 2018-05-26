@@ -19,7 +19,18 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
-[[constraint]]
+[prune]
+  unused-packages = true
+  non-go = true
+  go-tests = true
+{{ range .SubServices }}
+  [[prune.project]]
+    name = "{{ .GoPkg }}"
+    unused-packages = false
+    non-go = false
+    go-tests = false
+
+{{ end }}[[constraint]]
   #branch = "master"
   name = "github.com/sirupsen/logrus"
   version = "1.0.3"
@@ -45,10 +56,6 @@
   name = "github.com/grpc-ecosystem/grpc-gateway"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/inconshreveable/mousetrap"
-
-[[constraint]]
   #branch = "master"
   name = "github.com/spf13/cobra"
   version = "0.0.2"
@@ -65,7 +72,7 @@
   branch = "master"
   name = "golang.org/x/net"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "google.golang.org/genproto"
 
@@ -80,10 +87,6 @@
 [[constraint]]
   name = "github.com/stretchr/testify"
   version = "v1.2.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/grpc-ecosystem/go-grpc-middleware"
 
 [[constraint]]
   name = "github.com/dgrijalva/jwt-go"
@@ -108,9 +111,13 @@
 
 {{ if .IsGogoGen }}[[constraint]]
   name = "github.com/gogo/protobuf"
-  version = "1.0.0"
-{{ end }}
+  version = "v1.0.0"
+
 [[constraint]]
+  name = "github.com/gogo/googleapis"
+  version = "v1.0.0"
+
+{{ end }}[[constraint]]
   branch = "master"
   name = "github.com/gomeet/gomeet"
 
@@ -118,16 +125,11 @@
   branch = "master"
   name = "github.com/jinzhu/gorm"
 {{ end }}
-# SUB-SERVICES DEFINITION : dep
-#[[constraint]]
-  #branch = "develop"
-  #name = "{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}"
-  ##version = "{{ "{{SubServiceVersion}}" }}"
 
 {{ range .SubServices }}[[constraint]]
   branch = "develop"
   name = "{{ .GoPkg }}"
   #version = "{{ .Version }}"
 
-{{ end }}# END SUB-SERVICES DEFINITION : dep
+{{ end }}
 

@@ -25,13 +25,13 @@ func testServicesStatusReponse(
 
 	var expected []*{{ .GoProtoPkgAlias }}.ServiceStatus
 	// SUB-SERVICES DEFINITION : test-functest
-	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{svc.Name, svc.Version, {{ .GoProtoPkgAlias }}.ServiceStatus_OK, ""})
-	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}, "unknow", {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
+	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{Name: svc.Name, Version: svc.Version, Status: {{ .GoProtoPkgAlias }}.ServiceStatus_OK, EMsg: ""})
+	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{Name: "{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}, Version:  "unknow", Status:  {{ .GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, EMsg:  ""})
 	{{ range .SubServices }}
 	if config.Svc{{ upperPascalCase .ShortName }}Address == "inprocgrpc" {
-		expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "inprocgrpc", {{ $.GoProtoPkgAlias }}.ServiceStatus_OK, ""})
+		expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{Name: "{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", Version:  "inprocgrpc", Status:  {{ $.GoProtoPkgAlias }}.ServiceStatus_OK, EMsg:  ""})
 	} else {
-		expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow", {{ $.GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, ""})
+		expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{Name: "{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", Version:  "unknow", Status:  {{ $.GoProtoPkgAlias }}.ServiceStatus_UNAVAILABLE, EMsg:  ""})
 	}
 	{{ end }} // END SUB-SERVICES DEFINITION : test-functest
 

@@ -14,6 +14,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
@@ -51,6 +52,7 @@ func main() {
 		dbTypes         string
 		extraServeFlags string
 	)
+	useGogoImport := false
 	if parameter := g.Request.GetParameter(); parameter != "" {
 		for _, param := range strings.Split(parameter, ";") {
 			parts := strings.Split(param, "=")
@@ -69,6 +71,11 @@ func main() {
 				projectPkg = parts[1]
 			case "extra_serve_flags":
 				extraServeFlags = parts[1]
+			case "gogoimport":
+				useGogoImport, err = strconv.ParseBool(parts[1])
+				if err != nil {
+					g.Error(err, "parsing gogoimport option")
+				}
 			default:
 				log.Printf("warning: unknown parameter: %q", param)
 			}
@@ -98,6 +105,8 @@ func main() {
 			g.Error(err, "bad extra_serve_flags parameter")
 		}
 	}
+
+	p.UseGogoGen(useGogoImport)
 
 	if err := p.GenFromProto(g.Request); err != nil {
 		g.Error(err, "project template generation fail")

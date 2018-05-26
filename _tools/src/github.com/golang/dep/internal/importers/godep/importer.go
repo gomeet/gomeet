@@ -10,9 +10,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/golang/dep"
-	"github.com/golang/dep/internal/gps"
+	"github.com/golang/dep/gps"
 	"github.com/golang/dep/internal/importers/base"
 	"github.com/pkg/errors"
 )
@@ -31,7 +32,8 @@ func NewImporter(logger *log.Logger, verbose bool, sm gps.SourceManager) *Import
 }
 
 type godepJSON struct {
-	Imports []godepPackage `json:"Deps"`
+	Required []string       `json:"Packages"`
+	Imports  []godepPackage `json:"Deps"`
 }
 
 type godepPackage struct {
@@ -62,7 +64,8 @@ func (g *Importer) Import(dir string, pr gps.ProjectRoot) (*dep.Manifest, *dep.L
 		return nil, nil, err
 	}
 
-	return g.convert(pr)
+	m, l := g.convert(pr)
+	return m, l, nil
 }
 
 func (g *Importer) load(projectDir string) error {
@@ -83,20 +86,24 @@ func (g *Importer) load(projectDir string) error {
 	return nil
 }
 
-func (g *Importer) convert(pr gps.ProjectRoot) (*dep.Manifest, *dep.Lock, error) {
+func (g *Importer) convert(pr gps.ProjectRoot) (*dep.Manifest, *dep.Lock) {
 	g.Logger.Println("Converting from Godeps.json ...")
 
 	packages := make([]base.ImportedPackage, 0, len(g.json.Imports))
 	for _, pkg := range g.json.Imports {
 		// Validate
 		if pkg.ImportPath == "" {
-			err := errors.New("invalid godep configuration, ImportPath is required")
-			return nil, nil, err
+			g.Logger.Println(
+				"  Warning: Skipping project. Invalid godep configuration, ImportPath is required",
+			)
+			continue
 		}
 
 		if pkg.Rev == "" {
-			err := errors.New("invalid godep configuration, Rev is required")
-			return nil, nil, err
+			g.Logger.Printf(
+				"  Warning: Invalid godep configuration, Rev not found for ImportPath %q\n",
+				pkg.ImportPath,
+			)
 		}
 
 		ip := base.ImportedPackage{
@@ -107,10 +114,15 @@ func (g *Importer) convert(pr gps.ProjectRoot) (*dep.Manifest, *dep.Lock, error)
 		packages = append(packages, ip)
 	}
 
-	err := g.ImportPackages(packages, true)
-	if err != nil {
-		return nil, nil, err
+	g.ImportPackages(packages, true)
+	required := make([]string, 0, len(g.json.Required))
+	for _, req := range g.json.Required {
+		if !strings.HasPrefix(req, ".") { // ignore project packages
+			required = append(required, req)
+		}
 	}
-
-	return g.Manifest, g.Lock, nil
+	if len(required) > 0 {
+		g.Manifest.Required = required
+	}
+	return g.Manifest, g.Lock
 }

@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 
@@ -176,6 +177,7 @@ func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 
 func (p Project) PrintTreeFolder()                              { p.folder.print() }
 func (p Project) GomeetPkg() string                             { return helpers.GomeetPkg() }
+func (p Project) GomeetRetoolRev() string                       { return helpers.GomeetRetoolRev }
 func (p Project) IsGogoGen() bool                               { return p.isGogoGen }
 func (p Project) GomeetGeneratorUrl() string                    { return "https://" + p.GomeetPkg() }
 func (p Project) Version() string                               { return p.version }
@@ -228,9 +230,35 @@ func parseSubService(s string) []string {
 	return res
 }
 
+func (p Project) CountSubServices() int {
+	return len(p.SubServices)
+}
+
+func (p Project) CountSubServicesWithDbTypes() int {
+	r := 0
+	if len(p.SubServices) > 0 && p.HasDb() {
+		for _, ss := range p.SubServices {
+			if ss.HasDb() {
+				r++
+			}
+		}
+	}
+	if len(p.DbTypes()) > 0 {
+		r++
+	}
+	return r
+}
+
 func (p *Project) SubServicesMonolithHelp() string {
+	servicesKeys := []string{}
+	for k := range p.SubServices {
+		servicesKeys = append(servicesKeys, k)
+	}
+	sort.Strings(servicesKeys)
+
 	ssStrings := []string{}
-	for _, ss := range p.SubServices {
+	for _, k := range servicesKeys {
+		ss := p.SubServices[k]
 		ssString := fmt.Sprintf(
 			"  - if \"svc-%s-address\" is empty or is equal to \"inprocgrpc\" the",
 			tmplHelpers.LowerKebabCase(ss.ShortName()),
@@ -290,9 +318,17 @@ func (p *Project) SubServicesMonolithHelp() string {
 	}
 	return strings.Join(ssStrings, "\n")
 }
+
 func (p *Project) SubServicesDef() string {
+	servicesKeys := []string{}
+	for k := range p.SubServices {
+		servicesKeys = append(servicesKeys, k)
+	}
+	sort.Strings(servicesKeys)
+
 	ssStrings := []string{}
-	for _, ss := range p.SubServices {
+	for _, k := range servicesKeys {
+		ss := p.SubServices[k]
 		ssString := fmt.Sprintf(
 			"%s[version@%s]",
 			ss.GoPkg(),

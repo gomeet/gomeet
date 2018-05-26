@@ -50,24 +50,24 @@ func serviceStatusSuccessHandler(ver *{{ .GoProtoPkgAlias }}.VersionResponse) *{
 func svcCurrentStatus(s *{{ lowerPascalCase .ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ .GoProtoPkgAlias }}.ServiceStatus {
 	ver, err := s.Version(ctx, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
 	if err != nil {
-		return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{name, version}, err, "Version call error")
+		return serviceStatusErrorHandler(ctx, &{{ .GoProtoPkgAlias }}.VersionResponse{Name: name, Version: version}, err, "Version call error")
 	}
-	return serviceStatusSuccessHandler(&{{ .GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
+	return serviceStatusSuccessHandler(&{{ .GoProtoPkgAlias }}.VersionResponse{Name: ver.GetName(), Version: ver.GetVersion()})
 }
 
 // SUB-SERVICES DEFINITION : func-status
 {{ range .SubServices }}func svc{{ upperPascalCase .ShortName }}Status(s *{{ lowerPascalCase $.ShortName }}Server, ctx context.Context, svcCtx context.Context) *{{ $.GoProtoPkgAlias }}.ServiceStatus {
 	if err := s.init{{ upperPascalCase .ShortName }}Client(); err != nil {
-		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Init client error")
+		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{Name: "{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", Version: "unknow"}, err, "Init client error")
 	}
 	subSvcCtx, cancel := context.WithTimeout(svcCtx, time.Duration(grpcTimeout)*time.Second)
 	defer cancel()
 
 	ver, err := s.svc{{ upperPascalCase .ShortName }}GrpcClient.Version(subSvcCtx, &svc{{ upperPascalCase .ShortName }}Pb.EmptyMessage{})
 	if err != nil {
-		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", "unknow"}, err, "Version call error")
+		return serviceStatusErrorHandler(ctx, &{{ $.GoProtoPkgAlias }}.VersionResponse{Name: "{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", Version: "unknow"}, err, "Version call error")
 	}
-	return serviceStatusSuccessHandler(&{{ $.GoProtoPkgAlias }}.VersionResponse{ver.GetName(), ver.GetVersion()})
+	return serviceStatusSuccessHandler(&{{ $.GoProtoPkgAlias }}.VersionResponse{Name: ver.GetName(), Version: ver.GetVersion()})
 }
 {{ end }}
 // END SUB-SERVICES DEFINITION : func-status

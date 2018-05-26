@@ -6,13 +6,12 @@ package service
 import (
 	"flag"
 	"fmt"
-	"os"
+	"os"{{ if .CountSubServicesWithDbTypes }}
+	"sync"{{ end }}
 	"testing"
+	{{ if .HasDb }}"errors"
 
-	{{ if .HasDb }}
-	"github.com/stretchr/testify/assert"
-	{{ end }}
-
+	"github.com/stretchr/testify/assert"{{ end }}
 	"github.com/fullstorydev/grpchan"
 	"github.com/fullstorydev/grpchan/inprocgrpc"
 	log "github.com/sirupsen/logrus"
@@ -122,14 +121,53 @@ func init() {
 
 {{ if .HasDb }}
 func flushAllDbTest(t *testing.T) {
-{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t)
+{{ if .CountSubServicesWithDbTypes }}
+	var wg sync.WaitGroup
+  wg.Add({{ .CountSubServicesWithDbTypes }})
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}	go func() {
+		defer wg.Done()
+		flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t)
+	}()
+{{ end }}
+{{- end }}
+	{{ if .DbTypes }}go func() {
+		defer wg.Done()
+		flushDbTest(t)
+	}()
+{{ end }}
+	wg.Wait()
+{{ else }}
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}	flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t)
 {{ end }}
 {{- end }}
 	{{ if .DbTypes }}flushDbTest(t){{ end }}
+{{ end }}
+}
+func migrateAllDbTest() error {
+{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}	if err := migrateDbSvc{{ upperPascalCase $ss.ShortName }}Test(); err != nil {
+		return err
+	}
+{{ end }}
+{{- end }}
+{{ if .DbTypes }}	if err := migrateDbTest(); err != nil {
+		return err
+	}{{ end }}
+	return nil
 }
 {{ end }}
 
 {{ if .DbTypes }}
+func migrateDbTest() error {
+	var err error
+	{{ range .DbTypes }}
+	if {{ lowerPascalCase . }}DSN == "" {
+		return errors.New("{{ lowerPascalCase . }}DSN is empty")
+	}
+	{{ if eq (len $.DbTypes) 1 }}err = models.MigrateSchema({{ lowerPascalCase . }}DSN)
+	{{ else }}err = models.MigrateSchema("{{ lower . }}", {{ lowerPascalCase . }}DSN){{ end }}
+	return err
+	{{ end }}
+}
 func flushDbTest(t *testing.T) {
 	var err error
 	{{ range .DbTypes }}
@@ -147,14 +185,22 @@ func flushDbTest(t *testing.T) {
 {{ end }}
 
 {{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}
+func migrateDbSvc{{ upperPascalCase $ss.ShortName }}Test() error {
+	var err error
+	{{ range $ss.DbTypes }}
+	if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN == "" {
+		return errors.New("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN is empty")
+	}
+	{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN)
+	{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN){{ end }}
+	return err
+	{{ end }}
+}
+
 func flushDbSvc{{ upperPascalCase $ss.ShortName }}Test(t *testing.T) {
 	var err error
 	{{ range $ss.DbTypes }}
 	assert.NotEmpty(t, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN is empty")
-
-	{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN)
-	{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN){{ end }}
-	assert.Nil(t, err, fmt.Sprintf("{{ lowerKebabCase $ss.Name }} - {{ lower . }} database migration fail - dsn: %s", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN))
 
 	{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN)
 	{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN){{ end }}
@@ -197,7 +243,14 @@ func TestMain(m *testing.M) {
 		fmt.Printf("Test fail : %s\n", err.Error())
 		os.Exit(1)
 	}
+
 	cli = gCli.GetGRPCClient()
+
+{{ if .HasDb }}if err := migrateAllDbTest(); err != nil {
+		fmt.Printf("Test fail : %s\n", err.Error())
+		os.Exit(1)
+	}{{ end }}
+
 	r := m.Run()
 
 	os.Exit(r)

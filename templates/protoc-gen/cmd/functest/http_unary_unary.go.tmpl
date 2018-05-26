@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"encoding/json"
 
-	"github.com/golang/protobuf/jsonpb"
+	"github.com/{{ if .IsGogoGen }}gogo{{ else }}golang{{ end }}/protobuf/jsonpb"
 
 {{ protoMessagesNeededImports false .GrpcMethod.Method.GetOutputType }}
 )

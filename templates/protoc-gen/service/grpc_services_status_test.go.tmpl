@@ -22,9 +22,9 @@ func TestServicesStatus(t *testing.T) {
 
 	var expected []*{{ .GoProtoPkgAlias }}.ServiceStatus
 	// SUB-SERVICES DEFINITION : test-unit
-	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{name, gomeetService.INPROCESS_ADDRESS, {{ .GoProtoPkgAlias }}.ServiceStatus_OK, ""})
-	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{"{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}", gomeetService.INPROCESS_ADDRESS, {{ .GoProtoPkgAlias }}.ServiceStatus_OK, ""})
-	{{ range .SubServices }}expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{"{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", gomeetService.INPROCESS_ADDRESS, {{ $.GoProtoPkgAlias }}.ServiceStatus_OK, ""})
+	expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{Name: name, Version: gomeetService.INPROCESS_ADDRESS, Status: {{ .GoProtoPkgAlias }}.ServiceStatus_OK, EMsg: ""})
+	// expected = append(expected, &{{ .GoProtoPkgAlias }}.ServiceStatus{Name: "{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}", Version:  gomeetService.INPROCESS_ADDRESS, Status:  {{ .GoProtoPkgAlias }}.ServiceStatus_OK, EMsg:  ""})
+	{{ range .SubServices }}expected = append(expected, &{{ $.GoProtoPkgAlias }}.ServiceStatus{Name: "{{ $.Prefix }}{{ lowerKebabCase .ShortName }}", Version:  gomeetService.INPROCESS_ADDRESS, Status:  {{ $.GoProtoPkgAlias }}.ServiceStatus_OK, EMsg:  ""})
 	{{ end }} // END SUB-SERVICES DEFINITION : test-unit
 
 	sort.Sort(servicesStatusByName(expected))
