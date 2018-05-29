@@ -241,7 +241,7 @@ Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
 				--gomeetfaker_out="gogoimport=false:${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=false:project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
+				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
 			$$f; \
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \
