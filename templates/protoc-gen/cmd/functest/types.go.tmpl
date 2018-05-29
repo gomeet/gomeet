@@ -19,6 +19,8 @@ type FunctionalTestConfig struct {
 	ClientPrivateKey    string
 	JsonWebToken        string
 	TimeoutSeconds      int
+	IsEmbeddedServer    bool
+	IsRandomPort        bool
 	{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}
 	{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
