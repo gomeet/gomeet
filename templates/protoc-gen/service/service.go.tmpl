@@ -8,7 +8,8 @@ import (
 
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/fullstorydev/grpchan"
-	"github.com/gorilla/mux"
+{{ if .IsGogoGen }}	"github.com/gogo/gateway"
+{{ end }}	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
@@ -131,9 +132,21 @@ func (svc *Service) RegisterHTTPServices(
 	}
 
 	svc.httpController.RegisterRoutes(mux)
-
-	// get server mux
+	// get server mux{{ if .IsGogoGen }}
+	jsonpb := &gateway.JSONPb{
+		EmitDefaults: true,
+		Indent:       "  ",
+		OrigName:     true,
+	}
+	gwmux := runtime.NewServeMux(
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, jsonpb),
+		// This is necessary to get error details properly
+		// marshalled in unary requests.
+		runtime.WithProtoErrorHandler(runtime.DefaultHTTPProtoErrorHandler),
+	)
+{{ else }}
 	gwmux := runtime.NewServeMux()
+{{ end }}
 	err := {{ .GoProtoPkgAlias }}.Register{{ upperPascalCase .ShortName }}HandlerFromEndpoint(ctx, gwmux, addr, opts)
 	if err != nil {
 		log.Fatalf("RegisterGRPCGateway error : %s\n", err)
