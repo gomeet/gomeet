@@ -25,8 +25,8 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 // Enable registration with golang/protobuf for the grpc-gateway.
 option (gogoproto.goproto_registration) = true;
-// Enable generation of XXX_MessageName methods for grpc-go/status only on master branch on GoPkg.toml.
-//option (gogoproto.messagename_all) = true;
+// Enable generation of XXX_MessageName
+option (gogoproto.messagename_all) = true;
 {{ end }}
 service {{ upperPascalCase .ShortName }} {
   // Version method receives no paramaters and returns a version message.

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Nothing
+- BUG FIX for using grpc-gateway with gogo/protobuf
 
 ## 0.0.12 - 2018-05-26
 
