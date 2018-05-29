@@ -293,7 +293,7 @@ func projectCreationGopkgTomlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2775, mode: os.FileMode(420), modTime: time.Unix(1527595559, 0)}
+	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2775, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1393,7 +1393,7 @@ func projectCreationPbProtoProtoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3330, mode: os.FileMode(420), modTime: time.Unix(1527596338, 0)}
+	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3330, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1513,7 +1513,7 @@ func projectCreationThird_partyGithubComGogoProtobufGogoprotoGogoProto() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/github.com/gogo/protobuf/gogoproto/gogo.proto", size: 4621, mode: os.FileMode(420), modTime: time.Unix(1527596014, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/github.com/gogo/protobuf/gogoproto/gogo.proto", size: 4621, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3213,7 +3213,7 @@ func protocGenServiceServiceGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 6651, mode: os.FileMode(420), modTime: time.Unix(1527595851, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 6651, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
