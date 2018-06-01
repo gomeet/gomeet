@@ -27,8 +27,302 @@ import (
 
 	gomeetService "{{ .GomeetPkg }}/utils/service"
 
+	"{{ .GoPkg }}/config"
 	"{{ .GoPkg }}/service"
 )
+
+/*
+type Server struct {
+	grpcAddress, httpAddress, corsAllowedOrigins string
+	isStarted                                    bool
+	svc                                          *service.Service
+	Config                                       *config.Config
+	GPRCServer                                   *grpc.Server
+	HTTPServer                                   *http.Server
+	InProcessChannel                             grpchan.Channel
+}
+
+
+func New(cfg *config.Config) *Server {
+	svc := service.NewService(cfg)
+	ipc := new(inprocgrpc.Channel)
+	srv := &Server{
+		Config:           cfg,
+		svc:              svc,
+		InProcessChannel: ipc,
+	}
+	srv.initializeGRPCServer()
+	return srv
+}
+
+func (s *Server) initializeGRPCServer() bool {
+	var grpcS *grpc.Server
+	svc, ipc, cfg := s.svc, s.InProcessChannel, s.Config
+	if svc == nil || ipc == nil || cfg == nil {
+		return false
+	}
+
+	sInterceptors, uInterceptors := gomeetService.Interceptors()
+	uMdl := grpc.UnaryInterceptor(uInterceptors)
+	sMdl := grpc.StreamInterceptor(sInterceptors)
+
+	if cfg.CaCert != "" && cfg.ServerCert != "" && cfg.ServerKey != "" {
+		// load the server's key pair
+		serverKeyPair, err := tls.LoadX509KeyPair(cfg.ServerCert, cfg.ServerKey)
+		if err != nil {
+			log.Fatalf("failed to load gateway key pair: %v", err)
+		}
+
+		// create a certificate pool from the CA
+		certPool := x509.NewCertPool()
+		ca, err := ioutil.ReadFile(cfg.CaCert)
+		if err != nil {
+			log.Fatalf("failed to read CA certificate: %v", err)
+		}
+		if ok := certPool.AppendCertsFromPEM(ca); !ok {
+			log.Fatalf("failed to build certificate pool")
+		}
+
+		// set up the TLS credentials
+		serverCredentials := credentials.NewTLS(&tls.Config{
+			ClientAuth:   tls.RequireAndVerifyClientCert,
+			Certificates: []tls.Certificate{serverKeyPair},
+			ClientCAs:    certPool,
+		})
+
+		grpcS = grpc.NewServer(grpc.Creds(serverCredentials), sMdl, uMdl)
+	} else {
+		grpcS = grpc.NewServer(sMdl, uMdl)
+	}
+
+	{{ if .SubServices }}
+	// sub-services can be loaded in this process
+	subServiceshandlers := grpchan.HandlerMap{}
+	reg := grpchan.WithInterceptor(subServiceshandlers, uInterceptors, sInterceptors)
+	{{ range .SubServices }}{{ $ss := . }}
+	if gomeetService.IsInprocessAddress(cfg.Svc{{ upperPascalCase .ShortName }}Address) {
+		svc.RegisterSvc{{ upperPascalCase .ShortName }}GRPCServicesInprocess(reg, ipc)
+	}
+	{{ end }}{{ end }}
+	//Real server
+	mainHandlers := grpchan.HandlerMap{}
+	svc.RegisterGRPCServices(mainHandlers, ipc)
+	grpc_prometheus.Register(grpcS)
+
+	mainHandlers.ForEach(grpcS.RegisterService)
+	{{ if .SubServices }}subServiceshandlers.ForEach(ipc.RegisterService)
+	{{ end }}
+	s.GRPCServer = grpcS
+
+	return true
+}
+
+func (s *Server) initializeHTTPServer(
+	httpServerAddr string, grpcServerAddr string,
+	corsAllowedOrigins string,
+	ctx context.Context,
+) bool {
+	// create the HTTP request router
+	h := mux.NewRouter()
+
+	// register the gRPC gateway
+	var opts []grpc.DialOption
+	if cfg.CaCert != "" && cfg.ServerCert != "" && cfg.ServerKey != "" {
+		// load the gateway's key pair
+		gatewayKeyPair, err := tls.LoadX509KeyPair(gatewayCert, gatewayKey)
+		if err != nil {
+			log.Fatalf("failed to load client key pair: %v", err)
+		}
+
+		// create a certificate pool from the CA
+		certPool := x509.NewCertPool()
+		ca, err := ioutil.ReadFile(caCert)
+		if err != nil {
+			log.Fatalf("failed to read CA certificate: %v", err)
+		}
+		if ok := certPool.AppendCertsFromPEM(ca); !ok {
+			log.Fatalf("failed to build certificate pool")
+		}
+
+		// set up the TLS credentials
+		serverHost, _, err := net.SplitHostPort(grpcServerAddr)
+		if err != nil {
+			log.Fatalf("failed to parse server hostname in %s: %v", grpcServerAddr, err)
+		}
+		if serverHost == "" {
+			serverHost = "localhost"
+		}
+		gatewayCredentials := credentials.NewTLS(&tls.Config{
+			ServerName:   serverHost,
+			Certificates: []tls.Certificate{gatewayKeyPair},
+			RootCAs:      certPool,
+		})
+
+		opts = []grpc.DialOption{grpc.WithTransportCredentials(gatewayCredentials)}
+	} else {
+		opts = []grpc.DialOption{grpc.WithInsecure()}
+	}
+
+	// register other HTTP handlers
+	svc := service.NewService()
+	if jwtKey != "" {
+		// setup the JWT authentication middleware
+		jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
+			ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
+				return []byte(jwtKey), nil
+			},
+			SigningMethod: jwt.SigningMethodHS256,
+		})
+
+		svc.RegisterHTTPServices(ctx, h, grpcServerAddr, opts, jwtMiddleware)
+	} else {
+		svc.RegisterHTTPServices(ctx, h, grpcServerAddr, opts, nil)
+	}
+
+	// setup the negroni middleware for request logging
+	n := negroni.New(
+		// no crash with 500
+		negroni.NewRecovery(),
+		// global logrus logger
+		nlog.NewMiddlewareFromLogger(log.StandardLogger(), "{{ .Name }}"),
+	)
+
+	// CORS support
+	if corsAllowedOrigins != "" {
+		log.Infof("HTTP with Cross Origin Resource Sharing, AllowedOrigins: %s", corsAllowedOrigins)
+		n.Use(cors.New(cors.Options{
+			AllowedOrigins: strings.Split(corsAllowedOrigins, "|"),
+		}))
+	}
+
+	n.UseHandler(h)
+
+	s.HTTPServer = &http.Server{Handler: n}
+	return true
+}
+
+func (s *Server) Serve(
+	grpcL net.Listener,
+	httpL net.Listener,
+) error {
+	grpcS, httpS, cfg := s.GRPCServer, s.HTTPServer, s.Config
+	if grpcS == nil || ipc == nil || cfg == nil {
+		return errors.New("GRPCServer, HTTPServer, or Config is nil")
+	}
+
+	// collect on this channel the exits of each protocol's .Serve() call
+	eps := make(chan error, 2)
+	// start the listeners for each protocol
+	go func() { eps <- grpcS.Serve(grpcL) }()
+	go func() { eps <- httpS.Serve(httpL) }()
+
+	grpcSecurity := "insecure"
+	if cfg.CaCert != "" && cfg.ServerCert != "" && cfg.ServerKey != "" {
+		grpcSecurity = "secure"
+	}
+	jwtSupport := "disabled"
+	if cfg.JwtKey != "" {
+		jwtSupport = "enabled"
+	}
+
+	// handle listener errors
+	var errstrings []string
+	i := 0
+	for err := range eps {
+		if err != nil {
+			errstrings = append(errstrings, err.Error())
+			log.Errorf("protocol serve error: %v", err)
+			ok = false
+		}
+		i++
+		if i == cap(eps) {
+			close(eps)
+			break
+		}
+	}
+	if len(errstrings) > 0 {
+		return errors.New(strings.Join(errstrings, "\n")
+	}
+
+  return nil
+}
+
+func (s *Server) ListenAndServe(
+	grpcAddr string, httpAddr string,
+	corsAllowedOrigins string,
+) error {
+	svc, ipc, cfg := s.svc, s.InProcessChannel, s.Config
+	if svc == nil || ipc == nil || cfg == nil {
+		return false
+	}
+	if s.GRPCServer == nil {
+		ok := s.initializeGRPCServer()
+		if !ok || s.GRPCServer == nil {
+			return false
+		}
+	}
+	grpcS := s.GRPCServer
+	s.grpcAddress = grpcAddr
+	s.httpAddress = httpAddr
+	s.corsAllowedOrigins = corsAllowedOrigins
+
+	// create the gRPC listener
+	grpcL, err := net.Listen("tcp", grpcAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// create the HTTP listener
+	httpL, err := net.Listen("tcp", httpAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create the HTTP/1.1 server (we reuse the gRPC server's key pair for the gRPC gateway client)
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	s.initializeHTTPServer(httpAddr, grpcAddr, corsAllowedOrigins, ctx)
+	httpS := s.HTTPServer
+	if httpS == nil {
+		return false
+	}
+
+	// HTTPS support
+	if cfg.CaCert != "" && cfg.ServerCert != "" && cfg.ServerKey != "" {
+		// load the server's key pair
+		serverKeyPair, err := tls.LoadX509KeyPair(serverCert, serverKey)
+		if err != nil {
+			log.Fatalf("failed to load HTTPS server key pair: %v", err)
+		}
+
+		tlsConfig := &tls.Config{
+			Certificates: []tls.Certificate{serverKeyPair},
+			ClientAuth:   tls.NoClientCert,
+		}
+
+		httpsL := tls.NewListener(httpL, tlsConfig)
+		httpL = httpsL
+	}
+
+	if err := s.Serve(grpcL, httpL); err != nil {
+		return err
+	}
+	s.isStarted = true
+	log.Infof("serving %s gRPC on %s and %s HTTP/1.1 on %s (JWT %s)", grpcSecurity, grpcAddr, grpcSecurity, httpAddr, jwtSupport)
+
+	return nil
+}
+
+
+
+*/
+
+
+
+
+
+// old code bellow
 
 func grpcServer(
 	caCert string, serverCert string, serverKey string, jwtKey string,

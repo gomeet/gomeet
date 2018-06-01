@@ -29,6 +29,10 @@ func FixSvcAddress(s string) string {
 	return s
 }
 
+func IsInprocessAddress(s string) bool {
+	return strings.ToLower(s) == strings.ToLower(INPROCESS_ADDRESS)
+}
+
 func recoverFromPanic(p interface{}) error {
 	log.Infof("recovering from panic: %s", p)
 

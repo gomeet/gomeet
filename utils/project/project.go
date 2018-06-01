@@ -647,7 +647,6 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	if err != nil {
 		return err
 	}
-
 	f := newFolder(p.Name(), p.Path())
 	cmd := f.addFolder("cmd")
 	cmd.addFile("cli.go", "protoc-gen/cmd/cli.go.tmpl", nil, false)
@@ -655,6 +654,9 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
+	cfg := f.addFolder("config")
+	//cfg.addFile("config.go", "protoc-gen/config/config.go.tmpl", nil, false)
+	cfg.addFile("config.go", "protoc-gen/config/config.go.tmpl", nil, false)
 	functest := cmd.addFolder("functest")
 	functest.addFile("http_metrics.go", "protoc-gen/cmd/functest/http_metrics.go.tmpl", nil, false)
 	functest.addFile("types.go", "protoc-gen/cmd/functest/types.go.tmpl", nil, false)
