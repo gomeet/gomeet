@@ -130,6 +130,11 @@
   name = "github.com/jinzhu/gorm"
 {{ end }}
 
+{{ if .HasUi }}[[constraint]]
+  name = "github.com/elazarl/go-bindata-assetfs"
+  version = "v1.0.0"
+{{ end }}
+
 {{ range .SubServices }}[[constraint]]
   branch = "develop"
   name = "{{ .GoPkg }}"

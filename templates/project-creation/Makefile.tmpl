@@ -189,7 +189,7 @@ define package_shasum
 endef
 
 .PHONY: build
-build: proto
+build: proto{{ if .HasUi }} ui{{ end }}
 	@echo "$(NAME): build task"
 	-mkdir -p _build
 	CGO_ENABLED=$(GO_CGO_ENABLED) go build \
@@ -201,6 +201,11 @@ build: proto
 .PHONY: clean
 clean: tools-clean package-clean proto-clean
 	@echo "$(NAME): clean task"
+{{ if .HasUi }}
+.PHONY: ui
+ui: tools
+	@echo "$(NAME): ui task"
+	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...{{ end }}
 
 .PHONY: proto
 proto: tools proto-gen-doc
@@ -241,7 +246,7 @@ Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
 				--gomeetfaker_out="gogoimport=false:${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
+        --gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};{{ if .HasUi }}ui_type={{ .UiType }};{{ end }}db_types=${DB_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
 			$$f; \
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \

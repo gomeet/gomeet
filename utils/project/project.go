@@ -25,14 +25,14 @@ import (
 const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
 var allowedDbTypes = []string{"mysql", "postgres", "sqlite", "mssql"}
+var allowedUiTypes = []string{"none", "simple"} //TODO "elm", "react", "vuejs", ....
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
 }
 
-func GomeetAllowedDbTypes() []string {
-	return allowedDbTypes
-}
+func GomeetAllowedDbTypes() []string { return allowedDbTypes }
+func GomeetAllowedUiTypes() []string { return allowedUiTypes }
 
 type serveFlag struct {
 	Name         string
@@ -46,6 +46,7 @@ type Project struct {
 
 	SubServices          map[string]*Project
 	dbTypes              []string
+	uiType               string
 	extraServeFlags      []*serveFlag
 	folder               *folder
 	protoRegistry        *ggdescriptor.Registry
@@ -66,7 +67,7 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{pkgNfo, nil, []string{}, "none", nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -166,6 +167,26 @@ func (p *Project) SetDbTypes(s string) error {
 	return nil
 }
 
+func (p *Project) SetUiType(s string) error {
+	p.uiType = "none"
+	if s != "" {
+		uiType := strings.ToLower(strings.TrimSpace(s))
+		ok := false
+		for _, allowedUiType := range GomeetAllowedUiTypes() {
+			if uiType == allowedUiType {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			return fmt.Errorf("\"%s\" isn't allowed in ui_type - allowed ui_type : [%s]", uiType, strings.Join(GomeetAllowedUiTypes(), "|"))
+		}
+		p.uiType = uiType
+	}
+
+	return nil
+}
+
 func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 	if s == "" {
 		s = DEFAULT_PROTO_PKG_ALIAS
@@ -183,6 +204,7 @@ func (p Project) GomeetGeneratorUrl() string                    { return "https:
 func (p Project) Version() string                               { return p.version }
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
+func (p Project) UiType() string                                { return p.uiType }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
 func (p Project) GoCGOEnabled() int {
@@ -210,6 +232,11 @@ func (p Project) HasDb() bool {
 	}
 
 	return false
+}
+
+func (p Project) HasUi() bool {
+	uiT := p.UiType()
+	return (uiT != "" && uiT != "none")
 }
 
 func (p *Project) UseGogoGen(b bool) {
@@ -492,6 +519,10 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 	// if not use gogo no need gogo's descriptors as third party
 	if !p.IsGogoGen() {
 		f.delete("third_party/github.com/gogo")
+	}
+
+	if !p.HasUi() {
+		f.delete("ui")
 	}
 
 	p.folder = f
