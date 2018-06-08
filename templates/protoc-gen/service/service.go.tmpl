@@ -131,7 +131,6 @@ func (svc *Service) RegisterHTTPServices(
 		jwtMiddleware: jwtMiddleware,
 	}
 
-	svc.httpController.RegisterRoutes(mux)
 	// get server mux{{ if .IsGogoGen }}
 	jsonpb := &gateway.JSONPb{
 		EmitDefaults: true,
@@ -171,4 +170,6 @@ func (svc *Service) RegisterHTTPServices(
 	// prometheus metrics handler
 	mux.
 		Handle("/metrics", prometheus.Handler())
+
+	svc.httpController.RegisterRoutes(mux)
 }
