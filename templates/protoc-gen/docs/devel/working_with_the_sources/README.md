@@ -12,7 +12,9 @@
 - [docker](https://docs.docker.com/engine/installation/)
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [Unzip](http://www.info-zip.org/UnZip.html)
-{{ range .DbTypes }}{{ if eq . "mysql" }}- [{{ lower . }}](https://www.{{ lower . }}.com/) or [mariaDB clone](https://mariadb.com/)
+{{ if .HasUi }}{{ if .UiType eq "elm" }}- [NodeJS](https://guide.elm-lang.org/install.html)
+- [elm-platform](https://guide.elm-lang.org/install.html)
+{{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}- [{{ lower . }}](https://www.{{ lower . }}.com/) or [mariaDB clone](https://mariadb.com/)
 {{ else if eq . "postgres" }}- [postgreSQL](https://www.postgresql.org/)
 {{ else if eq . "sqlite" }}- [sqlite3](https://www.sqlite.org/)
 {{ else if eq . "mssql" }}- [sql-server](https://www.microsoft.com/fr-fr/sql-server/sql-server-2016)
@@ -53,6 +55,18 @@ sudo curl \
      -o /usr/local/bin/docker-compose
 # 2. Apply executable permissions to the binary
 sudo chmod +x /usr/local/bin/docker-compose
+{{ if .HasUi }}{{ if .UiType eq "elm" }}
+# 3. Install ui tools chain
+# install nodejs
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+# install elm-platform
+npm install -g elm
+
+# 4. Install databases
+{{ end }}{{ else }}
+# 3. Install databases
+{{ end }}
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "mysql" }}
 # install mariadb/mysql
 sudo apt-get install mariadb-server
@@ -77,6 +91,7 @@ source ~/.bashrc{{ end }}{{ end }}{{ end }}
 #### On MacOSX
 
 ```bash
+
 brew install go
 brew install git
 brew install protobuf
@@ -85,6 +100,14 @@ brew install git-flow-avh
 echo -e "export GOPATH=\$(go env GOPATH)\nexport PATH=\${PATH}:\${GOPATH}/bin" >> ~/.bashrc
 echo "" >> ~/.bashrc
 source ~/.bashrc
+
+{{ if .HasUi }}{{ if .UiType eq "elm" }}
+# for ui
+# install nodejs
+brew install node
+# install elm-platform
+npm install -g elm
+{{ end }}{{ end }}
 
 # for docker see https://docs.docker.com/docker-for-mac/install/
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "mysql" }}brew install mysql
@@ -191,7 +214,8 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make package` - Building all packages (multi platform, and docker image)
 - `make package-clean` - Clean up the builded packages
 - `make package-proto` - Building the `_build/packaged/proto.tgz` file with dirstribluables protobuf files
-- `make proto` - Generating files from proto
+{{ if .HasUi }}- `make ui` - Generation of a virtual file system that is compiled with the binary from files inside `ui/assets`
+{{ end }}- `make proto` - Generating files from proto
 - `make proto-clean` - Clean up generated files from the proto file
 - `make release` - Making a release (see below)
 - `make start` - Building docker image and performing a `docker-compose up -d` command

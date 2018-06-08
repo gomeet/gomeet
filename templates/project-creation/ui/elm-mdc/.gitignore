@@ -1,0 +1,16 @@
+.DS_Store
+.*.sw?
+*~
+.vscode/
+
+# elm-package generated files
+elm-stuff
+elm.js
+# elm-repl generated files
+repl-temp-*
+
+node_modules
+elm-mdc.js
+material-components-web.css
+
+style-bundle.js

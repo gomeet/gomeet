@@ -1,0 +1,26 @@
+{
+  "name": "ah-svc-www",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "css-loader": "^0.28.11",
+    "extract-loader": "^2.0.1",
+    "file-loader": "^1.1.11",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.3",
+    "webpack": "^3.12.0",
+    "webpack-dev-server": "^2.11.2",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "material-components-web": "^0.35.1",
+    "elm-mdc": "git+https://github.com/aforemny/elm-mdc.git"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
