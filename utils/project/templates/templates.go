@@ -2313,7 +2313,7 @@ func protocGenCmdFunctestTypesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 1614, mode: os.FileMode(420), modTime: time.Unix(1528456683, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 1614, mode: os.FileMode(420), modTime: time.Unix(1528458320, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2333,7 +2333,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 14369, mode: os.FileMode(420), modTime: time.Unix(1528456683, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 14369, mode: os.FileMode(420), modTime: time.Unix(1528458320, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
