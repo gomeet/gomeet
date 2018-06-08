@@ -76,7 +76,8 @@ func Flush(dsn string) error {
 		for _, mdl := range mdls {
 			scope := db.NewScope(mdl)
 			quotedTableName := scope.QuotedTableName()
-			if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil {
+			{{ if eq . "sqlite" }}if err := db.Exec(fmt.Sprintf("DELETE FROM %s;", quotedTableName)).Error; err != nil {
+			{{ else }}if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil { {{ end }}
 				errs = append(errs, err)
 			}
 		}
@@ -149,7 +150,8 @@ func Flush(dsn string) error {
 				for _, mdl := range mdls {
 					scope := db.NewScope(mdl)
 					quotedTableName := scope.QuotedTableName()
-					if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil {
+					{{ if eq . "sqlite" }}if err := db.Exec(fmt.Sprintf("DELETE FROM %s;", quotedTableName)).Error; err != nil {
+					{{ else }}if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s;", quotedTableName)).Error; err != nil { {{ end }}
 						errs = append(errs, err)
 					}
 				}
