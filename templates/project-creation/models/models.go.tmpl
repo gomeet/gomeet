@@ -29,7 +29,7 @@ func mysqlModels() []interface {
 */
 {{ else }}
 // don't forget you need create
-// func <mysql|postgres|sqlite|mssql>Models() (values []interface{}) {}
+// func <mysql|postgres|postgis|sqlite|mssql>Models() (values []interface{}) {}
 
 {{ range .DbTypes }}
 // All {{ upperPascalCase . }} models

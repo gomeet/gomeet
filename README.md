@@ -50,7 +50,7 @@ Usage:
   gomeet new [name] [flags]
 
 Flags:
-      --db-types string           DB types [mysql,postgres,sqllite,mssql] (comma separated)
+      --db-types string           DB types [mysql,postgres,postgis,sqllite,mssql] (comma separated)
       --default-prefixes string   List of prefixes [svc-,gomeet-svc-] (comma separated) - Overloaded with $GOMEET_DEFAULT_PREFIXES
       --force                     Replace files if exists
   -h, --help                      help for new
