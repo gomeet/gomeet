@@ -13,7 +13,8 @@
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [Unzip](http://www.info-zip.org/UnZip.html)
 {{ range .DbTypes }}{{ if eq . "mysql" }}- [{{ lower . }}](https://www.{{ lower . }}.com/) or [mariaDB clone](https://mariadb.com/)
-{{ else if eq . "postgres" }}- [postgreSQL](https://www.postgresql.org/)
+{{ else if eq . "postgres" }}- [postgreSQL](https://www.postgresql.org/){{ if $.HasPostgis }}
+- [postGIS](http://postgis.net/docs/manual-2.4/){{ end }}
 {{ else if eq . "sqlite" }}- [sqlite3](https://www.sqlite.org/)
 {{ else if eq . "mssql" }}- [sql-server](https://www.microsoft.com/fr-fr/sql-server/sql-server-2016)
 {{ end }}{{ end }}
@@ -56,9 +57,10 @@ sudo chmod +x /usr/local/bin/docker-compose
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "mysql" }}
 # install mariadb/mysql
 sudo apt-get install mariadb-server
-{{ else if eq . "postgres" }}
-# install postgreSQL
-sudo apt-get install postgresql postgresql-contrib
+{{ else if eq . "postgres" }}{{ if $.HasPostgis }}# install postgreSQL/PostGIS
+sudo apt-get install postgresql-10-postgis-2.4 postgresql-contrib
+{{ else }}# install postgreSQL
+sudo apt-get install postgresql postgresql-contrib{{ end }}
 {{ else if eq . "sqlite" }}
 # install sqlite3
 sudo apt-get install sqlite3
@@ -88,7 +90,8 @@ source ~/.bashrc
 
 # for docker see https://docs.docker.com/docker-for-mac/install/
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "mysql" }}brew install mysql
-{{ else if eq . "postgres" }}brew install postgresql
+{{ else if eq . "postgres" }}brew install postgresql{{ if $.HasPostgis }}
+brew install postgis{{ end }}
 {{ else if eq . "sqlite" }}brew install sqlite
 {{ else if eq . "mssql" }}# use Docker to run sql-server see https://docs.microsoft.com/fr-fr/sql/linux/quickstart-install-connect-docker
 sudo docker pull microsoft/mssql-server-linux:2017-latest
@@ -166,7 +169,22 @@ createuser -d -E -i -l -P -r -s <USERNAME>
 
 $ sudo -u postgres createdb -O <USERNAME> {{ lowerSnakeCase $.Name }}
 $ sudo -u postgres createdb -O <USERNAME> {{ lowerSnakeCase $.Name }}_test
-```
+```{{ if $.HasPostgis }}
+
+- postGIS
+
+```bash
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION postgis;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION postgis_topology;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION fuzzystrmatch;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION postgis_tiger_geocoder;"
+
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }}_test -c "CREATE EXTENSION postgis;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }}_test -c "CREATE EXTENSION postgis_topology;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }}_test -c "CREATE EXTENSION fuzzystrmatch;"
+$ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }}_test -c "CREATE EXTENSION postgis_tiger_geocoder;"
+```{{ end }}
+
 {{ else if eq . "sqlite" }}
 - sqlite3 database
 
