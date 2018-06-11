@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.14 - 2018-06-11
+
+- Nothing
+
 ## 0.0.13 - 2018-05-29
 
 - BUG FIX for using grpc-gateway with gogo/protobuf
