@@ -172,6 +172,7 @@ $ sudo -u postgres createdb -O <USERNAME> {{ lowerSnakeCase $.Name }}_test
 ```{{ if $.HasPostgis }}
 
 - postGIS
+
 ```bash
 $ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION postgis;"
 $ sudo -u postgres psql -d {{ lowerSnakeCase $.Name }} -c "CREATE EXTENSION postgis_topology;"
