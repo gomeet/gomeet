@@ -24,7 +24,7 @@ import (
 
 const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
-var allowedDbTypes = []string{"mysql", "postgres", "sqlite", "mssql"}
+var allowedDbTypes = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
@@ -46,6 +46,7 @@ type Project struct {
 
 	SubServices          map[string]*Project
 	dbTypes              []string
+	hasPostgis           bool
 	extraServeFlags      []*serveFlag
 	folder               *folder
 	protoRegistry        *ggdescriptor.Registry
@@ -66,7 +67,7 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{pkgNfo, nil, []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -147,6 +148,15 @@ func (p *Project) SetExtraServeFlags(s string) error {
 func (p *Project) SetDbTypes(s string) error {
 	if s != "" {
 		dbTypes := strings.Split(s, ",")
+		pgFind := 0
+		for _, dbType := range dbTypes {
+			if dbType == "postgres" || dbType == "postgis" {
+				pgFind++
+			}
+		}
+		if pgFind > 1 {
+			return errors.New(`"postgis" is a specal alias for "postgres" these dbTypes aren't allowed together`)
+		}
 		for _, dbType := range dbTypes {
 			dbType = strings.ToLower(strings.TrimSpace(dbType))
 			ok := false
@@ -158,6 +168,10 @@ func (p *Project) SetDbTypes(s string) error {
 			}
 			if !ok {
 				return fmt.Errorf("%s isn't allowed dbType", dbType)
+			}
+			if dbType == "postgis" {
+				dbType = "postgres"
+				p.hasPostgis = true
 			}
 			p.dbTypes = append(p.dbTypes, dbType)
 		}
@@ -206,6 +220,26 @@ func (p Project) HasDb() bool {
 	for _, ss := range p.SubServices {
 		if ss.HasDb() {
 			return true
+		}
+	}
+
+	return false
+}
+
+func (p Project) HasPostgis() bool {
+	dbT := p.DbTypes()
+	if len(dbT) < 1 {
+		return false
+	}
+	for _, ss := range p.SubServices {
+		if ss.HasPostgis() {
+			return true
+		}
+	}
+
+	for _, typ := range p.DbTypes() {
+		if typ == "postgres" {
+			return p.hasPostgis
 		}
 	}
 
@@ -531,7 +565,8 @@ func (p Project) AfterProjectCreationCmd() (r []string) {
 	r = append(r, "git init")
 	r = append(r, "git add .")
 	r = append(r, fmt.Sprintf("git commit -m 'First commit (gomeet new %s)'", p.GoPkg()))
-	r = append(r, "make tools-sync proto dep dep-prune test")
+	//r = append(r, "make tools-sync proto dep dep-prune test")
+	r = append(r, "make tools-sync proto dep")
 	r = append(r, "git add .")
 	r = append(r, "git commit -m 'Added tools and dependencies'")
 	return r
