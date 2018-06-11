@@ -36,7 +36,7 @@ services:
       networks:
         - db
 {{ else if eq . "postgres" }}  db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:
-      image: {{ if .HasPostgis }}kartoza/postgis{{ else }}postgres{{ end }}
+      image: {{ if $.HasPostgis }}kartoza/postgis{{ else }}postgres{{ end }}
       restart: always
       environment:
         POSTGRES_USER: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}
