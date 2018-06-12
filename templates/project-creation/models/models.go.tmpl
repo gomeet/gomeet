@@ -29,12 +29,18 @@ func mysqlModels() []interface {
 */
 {{ else }}
 // don't forget you need create
-// func <mysql|postgres|postgis|sqlite|mssql>Models() (values []interface{}) {}
+// func <mysql|postgres|sqlite|mssql>Models() (values []interface{}) { return }
+// func <mysql|postgres|sqlite|mssql>BeforeMigrateSchema(db *gorm.DB) error { return nil }
 
 {{ range .DbTypes }}
 // All {{ upperPascalCase . }} models
 func {{ lowerPascalCase . }}Models() (values []interface{}) {
 	//values = append(values, &MyModel{})
 	return
+}
+
+// custom migration queries come here
+func {{ lowerPascalCase . }}BeforeMigrateSchema(db *gorm.DB) error {
+	return nil
 }
 {{ end }}{{ end }}

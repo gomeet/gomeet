@@ -42,6 +42,9 @@ func (*Logger) Print(v ...interface{}) {
 	defer db.Close()
 	db.SetLogger(&Logger{})
 	db.LogMode(true)
+	if err := {{ lowerPascalCase . }}BeforeMigrateSchema(db); err != nil {
+		return err
+	}
 	mdls := {{ lowerPascalCase . }}Models()
 	if len(mdls) > 0 {
 		{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
@@ -109,6 +112,9 @@ func Flush(dsn string) error {
 			defer db.Close()
 			db.SetLogger(&Logger{})
 			db.LogMode(true)
+			if err := {{ lowerPascalCase . }}BeforeMigrateSchema(db); err != nil {
+				return err
+			}
 			mdls := {{ lowerPascalCase . }}Models()
 			if len(mdls) > 0 {
 				{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
