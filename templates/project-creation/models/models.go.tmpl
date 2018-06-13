@@ -31,6 +31,7 @@ func mysqlModels() []interface {
 // don't forget you need create
 // func <mysql|postgres|sqlite|mssql>Models() (values []interface{}) { return }
 // func <mysql|postgres|sqlite|mssql>BeforeMigrateSchema(db *gorm.DB) error { return nil }
+// func <mysql|postgres|sqlite|mssql>AfterMigrateSchema(db *gorm.DB) error { return nil }
 
 {{ range .DbTypes }}
 // All {{ upperPascalCase . }} models
@@ -39,8 +40,15 @@ func {{ lowerPascalCase . }}Models() (values []interface{}) {
 	return
 }
 
-// custom migration queries come here
+// {{ lowerPascalCase . }}BeforeMigrateSchema you can set your custom migration queries here
+// this hook occur before models migration
 func {{ lowerPascalCase . }}BeforeMigrateSchema(db *gorm.DB) error {
+	return nil
+}
+
+// {{ lowerPascalCase . }}AfterMigrateSchema you can set your custom migration queries here
+// this hook occur after models migration
+func {{ lowerPascalCase . }}AfterMigrateSchema(db *gorm.DB) error {
 	return nil
 }
 {{ end }}{{ end }}
