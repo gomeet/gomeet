@@ -1,37 +1,58 @@
 package models
 
-{{ if not .DbTypes }}
-// implement your GORM models here
-
 /*
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+)
 
 // MyModel is the GORM model definition.
 type MyModel struct {
-	gorm.Model
-	Attr1    string `gorm:"size:30;index:idx_attr1"`
-	Attr2    string `gorm:"size:13;"`
+	UUID      uuid.UUID `gorm:"primary_key;type:char(36);not null"`
+	Attr1     string `gorm:"size:30;index:idx_attr1"`
+	Attr2     string `gorm:"size:13;"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
 }
 
 // MyModel2 is the GORM model definition.
 type MyModel2 struct {
-	gorm.Model
-	Attr1    string `gorm:"size:30;index:idx_attr1"`
-	Attr2    string `gorm:"size:13;"`
+	UUID      uuid.UUID `gorm:"primary_key;type:char(36);not null"`
+	Attr1     string `gorm:"size:30;index:idx_attr1"`
+	Attr2     string `gorm:"size:13;"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt *time.Time `sql:"index"`
 }
 
-// for migrate func you need to declare a func that return all model for your DB_TYPES in Makefile like this
-func mysqlModels() []interface {
+func (*MyModel) BeforeCreate(scope *gorm.Scope) error {
+	scope.SetColumn("UUID", uuid.New())
+	return nil
+}
+
+func (*MyModel2) BeforeCreate(scope *gorm.Scope) error {
+	scope.SetColumn("UUID", uuid.New())
+	return nil
+}
+{{ if not .DbTypes }}
+
+// for migrate func you need to declare a func that return all model for your DB_TYPE in Makefile like this
+func <mysql|postgres|sqlite|mssql>Models() []interface {
 	values = append(values, &MyModel{})
 	values = append(values, &MyModel2{})
 	return
 }
 
+func <mysql|postgres|sqlite|mssql>BeforeMigrateSchema(db *gorm.DB) error { return nil }
+
+func <mysql|postgres|sqlite|mssql>AfterMigrateSchema(db *gorm.DB) error { return nil }
+
 */
 {{ else }}
-// don't forget you need create
-// func <mysql|postgres|sqlite|mssql>Models() (values []interface{}) { return }
-// func <mysql|postgres|sqlite|mssql>BeforeMigrateSchema(db *gorm.DB) error { return nil }
-// func <mysql|postgres|sqlite|mssql>AfterMigrateSchema(db *gorm.DB) error { return nil }
+*/
 
 {{ range .DbTypes }}
 // All {{ upperPascalCase . }} models
