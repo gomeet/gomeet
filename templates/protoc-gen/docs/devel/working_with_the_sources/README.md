@@ -206,6 +206,13 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make docker` - Building docker image
 - `make docker-push` - Push the docker image to docker registry server - default registry is `docker.io` it can be overloaded via the environment variable `DOCKER_REGISTRY` like this `DOCKER_REGISTRY={{ "{{hostname}}" }}:{{ "{{port}}" }} make docker-push`
 - `make install` - Performing a `go install` command
+- `make package-arm32` - build linux arm32 packages
+- `make package-arm64` - build linux arm64  packages
+- `make package-amd64-linux` - build linux amd64 packages
+- `make package-amd64-darwin` - build darwin amd64 packages
+- `make package-amd64-openbsd` - build OpenBSD packages
+- `make package-amd64-windows` - build windows amd64 packages
+- `make package-amd64` - build all amf64 packages - alias of `make package-amd64-linux package-amd64-darwin package-amd64-openbsd package-amd64-windows`
 - `make package` - Building all packages (multi platform, and docker image)
 - `make package-clean` - Clean up the builded packages
 - `make package-proto` - Building the `_build/packaged/proto.tgz` file with dirstribluables protobuf files
