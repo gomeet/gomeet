@@ -26,7 +26,7 @@
 #{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER="localhost"
 #{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT="5432"
 #{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE="{{ lowerSnakeCase $.Name }}"
-#{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN="host=tcp(${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER port=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT) user=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME dbname=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE password=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD"
+#{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN="host=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER port=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT user=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME dbname=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE password=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD"
 {{ else if eq . "sqlite" }}
 #{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN="/tmp/{{ lowerSnakeCase $.Name }}.sqlite3.db"
 {{ else if eq . "mssql" }}
@@ -52,7 +52,7 @@
 #{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER="localhost"
 #{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT="5432"
 #{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE="{{ lowerSnakeCase $ss.Name }}"
-#{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN="host=tcp(${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER port=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT) user=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME dbname=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE password=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD"
+#{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN="host=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_SERVER port=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT user=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME dbname=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE password=${{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD"
 {{ else if eq . "sqlite" }}
 #{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN="/tmp/{{ lowerSnakeCase $ss.Name }}.sqlite3.db"
 {{ else if eq . "mssql" }}
