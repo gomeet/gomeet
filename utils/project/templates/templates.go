@@ -333,7 +333,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 34887, mode: os.FileMode(420), modTime: time.Unix(1530289663, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 34887, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1113,7 +1113,7 @@ func projectCreationHackRunEnvSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 6538, mode: os.FileMode(420), modTime: time.Unix(1529322150, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 6538, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1373,7 +1373,7 @@ func projectCreationModelsModelsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/models/models.go.tmpl", size: 1997, mode: os.FileMode(420), modTime: time.Unix(1528975225, 0)}
+	info := bindataFileInfo{name: "project-creation/models/models.go.tmpl", size: 1997, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1873,7 +1873,7 @@ func protocGenTravisYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/.travis.yml.tmpl", size: 1577, mode: os.FileMode(420), modTime: time.Unix(1528988576, 0)}
+	info := bindataFileInfo{name: "protoc-gen/.travis.yml.tmpl", size: 1577, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2353,7 +2353,7 @@ func protocGenCmdMigrateGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 8914, mode: os.FileMode(420), modTime: time.Unix(1529322414, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 8914, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2613,7 +2613,7 @@ func protocGenDocsDevelWorking_with_the_sourcesReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 16362, mode: os.FileMode(420), modTime: time.Unix(1530526771, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 16362, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2773,7 +2773,7 @@ func protocGenHackRunShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 25832, mode: os.FileMode(420), modTime: time.Unix(1529322203, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 25832, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2813,7 +2813,7 @@ func protocGenModelsMigrate_schemaGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5789, mode: os.FileMode(420), modTime: time.Unix(1528885185, 0)}
+	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5789, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
