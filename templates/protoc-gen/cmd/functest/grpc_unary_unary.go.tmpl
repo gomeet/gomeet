@@ -17,12 +17,17 @@ func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTestConf
 	var testCaseResults []*TestCaseResult
   reqs, extras, err := testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request(config)
 	if err != nil {
-		failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: fmt.Sprintf("HTTP testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request error (%v)", err)})
+		failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}", Message: fmt.Sprintf("GRPC testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request error (%v)", err)})
 		return failures
 	}
 
-	for _, req := range reqs {
-		res, err := client.GetGRPCClient().{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)
+	for i, req := range reqs {
+		newCtx, _, err := test{{ upperPascalCase .GrpcMethod.Method.Name }}Context(config, FUNCTEST_GRPC, ctx, req, extras, i)
+		if err != nil {
+			testCaseResults = append(testCaseResults, &TestCaseResult{Request: req, Error: err})
+			continue
+		}
+		res, err := client.GetGRPCClient().{{ upperPascalCase .GrpcMethod.Method.Name }}(newCtx, req)
 		testCaseResults = append(testCaseResults, &TestCaseResult{req, res, err})
 	}
 

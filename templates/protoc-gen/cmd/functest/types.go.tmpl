@@ -17,7 +17,10 @@ type FunctionalTestConfig struct {
 	CaCertificate       string
 	ClientCertificate   string
 	ClientPrivateKey    string
+	JsonWebTokenSecret  string
 	JsonWebToken        string
+	TokenLifetimeHours  int
+	SubjectID           string
 	TimeoutSeconds      int
 	IsEmbeddedServer    bool
 	IsRandomPort        bool

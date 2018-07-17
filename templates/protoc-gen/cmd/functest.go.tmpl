@@ -221,16 +221,19 @@ func runFunctionalTests() {
 	}
 	{{ end }}
 	testConfig := functest.FunctionalTestConfig{
-		ServerAddress:     serverAddress,
-		GrpcServerAddress: grpcServerAddress,
-		HttpServerAddress: httpServerAddress,
-		CaCertificate:     caCertificate,
-		ClientCertificate: serverCertificate,
-		ClientPrivateKey:  serverPrivateKey,
-		TimeoutSeconds:    timeoutSeconds,
-		JsonWebToken:      jwtToken,
-		IsEmbeddedServer:  useEmbeddedServer,
-		IsRandomPort:      useRandomPort,
+		ServerAddress:      serverAddress,
+		GrpcServerAddress:  grpcServerAddress,
+		HttpServerAddress:  httpServerAddress,
+		CaCertificate:      caCertificate,
+		ClientCertificate:  serverCertificate,
+		ClientPrivateKey:   serverPrivateKey,
+		TimeoutSeconds:     timeoutSeconds,
+		JsonWebTokenSecret: jwtSecret,
+		JsonWebToken:       jwtToken,
+		TokenLifetimeHours: tokenLifetimeHours,
+		SubjectID:          subjectID,
+		IsEmbeddedServer:   useEmbeddedServer,
+		IsRandomPort:       useRandomPort,
 
 		//extra parameters
 
