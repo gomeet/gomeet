@@ -59,7 +59,10 @@ func (p *Point) FuzzifyDistance(p2 *Point) float64 {
 		2.0,
 		2.5,
 		3.0,
-		3.2,
+		3.5,
+		4.0,
+		4.5,
+		5,
 	}
 	for _, level := range levels {
 		if dist <= level {
