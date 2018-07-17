@@ -15,6 +15,13 @@ import (
 )
 
 func TestHttp{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTestConfig) (failures []TestFailure) {
+	grpcCli, ctx, err := grpcClient(config)
+	if err != nil {
+		failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}/HTTP", Message: fmt.Sprintf("gRPC client initialization error (%v)", err)})
+		return failures
+	}
+	defer grpcCli.Close()
+
 	client, serverAddr, proto, err := httpClient(config)
 	if err != nil {
 		failures = append(failures, TestFailure{Procedure: "{{ upperPascalCase .GrpcMethod.Method.Name }}/HTTP", Message: fmt.Sprintf("HTTP client initialization error (%v)", err)})
@@ -28,10 +35,15 @@ func TestHttp{{ upperPascalCase .GrpcMethod.Method.Name }}(config FunctionalTest
 		return failures
 	}
 
-	for _, req := range reqs {
+	for i, req := range reqs {
 		{{ grpcFunctestHttp .GrpcMethod.Method -}}
 
-		httpReq.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.JsonWebToken))
+		_, newJwt, err := test{{ upperPascalCase .GrpcMethod.Method.Name }}Context(config, FUNCTEST_HTTP, ctx, req, extras, i)
+		if err != nil {
+			testCaseResults = append(testCaseResults, &TestCaseResult{Request: req, Error: err})
+			continue
+		}
+		httpReq.Header.Add("Authorization", fmt.Sprintf("Bearer %s", newJwt))
 		httpReq.Header.Add("Content-Type", "application/json")
 
 		resp, err := client.Do(httpReq)

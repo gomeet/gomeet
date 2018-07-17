@@ -1,8 +1,20 @@
 package functest
 
 import (
+	"context"
 {{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
 )
+
+func test{{ upperPascalCase .GrpcMethod.Method.Name }}Context(
+	config FunctionalTestConfig,
+	testsType string,
+	defaultCtx context.Context,
+	req *{{ messageGoType .GrpcMethod.Method.GetInputType }},
+	extras map[string]interface{},
+	testCaseNum int,
+) (newCtx context.Context, jwtToken string, err error) {
+	return defaultCtx, config.JsonWebToken, nil
+}
 
 func testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request(
 	config FunctionalTestConfig,
