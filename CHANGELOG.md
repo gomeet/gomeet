@@ -11,15 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.0.16 - 2018-07-17
 
-- Nothing
+- Added utility functions for geo manipulation
 
 ## 0.0.15 - 2018-07-16
 
-- Nothing
+- Added utility functions for date/time manipulation
 
 ## 0.0.14 - 2018-06-11
 
-- Nothing
+- Improvements
 
 ## 0.0.13 - 2018-05-29
 
