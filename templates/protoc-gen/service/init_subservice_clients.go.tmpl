@@ -37,6 +37,8 @@ func (s *{{ lowerPascalCase $.ShortName }}Server) init{{ upperPascalCase .ShortN
 			s.caCertificate,
 			s.certificate,
 			s.privateKey,
+			s.maxRecvMsgSize,
+			s.maxSendMsgSize,
 		)
 	}
 

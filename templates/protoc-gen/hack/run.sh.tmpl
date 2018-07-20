@@ -10,6 +10,8 @@
 #   {{ upperSnakeCase .ProjectGroupName }}_PATH="$GOPATH/src/{{ .ProjectGroupGoPkg }}"
 #   {{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE="make" # go, make
 #   {{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
+#   {{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
+#   {{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
 #   {{ upperSnakeCase .Name }}_ADDRESS=":13000"
 {{ range .SubServices -}}{{ $ss := . }}#   {{ upperSnakeCase $ss.Name }}_ADDRESS="inprocgrpc"
 {{ end -}}
@@ -102,6 +104,8 @@ fi;
 {{ upperSnakeCase .ProjectGroupName }}_PATH="$GOPATH/src/{{ .ProjectGroupGoPkg }}"
 [ -z "${{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE" ] && {{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE="make" # go, make
 [ -z "${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET" ] && {{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
+[ -z "${{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE" ] && {{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
+[ -z "${{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE" ] && {{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
 [ -z "${{ upperSnakeCase .Name }}_ADDRESS" ] && {{ upperSnakeCase .Name }}_ADDRESS=":13000"
 {{ range .SubServices -}}{{ $ss := . }}[ -z "${{ upperSnakeCase $ss.Name }}_ADDRESS" ] && {{ upperSnakeCase $ss.Name }}_ADDRESS="inprocgrpc"
 {{ end -}}
@@ -189,10 +193,14 @@ case "$1" in
 esac
 {{ upperSnakeCase $.Name }}_SERVER_OPTS='serve
 	-d
-	--jwt-secret="${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET"'
+	--jwt-secret="${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET"
+	--max-recv-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE"
+	--max-send-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE"'
 {{ range .SubServices -}}{{ $ss := . }}{{ upperSnakeCase $ss.Name }}_SERVER_OPTS='serve
 	-d
-	--jwt-secret="${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET"'
+	--jwt-secret="${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET"
+	--max-recv-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE"
+	--max-send-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE"'
 {{ end }}
 {{ upperSnakeCase $.Name }}_SERVER_OPTS_MIGRATE=''
 {{ range .SubServices -}}{{ $ss := . }}{{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE=''
@@ -248,7 +256,7 @@ case "${{ upperSnakeCase $ss.Name }}_ADDRESS" in
 		{{ upperSnakeCase $.Name }}_SERVER_OPTS_EXTRAFLAGS=${{ upperSnakeCase $.Name }}_SERVER_OPTS_EXTRAFLAGS" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_EXTRAFLAGS_EMBED
 		{{ end -}}
 		{{ if .DbTypes -}}
-		{{ upperSnakeCase $.Name }}_SERVER_OPTS_MIGRATE=${{ upperSnakeCase $.Name }}_SERVER_OPTS_MIGRATE" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE_EMBED
+		{{ upperSnakeCase $.Name }}_SERVER_OPTS_MIGRATE=${{ upperSnakeCase $.Name }}_SERVER_OPTS_MIGRATE" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE
 		{{ upperSnakeCase $.Name }}_SERVER_OPTS_DSN=${{ upperSnakeCase $.Name }}_SERVER_OPTS_DSN" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_DSN_EMBED
 		{{ end -}}
 	;;
@@ -268,7 +276,7 @@ case "${{ upperSnakeCase $sss.Name }}_ADDRESS" in
 		{{ upperSnakeCase $ss.Name }}_SERVER_OPTS_EXTRAFLAGS=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_EXTRAFLAGS" "${{ upperSnakeCase $sss.Name }}_SERVER_OPTS_EXTRAFLAGS_EMBED
 		{{ end -}}
 		{{ if .DbTypes -}}
-		{{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE" "${{ upperSnakeCase $sss.Name }}_SERVER_OPTS_MIGRATE_EMBED
+		{{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_MIGRATE" "${{ upperSnakeCase $sss.Name }}_SERVER_OPTS_MIGRATE
 		{{ upperSnakeCase $ss.Name }}_SERVER_OPTS_DSN=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_DSN" "${{ upperSnakeCase $sss.Name }}_SERVER_OPTS_DSN_EMBED
 		{{ end -}}
 	;;

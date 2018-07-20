@@ -1,5 +1,15 @@
 package models
 
+{{ if .DbTypes }}
+import (
+	//"time"
+
+	//"github.com/google/uuid"
+	"github.com/jinzhu/gorm"
+)
+
+/*
+{{ else }}
 /*
 import (
 	"time"
@@ -7,7 +17,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
-
+{{ end }}
 // MyModel is the GORM model definition.
 type MyModel struct {
 	UUID      uuid.UUID `gorm:"primary_key;type:char(36);not null"`

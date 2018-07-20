@@ -19,6 +19,8 @@ type FunctionalTestConfig struct {
 	ClientPrivateKey    string
 	JsonWebTokenSecret  string
 	JsonWebToken        string
+	MaxRecvMsgSize      int
+	MaxSendMsgSize      int
 	TokenLifetimeHours  int
 	SubjectID           string
 	TimeoutSeconds      int

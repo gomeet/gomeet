@@ -24,6 +24,8 @@ var (
 	httpServerAddress  string
 	corsAllowedOrigins string
 	jwtSecret          string
+	maxRecvMsgSize     int
+	maxSendMsgSize     int
 
 	//Main server database and extra flags
 	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate bool
@@ -78,6 +80,12 @@ func init() {
 
 	// JWT secret signing key
 	serveCmd.PersistentFlags().StringVarP(&jwtSecret, "jwt-secret", "j", "", "JSON Web Token secret signing key (required for JWT support)")
+
+	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
+
+	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
 
 	// CA certificate
 	serveCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
@@ -180,7 +188,7 @@ func serve() {
 		ok = server.OnMultipleAddresses(
 			grpcServerAddress, httpServerAddress,
 			corsAllowedOrigins,
-			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
@@ -191,7 +199,7 @@ func serve() {
 		ok = server.OnSingleAddress(
 			serverAddress,
 			corsAllowedOrigins,
-			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
