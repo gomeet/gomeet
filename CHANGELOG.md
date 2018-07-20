@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-- Nothing
+- Added `max-recv-msg-size` and `max-send-msg-size` flags to set maximum gRPC message sizes (default 10)
+- Upgrading `go-proto-gomeetfaker`
+  - Removes [github.com/dmgk/faker](https://github.com/dmgk/faker) dependency to use the [github.com/gomeet/faker](https://github.com/gomeet/faker) fork
 
 ## 0.0.16 - 2018-07-17
 
