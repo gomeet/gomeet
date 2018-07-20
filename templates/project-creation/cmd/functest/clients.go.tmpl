@@ -26,6 +26,8 @@ func grpcClient(config FunctionalTestConfig) (*client.GomeetClient, context.Cont
 		config.CaCertificate,
 		config.ClientCertificate,
 		config.ClientPrivateKey,
+		config.MaxRecvMsgSize,
+		config.MaxSendMsgSize,
 	)
 
 	if err != nil {

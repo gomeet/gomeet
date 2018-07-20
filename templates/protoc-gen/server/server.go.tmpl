@@ -31,18 +31,17 @@ import (
 )
 
 func grpcServer(
-	caCert string, serverCert string, serverKey string, jwtKey string,
+	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
 	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
 	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
 {{ end }}) *grpc.Server {
-	var grpcS *grpc.Server
-
-	sInterceptors, uInterceptors := gomeetService.Interceptors()
-	uMdl := grpc.UnaryInterceptor(uInterceptors)
-	sMdl := grpc.StreamInterceptor(sInterceptors)
+	var (
+		grpcS      *grpc.Server
+		serverOpts []grpc.ServerOption
+	)
 
 	if caCert != "" && serverCert != "" && serverKey != "" {
 		// load the server's key pair
@@ -68,10 +67,18 @@ func grpcServer(
 			ClientCAs:    certPool,
 		})
 
-		grpcS = grpc.NewServer(grpc.Creds(serverCredentials), sMdl, uMdl)
-	} else {
-		grpcS = grpc.NewServer(sMdl, uMdl)
+		serverOpts = append(serverOpts, grpc.Creds(serverCredentials))
 	}
+
+	sInterceptors, uInterceptors := gomeetService.Interceptors()
+	uMdl := grpc.UnaryInterceptor(uInterceptors)
+	sMdl := grpc.StreamInterceptor(sInterceptors)
+	serverOpts = append(serverOpts, sMdl)
+	serverOpts = append(serverOpts, uMdl)
+	serverOpts = append(serverOpts, grpc.MaxRecvMsgSize(maxRecvMsgSize * 1024 * 1024))
+	serverOpts = append(serverOpts, grpc.MaxSendMsgSize(maxSendMsgSize * 1024 * 1024))
+
+	grpcS = grpc.NewServer(serverOpts...)
 
 	svc := service.NewService()
 	inProcessChannel := new(inprocgrpc.Channel)
@@ -85,7 +92,7 @@ func grpcServer(
 	if strings.ToLower(svc{{ upperPascalCase .ShortName }}Address) == strings.ToLower(gomeetService.INPROCESS_ADDRESS) {
 		svc.RegisterSvc{{ upperPascalCase .ShortName }}GRPCServicesInprocess(
 			reg, inProcessChannel,
-			jwtKey, caCert, serverCert, serverKey,
+			jwtKey, caCert, serverCert, serverKey, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
 			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
@@ -96,7 +103,7 @@ func grpcServer(
 	mainHandlers := grpchan.HandlerMap{}
 	svc.RegisterGRPCServices(
 		mainHandlers, inProcessChannel,
-		jwtKey, caCert, serverCert, serverKey,
+		jwtKey, caCert, serverCert, serverKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
 		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
@@ -195,7 +202,7 @@ func httpServer(
 func OnMultipleAddresses(
 	grpcAddr string, httpAddr string,
 	corsAllowedOrigins string,
-	caCert string, serverCert string, serverKey string, jwtKey string,
+	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
@@ -215,7 +222,7 @@ func OnMultipleAddresses(
 
 	// create the gRPC server
 	grpcS := grpcServer(
-		caCert, serverCert, serverKey, jwtKey,
+		caCert, serverCert, serverKey, jwtKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
@@ -283,7 +290,7 @@ func OnMultipleAddresses(
 func OnSingleAddress(
 	addr string,
 	corsAllowedOrigins string,
-	caCert string, serverCert string, serverKey string, jwtKey string,
+	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
@@ -304,7 +311,7 @@ func OnSingleAddress(
 
 	// create the gRPC server
 	grpcS := grpcServer(
-		caCert, serverCert, serverKey, jwtKey,
+		caCert, serverCert, serverKey, jwtKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,

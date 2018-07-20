@@ -29,6 +29,8 @@ type GomeetClient struct {
 	caCertificate     string
 	clientCertificate string
 	clientPrivateKey  string
+	maxRecvMsgSize    int
+	maxSendMsgSize    int
 	cc                *grpc.ClientConn
 	inProcessChannel  grpchan.Channel
 	c                 {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
@@ -47,6 +49,8 @@ func NewGomeetInProcessClient(
 		clientCertificate: "",
 		clientPrivateKey:  "",
 		cc:                nil,
+		maxRecvMsgSize:    10,
+		maxSendMsgSize:    10,
 		inProcessChannel:  inProcessChannel,
 		c:                 c,
 	}, nil
@@ -55,14 +59,14 @@ func NewGomeetInProcessClient(
 func NewGomeetClient(
 	addr string,
 	timeout int,
-	caCertificate string,
-	clientCertificate string,
-	clientPrivateKey string,
+	caCertificate, clientCertificate, clientPrivateKey string,
+	maxRecvMsgSize, maxSendMsgSize int,
 ) (*GomeetClient, error) {
 	// set up a connection to the server
 	var (
-		cc  *grpc.ClientConn
-		err error
+		clientDialOpts []grpc.DialOption
+		cc             *grpc.ClientConn
+		err            error
 	)
 	timeoutDuration := time.Duration(timeout) * time.Second
 	if caCertificate != "" && clientCertificate != "" && clientPrivateKey != "" {
@@ -92,11 +96,16 @@ func NewGomeetClient(
 			Certificates: []tls.Certificate{clientKeyPair},
 			RootCAs:      certPool,
 		})
-
-		cc, err = grpc.Dial(addr, grpc.WithTimeout(timeoutDuration), grpc.WithTransportCredentials(clientCredentials))
+		clientDialOpts = append(clientDialOpts, grpc.WithTransportCredentials(clientCredentials))
 	} else {
-		cc, err = grpc.Dial(addr, grpc.WithTimeout(timeoutDuration), grpc.WithInsecure())
+		clientDialOpts = append(clientDialOpts, grpc.WithInsecure())
 	}
+	clientDialOpts = append(clientDialOpts, grpc.WithTimeout(timeoutDuration))
+	clientDialOpts = append(clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxRecvMsgSize * 1024 * 1024)))
+	clientDialOpts = append(clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallSendMsgSize(maxSendMsgSize * 1024 * 1024)))
+
+	cc, err = grpc.Dial(addr, clientDialOpts...)
+
 	if err != nil {
 		return nil, fmt.Errorf("gRPC connect fail - %v", err)
 	}
@@ -110,6 +119,8 @@ func NewGomeetClient(
 		caCertificate:     caCertificate,
 		clientCertificate: clientCertificate,
 		clientPrivateKey:  clientPrivateKey,
+		maxRecvMsgSize:    maxRecvMsgSize,
+		maxSendMsgSize:    maxSendMsgSize,
 		cc:                cc,
 		inProcessChannel:  new(inprocgrpc.Channel),
 		c:                 c,
@@ -146,4 +157,14 @@ func (c GomeetClient) GetCertificate() string {
 // GetPrivateKey return clientPrivateKey
 func (c GomeetClient) GetPrivateKey() string {
 	return c.clientPrivateKey
+}
+
+// GetMaxRecvMsgSize return maxRecvMsgSize DialOption
+func (c GomeetClient) GetMaxRecvMsgSize() int {
+	return c.maxRecvMsgSize
+}
+
+// GetMaxSendMsgSize return maxSendMsgSize DialOption
+func (c GomeetClient) GetMaxSendMsgSize() int {
+	return c.maxSendMsgSize
 }

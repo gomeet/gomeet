@@ -101,6 +101,9 @@ func (s *{{ "{{CurentServiceNameLowerCamelCase}}" }}Server) init{{ "{{SubService
     s.caCertificate,
     s.certificate,
     s.privateKey,
+    s.max
+    s.maxRecvMsgSize,
+    s.maxSendMsgSize,
   )
 
   if err != nil {

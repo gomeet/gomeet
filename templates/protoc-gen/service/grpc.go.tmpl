@@ -20,6 +20,8 @@ type {{ lowerPascalCase .ShortName }}Server struct {
 	caCertificate       string
 	certificate         string
 	privateKey          string
+	maxRecvMsgSize      int // The max message size in mega bytes the server can receive
+	maxSendMsgSize      int // The max message size in mega bytes the server can send
 
 	// EXTRA : var
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName string

@@ -4,6 +4,8 @@
 #{{ upperSnakeCase .ProjectGroupName }}_PATH="$GOPATH/src/{{ .ProjectGroupGoPkg }}"
 #{{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE="make" # go, make
 #{{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
+#{{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
+#{{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
 #{{ upperSnakeCase .Name }}_ADDRESS=":13000"
 {{ range .SubServices -}}{{ $ss := . }}#{{ upperSnakeCase $ss.Name }}_ADDRESS="inprocgrpc"
 {{ end -}}
