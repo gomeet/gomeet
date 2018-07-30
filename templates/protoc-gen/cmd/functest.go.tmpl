@@ -6,11 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
-	{{ range .DbTypes }}{{ if eq . "mysql" }}"strings"{{ end }}{{ end }}
 
-	{{ if .DbTypes }}"github.com/jinzhu/gorm"
-	{{ range .DbTypes }}_ "github.com/jinzhu/gorm/dialects/{{ lower . }}"
-	{{ end }}{{ end -}}
 	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
 
@@ -19,7 +15,6 @@ import (
 
 	"{{ .GoPkg }}/server"
 	"{{ .GoPkg }}/cmd/functest"
-	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 )
 
 var (
