@@ -384,9 +384,9 @@ endif
 .PHONY: docker
 docker:
 	echo "TAG=$(DOCKER_TAG)" > .env
-	echo "JWT_SECRET=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET)" > .env
-	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" > .env
-	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" > .env
+	echo "JWT_SECRET=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET)" >> .env
+	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" >> .env
+	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" >> .env
 {{ range .SubServices }}	echo "TAG_SVC_{{ upperSnakeCase .ShortName }}=$(DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }})" >> .env
 {{ end -}}
 {{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}
