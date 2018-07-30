@@ -189,7 +189,7 @@ endef
 
 define package_shasum
 	@echo "$(NAME): package_shasum"
-	rm $(PACKAGE_DIR)/SHA256SUM
+	rm -f $(PACKAGE_DIR)/SHA256SUM
 	cd $(PACKAGE_DIR) \
 		&& find * '!' -name '*SUM' '!' -name '*SUMS' \
 		| xargs $(CMD_SHASUM) > SHA256SUMS
