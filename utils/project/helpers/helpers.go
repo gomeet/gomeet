@@ -15,7 +15,7 @@ import (
 
 const (
 	GomeetDefaultPrefixes = "svc-,gomeet-svc-"
-	GomeetRetoolRev       = "cbd0ddf8623f748f68361ac0d2674d13f45d1a64"
+	GomeetRetoolRev       = "46468802bc9b0adb848691e07adf1566df6c05a1"
 )
 
 type Empty struct{}
