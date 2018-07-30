@@ -182,6 +182,11 @@ define package_builder
 	@echo ""
 endef
 
+define package_zipper
+	@echo "$(NAME): compress package $(1) $(2)"
+	cd $(1) && tar czvf $(2).tgz $(2) && rm -rf $(2)
+endef
+
 define package_shasum
 	@echo "$(NAME): package_shasum"
 	cd $(PACKAGE_DIR) \
@@ -279,36 +284,42 @@ package-arm32: proto
 	@echo "$(NAME): package-arm32 task"
 	$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32)
 	#$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32,arm-linux-gnueabihf-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-arm32)
 
 .PHONY: package-arm64
 package-arm64: proto
 	@echo "$(NAME): package-arm64 task"
 	$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64)
 	#$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64,arm-linux-gnueabihf-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-arm64)
 
 .PHONY: package-amd64-linux
 package-amd64-linux: proto
 	@echo "$(NAME): package-amd64-linux task"
 	$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64)
 	#$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-amd64)
 
 .PHONY: package-amd64-darwin
 package-amd64-darwin: proto
 	@echo "$(NAME): package-amd64-darwin task"
 	$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64)
 	#$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),darwin-amd64)
 
 .PHONY: package-amd64-openbsd
 package-amd64-openbsd: proto
 	@echo "$(NAME): package-amd64-openbsd task"
 	$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64)
 	#$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),openbsd-amd64)
 
 .PHONY: package-amd64-windows
 package-amd64-windows: proto
 	@echo "$(NAME): package-amd64-windows task"
 	$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64)
 	#$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),windows-amd64)
 
 .PHONY: package-amd64
 package-amd64: package-amd64-linux  package-amd64-darwin  package-amd64-openbsd  package-amd64-windows
