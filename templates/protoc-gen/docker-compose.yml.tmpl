@@ -7,7 +7,7 @@ volumes:
   grafana_data: {}
 
 networks:
-{{ if .DbTypes }}  db:
+{{ if .HasDb }}  db:
     driver: bridge
 {{ end }}  grpc:
     driver: bridge
@@ -101,7 +101,7 @@ services:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
     command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
 {{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
-{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password: ${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
 {{- else if eq . "mssql" }}sqlserver://sa:${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:1433?database=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- end }}"{{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}{{ "}" }}"{{ end }}
@@ -128,7 +128,7 @@ services:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
     command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
 {{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
-{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password: ${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
+{{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
 {{- else if eq . "mssql" }}sqlserver://sa:${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:1433?database=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- end }}"{{ end }}{{ range .ExtraServeFlags }} --{{ lowerKebabCase .Name }}="${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}{{ "}" }}"{{ end }}

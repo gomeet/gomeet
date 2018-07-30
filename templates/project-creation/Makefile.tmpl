@@ -19,7 +19,6 @@ OS_ARCH=$(shell go env GOARCH)
 # eg. no comma, no semicolon or no colon
 EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}
 
-#DB_TYPES={{ .DbTypes | join "," }}
 DB_TYPES={{ range $i, $e := .DbTypes }}{{ if $i }},{{ end }}{{ if eq $e "postgres" }}{{ if $.HasPostgis }}postgis{{ else }}{{ $e }}{{ end }}{{ else }}{{ $e }}{{ end }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
