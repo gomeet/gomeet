@@ -191,8 +191,8 @@ define package_shasum
 	@echo "$(NAME): package_shasum"
 	rm $(PACKAGE_DIR)/SHA256SUM
 	cd $(PACKAGE_DIR) \
-		&& find * '!' -name 'VERSION' '!' -name 'LICENSE' '!' -name '*SUM' '!' -name '*SUMS' \
-		| xargs $(CMD_SHASUM) >> SHA256SUMS
+		&& find * '!' -name '*SUM' '!' -name '*SUMS' \
+		| xargs $(CMD_SHASUM) > SHA256SUMS
 endef
 
 .PHONY: build
@@ -328,12 +328,12 @@ package-amd64-windows: proto
 	$(call package_shasum)
 
 .PHONY: package-amd64
-package-amd64: package-amd64-linux  package-amd64-darwin  package-amd64-openbsd  package-amd64-windows
+package-amd64: package-amd64-linux package-amd64-darwin package-amd64-openbsd package-amd64-windows
 	@echo "$(NAME): package-amd64 task"
 	$(call package_shasum)
 
 .PHONY: package
-package: clean proto package-proto package-arm32 package-arm64 package-amd64 docker
+package: clean tools-sync tools proto package-proto package-arm32 package-arm64 package-amd64 docker
 	@echo "$(NAME): package task"
 	cp VERSION $(PACKAGE_DIR)/VERSION
 	cp LICENSE $(PACKAGE_DIR)/LICENSE
