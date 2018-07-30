@@ -184,15 +184,15 @@ endef
 
 define package_zipper
 	@echo "$(NAME): compress package $(1) $(2)"
-	cd $(1) && tar czvf $(2).tgz $(2) && rm -rf $(2)
+	cd $(1) && tar czvf $(2).tar.gz $(2) && rm -rf $(2)
 endef
 
 define package_shasum
 	@echo "$(NAME): package_shasum"
+	rm $(PACKAGE_DIR)/SHA256SUM
 	cd $(PACKAGE_DIR) \
-	  &&	find */* '!' -name 'VERSION' '!' -name 'LICENSE' '!' -name '*SUM' '!' -name '*SUMS' \
-		| xargs $(CMD_SHASUM) > SHA256SUMS
-	cd $(PACKAGE_DIR) && [ -f "$(PACKAGE_PROTO_NAME)" ] && $(CMD_SHASUM) $(PACKAGE_PROTO_NAME) >> SHA256SUMS
+		&& find * '!' -name 'VERSION' '!' -name 'LICENSE' '!' -name '*SUM' '!' -name '*SUMS' \
+		| xargs $(CMD_SHASUM) >> SHA256SUMS
 endef
 
 .PHONY: build
@@ -285,6 +285,7 @@ package-arm32: proto
 	$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32)
 	#$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32,arm-linux-gnueabihf-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),linux-arm32)
+	$(call package_shasum)
 
 .PHONY: package-arm64
 package-arm64: proto
@@ -292,6 +293,7 @@ package-arm64: proto
 	$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64)
 	#$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64,arm-linux-gnueabihf-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),linux-arm64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-linux
 package-amd64-linux: proto
@@ -299,6 +301,7 @@ package-amd64-linux: proto
 	$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64)
 	#$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64,x86_64-pc-linux-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),linux-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-darwin
 package-amd64-darwin: proto
@@ -306,6 +309,7 @@ package-amd64-darwin: proto
 	$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64)
 	#$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64,x86_64-pc-linux-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),darwin-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-openbsd
 package-amd64-openbsd: proto
@@ -313,6 +317,7 @@ package-amd64-openbsd: proto
 	$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64)
 	#$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64,x86_64-pc-linux-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),openbsd-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-windows
 package-amd64-windows: proto
@@ -320,13 +325,15 @@ package-amd64-windows: proto
 	$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64)
 	#$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64,x86_64-pc-linux-gcc)
 	$(call package_zipper,$(PACKAGE_DIR),windows-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64
 package-amd64: package-amd64-linux  package-amd64-darwin  package-amd64-openbsd  package-amd64-windows
 	@echo "$(NAME): package-amd64 task"
+	$(call package_shasum)
 
 .PHONY: package
-package: clean package-proto package-arm32 package-arm64 package-amd64 docker
+package: clean proto package-proto package-arm32 package-arm64 package-amd64 docker
 	@echo "$(NAME): package task"
 	cp VERSION $(PACKAGE_DIR)/VERSION
 	cp LICENSE $(PACKAGE_DIR)/LICENSE
