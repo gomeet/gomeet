@@ -233,7 +233,7 @@ func projectCreationGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 632, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 632, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -253,7 +253,7 @@ func projectCreationChangelogMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 714, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 714, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -273,12 +273,12 @@ func projectCreationDockerfileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 793, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 793, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _projectCreationGopkgTomlTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xa4\x96\xc1\x6e\xe3\x36\x10\x86\xef\x7a\x0a\xc2\xbe\xd6\xa2\x9d\xb4\x87\x16\xc8\xa1\x40\x81\xa0\xb7\xa2\x5b\x14\x2d\x8c\x1c\x28\x72\x44\x31\xa6\x38\xea\x90\x94\xa3\x0d\xfc\xee\x05\x25\x6f\x2d\xc8\xf2\x56\x1b\x5f\x12\x4b\x1a\x7e\xff\xaf\x99\xe1\x50\x6b\xf6\x8c\xcd\x41\xe7\x01\x6b\xcb\xe0\x4d\xd4\x8d\x85\x6c\x9d\xad\xd9\xef\x50\x02\xb1\x80\xac\x0a\xa1\xf1\x3f\x71\xae\x4d\xa8\x62\x91\x4b\xac\xb9\x46\x2b\x9c\xe6\x0a\x1a\x5e\x58\x2c\x78\x2d\x7c\x00\xe2\x0a\xa5\xe7\x17\x5c\x5e\xab\x6c\xcd\x4a\x24\xa6\x20\x08\x63\x41\x8d\xb5\x14\xca\x58\x83\x0b\x22\x18\x74\x79\x2f\x49\xf0\x4f\x34\x04\x8a\x3d\xb1\xfd\x6a\x24\x17\x3d\x10\x0f\x95\x71\x9a\xcb\x5a\x0d\xbf\x56\x2f\xd9\x9a\x19\xed\xf0\x56\x7c\x43\xf8\x0a\x32\xf0\xe6\xa0\xff\x5a\x7d\xc7\x56\x85\x09\x45\x94\x07\x08\x39\x92\xbe\x0a\xf9\x39\xfd\xf9\x3b\x41\xb3\x35\xdb\xef\x25\x3a\x1f\x48\x18\x17\x5e\x92\x0e\x63\x4e\xd4\xc0\x9e\xd8\x2d\x95\x55\x1f\xd4\x02\x79\x83\x2e\xc5\xed\xf2\x6d\xbe\x5d\x7d\x90\xf6\x30\xe0\x0a\x12\x4e\x56\x29\x4e\x41\x3b\xdc\xf2\x18\x49\x4e\x97\xd6\x5d\x89\x74\x18\x2f\xee\x55\xb1\x05\x22\xa3\x60\xd0\x9c\x91\x7c\xe3\x5d\x4f\x1d\xd9\x7e\xc8\xbf\x4f\xb6\xb3\x7d\x43\xd1\xc1\x4b\xc6\x58\x74\xd1\x83\xda\x34\x42\x1e\x84\x06\xcf\x9e\x58\xa0\x08\x19\x63\x0e\xdd\x46\xe3\xe5\x5a\xe3\x26\x80\x0f\xff\x45\xbc\xbf\x33\x12\x4e\x03\xcb\x3f\xc5\xe2\x13\x50\x6b\x24\x78\x76\x3a\x65\x8c\xed\x07\x7c\x7e\x76\xfc\x92\x74\x2e\x0e\xdf\xdf\x59\xfe\x8c\xbf\x1d\x34\x3b\x9d\x56\xfd\x93\x6b\x0f\xa5\xb0\x1e\x86\x55\x5f\x6c\x5c\x6e\x8d\x9c\x0c\x37\x93\x17\x70\x8a\x9d\x4e\x93\x5a\x30\xb6\xbe\x24\x79\x68\xe2\xa4\x38\x93\x2b\x6f\x28\x36\x1e\x1c\xb7\xa8\x29\xfa\x14\x35\xa9\xf6\x63\x4a\xdb\x14\x3f\x43\xaa\x45\x08\x8e\x6b\xdc\x48\xb4\x48\xa2\xb0\x30\x81\x6d\xf3\x6d\xfe\xe3\x42\x58\x29\x82\xa9\x78\x4f\xba\xb2\xf4\xc3\x50\xc9\x29\x65\xe1\x0b\xcb\xea\x73\x07\xc4\x09\x84\xb2\xc6\xc1\x1d\xa4\xf3\xb0\x68\x08\x03\x16\xb1\xbc\x87\x44\x8d\xdc\x80\x44\xdf\xf9\x00\xe7\x4b\x2d\x02\x1c\x45\x37\x47\x5d\x5c\xdb\xa6\xdc\x3d\x72\x89\x05\x89\x99\x52\x3c\xdc\x61\xb8\x36\x41\x56\x60\x6d\x95\xea\x5d\x61\x0d\xca\xd0\x1d\xb8\xc1\x68\x6b\x1a\xf8\x76\x4a\x5f\x84\x7e\xf4\xbd\x71\x07\xa1\x5f\x3f\x9a\x10\xff\xb7\x1a\xb5\x85\x7c\x04\xd1\xe0\xfa\x82\x7e\xb5\x4f\xaf\x57\x51\x23\x27\x29\x6e\x77\xf9\x6e\x37\xbf\x79\x16\x66\xa5\x8c\xd6\xfa\x80\xd4\x29\x68\x7b\x85\x4a\xb8\x85\xdb\xc7\x07\x82\x20\x2b\xe2\x69\x5e\x98\xb2\xbb\xf6\xf6\x30\xbf\x89\x66\x58\x4a\x93\x79\x15\xb6\x15\xfc\xf5\x18\x36\x1a\x27\xac\xc7\x7c\x77\xd7\x7e\x14\x31\x54\xdb\xd4\x46\x89\x5e\x1b\xa5\x2c\x1c\x05\xcd\xee\xcb\xa5\x7d\x3f\xd4\x87\xc7\x68\xd4\x55\xdf\xdf\x78\xef\xa5\x7d\x7f\x34\xe1\x80\xc7\x64\xb7\xef\x92\x4d\x2b\xac\x51\x22\x20\xf9\x85\xd9\xd4\x58\x03\x04\x5e\x8a\x03\x4c\x27\x5b\x7b\x3e\x5b\xd3\x54\x37\x25\xcb\x7f\xf5\xcf\xa8\xf1\x19\xdc\xdc\x7c\x9f\x45\x6b\x1c\x4d\xa3\x79\xf6\x62\xd0\x90\x44\xd1\x98\xe9\x99\xf0\x01\xd4\x97\x51\x76\xf3\x75\x6f\x1c\x62\x8b\xeb\xdd\xe7\x74\xf8\x77\xc9\xdf\x2f\xc5\x1f\x5d\xd3\x1f\xcd\x1f\x05\xbf\x1a\xf7\xb9\x8a\x5c\x23\xd5\xab\x8b\xcd\xec\xe6\x27\xc0\x57\x74\x14\xb4\x60\xb1\x19\x0b\x4d\xbf\x07\xd6\xa3\xe4\xa4\x67\x7f\x9e\x2f\xd3\xd3\xb1\xfa\xbf\x01\x00\x00\xff\xff\xe4\x3c\x35\x3d\xda\x0a\x00\x00")
+var _projectCreationGopkgTomlTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xa4\x96\xc1\x6e\xe3\x36\x10\x86\xef\x7a\x0a\xc2\xbe\xd6\x62\x9c\xb4\x87\x16\xc8\xa1\x40\x81\xa0\xb7\xa2\x5b\x14\x2d\x8c\x1c\x28\x72\x44\x31\xa6\x38\xec\x90\x94\xe3\x0d\xfc\xee\x05\x25\xef\x5a\x90\xe5\x85\x36\xb9\x24\x91\x34\xfc\xfe\x9f\x33\xc3\x61\xd6\xec\x09\xfd\x5e\x97\x11\x5b\xcb\xe0\x55\xb4\xde\x42\xb1\x2e\xd6\xec\x4f\xa8\x81\x58\x44\xd6\xc4\xe8\xc3\x2f\x9c\x6b\x13\x9b\x54\x95\x12\x5b\xae\xd1\x0a\xa7\xb9\x02\xcf\x2b\x8b\x15\x6f\x45\x88\x40\x5c\xa1\x0c\xfc\x82\x2b\x5b\x55\xac\x59\x8d\xc4\x14\x44\x61\x2c\xa8\xb1\x96\x42\x99\x5a\x70\x51\x44\x83\xae\xec\x25\x09\xfe\x4b\x86\x40\xb1\x47\xb6\x5b\x8d\xe4\x52\x00\xe2\xb1\x31\x4e\x73\xd9\xaa\xe1\xaf\xd5\x73\xb1\x66\x46\x3b\xbc\x15\xef\x09\x5f\x40\x46\xee\xf7\xfa\x9f\xd5\x0f\x6c\x55\x99\x58\x25\xb9\x87\x58\x22\xe9\xab\x90\x5f\xf3\x8f\x7f\x33\xb4\x58\xb3\xdd\x4e\xa2\x0b\x91\x84\x71\xf1\x39\xeb\x30\xe6\x44\x0b\xec\x91\xdd\x52\x59\xf5\x41\x1d\x50\x30\xe8\x72\xdc\xb6\xbc\x2b\xef\x56\xef\xa4\xdd\x0f\xb8\x8a\x84\x93\x4d\x8e\x53\xd0\x0d\xaf\x02\x26\x92\xd3\xa5\xed\xb1\x46\xda\x8f\x17\xf7\xaa\xd8\x01\x91\x51\x30\x68\xce\x48\xbe\xf2\x63\x4f\x1d\xd9\xbe\x2f\x7f\xcc\xb6\x8b\x9d\xa7\xe4\xe0\xb9\x60\x2c\xb9\x14\x40\x6d\xbc\x90\x7b\xa1\x21\xb0\x47\x16\x29\x41\xc1\x98\x43\xb7\xd1\x78\x79\xd6\xb8\x89\x10\xe2\xd7\x88\xb7\x37\x46\xc2\x69\x60\xe5\xa7\x54\x7d\x02\xea\x8c\x84\xc0\x4e\xa7\x82\xb1\xdd\x80\x2f\xcf\x8e\x9f\xb3\xce\xc5\xe1\xdb\x1b\x2b\x9f\xf0\x8f\xbd\x66\xa7\xd3\xaa\xff\x72\xed\xa1\x16\x36\xc0\xb0\xea\x8b\x8d\xcb\xab\x91\x93\xe1\x65\xf6\x02\x4e\xb1\xd3\x69\x52\x0b\xc6\xd6\x97\x24\x0f\x4d\x9c\x15\x67\x72\x15\x0c\x25\x1f\xc0\x71\x8b\x9a\x52\xc8\x51\x93\x6a\x3f\xe4\xb4\x4d\xf1\x33\xa4\x56\xc4\xe8\xb8\xc6\x8d\x44\x8b\x24\x2a\x0b\x13\xd8\x5d\x79\x57\xfe\xbc\x10\x56\x8b\x68\x1a\xde\x93\xae\x2c\xfd\x34\x54\x72\x4a\x59\xb8\x61\xd9\x7c\x3e\x02\x71\x02\xa1\xac\x71\xd0\x93\x46\x1d\xb5\x98\x73\x1e\x15\x9e\x30\x62\x95\xea\xf7\x73\xc8\xcb\x0d\x48\x0c\xc7\x10\xe1\xfc\xa8\x45\x84\x83\x38\xce\xed\x72\x71\x5d\x7d\xbd\x7d\xe0\x12\x2b\x12\x33\x65\xb8\xff\x40\x02\x5b\x13\x65\x03\xd6\x36\xb9\xd6\x0d\xb6\xa0\x0c\x7d\x00\x37\x18\xed\x8c\x87\xef\xa7\xf4\x25\xe8\xc7\xde\x2b\x77\x10\xbf\xb3\x06\x88\xda\x42\x39\x82\x68\x70\x7d\x39\xbf\xd9\xa3\xd7\xab\xc8\xcb\x49\x8a\xbb\x6d\xb9\xdd\xce\x1f\x9c\x85\x59\xa9\x93\xb5\x21\x22\x1d\x15\x74\xbd\x42\x23\xdc\xc2\xa3\x13\x22\x41\x94\x0d\xf1\x3c\x2b\x4c\x7d\xbc\xf6\x76\x3f\x7f\x80\x66\x58\x4a\x93\x79\x11\xb6\x13\xfc\xe5\x10\x37\x1a\x27\xac\x87\x72\xfb\xa1\xb3\x28\x52\x6c\xee\x72\x1b\x65\x7a\x6b\x94\xb2\x70\x10\x04\x1f\xe9\xfb\xa1\x3e\x3c\x25\xa3\xae\xfa\xfe\xc6\xbe\x97\xf6\xfd\xc1\xc4\x3d\x1e\xb2\xdd\xbe\x4b\x36\x9d\xb0\x46\x89\x88\x14\x16\x66\x53\x63\x0b\x10\x79\x2d\xf6\x30\x9d\x6a\xdd\xf9\x5e\xcd\x13\xdd\xd4\xac\xfc\x3d\x3c\xa1\xc6\x27\x70\x73\xb3\x7d\x16\xad\x71\x34\x8b\xe6\xd9\x8b\x41\x43\x12\x85\x37\xd3\xfb\xe0\x1d\xa8\x2f\xa3\xec\xe6\x76\x6f\x5c\x60\x8b\xeb\xdd\xe7\x74\xf8\x75\xc9\xdf\x6f\xd5\x5f\x47\xdf\x5f\xcb\xef\x05\xbf\x18\xf7\xb9\x49\x5c\x23\xb5\xab\x8b\xcd\xe2\xe6\xf5\xff\x0d\x1d\x05\x1d\x58\xf4\x63\xa1\xe9\xff\x02\xeb\x51\x72\xf2\xb7\xbf\xcf\x8f\xf9\xeb\x58\xfd\xff\x00\x00\x00\xff\xff\x4f\x4b\xde\xf7\xd6\x0a\x00\x00")
 
 func projectCreationGopkgTomlTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -293,7 +293,7 @@ func projectCreationGopkgTomlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2778, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1532433964, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -313,7 +313,7 @@ func projectCreationLicenseTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/LICENSE.tmpl", size: 1069, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/LICENSE.tmpl", size: 1069, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -333,7 +333,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 35556, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 35556, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -353,7 +353,7 @@ func projectCreationReadmeMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 1903, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 1903, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -373,7 +373,7 @@ func projectCreationVersionTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/VERSION.tmpl", size: 10, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/VERSION.tmpl", size: 10, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -393,7 +393,7 @@ func projectCreationCmdConsoleGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 4498, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 4498, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -413,7 +413,7 @@ func projectCreationCmdFunctestClientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2154, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2154, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -433,7 +433,7 @@ func projectCreationCmdFunctestHttp_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/functest/http_status.go.tmpl", size: 1047, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/functest/http_status.go.tmpl", size: 1047, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -453,7 +453,7 @@ func projectCreationCmdFunctestHttp_swaggerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/functest/http_swagger.go.tmpl", size: 2035, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/functest/http_swagger.go.tmpl", size: 2035, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -473,7 +473,7 @@ func projectCreationCmdRemotecliCmd_console_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_console_version.go.tmpl", size: 180, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_console_version.go.tmpl", size: 180, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -493,7 +493,7 @@ func projectCreationCmdRemotecliCmd_default_timeoutGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_default_timeout.go.tmpl", size: 515, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_default_timeout.go.tmpl", size: 515, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -513,7 +513,7 @@ func projectCreationCmdRemotecliCmd_jwtGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_jwt.go.tmpl", size: 542, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_jwt.go.tmpl", size: 542, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -533,7 +533,7 @@ func projectCreationCmdRemotecliCmd_service_addressGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_service_address.go.tmpl", size: 185, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_service_address.go.tmpl", size: 185, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -553,7 +553,7 @@ func projectCreationCmdRemotecliCmd_tls_configGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_tls_config.go.tmpl", size: 661, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/cmd_tls_config.go.tmpl", size: 661, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -573,7 +573,7 @@ func projectCreationCmdRemotecliHelpersGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/remotecli/helpers.go.tmpl", size: 689, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/remotecli/helpers.go.tmpl", size: 689, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -593,7 +593,7 @@ func projectCreationCmdTokenGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/token.go.tmpl", size: 2102, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/token.go.tmpl", size: 2102, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -613,7 +613,7 @@ func projectCreationCmdVersionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/version.go.tmpl", size: 782, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/version.go.tmpl", size: 782, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -633,7 +633,7 @@ func projectCreationDocsBaremetalReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/baremetal/README.md", size: 803, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/baremetal/README.md", size: 803, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -653,7 +653,7 @@ func projectCreationDocsDevelReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/devel/README.md", size: 198, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/devel/README.md", size: 198, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -673,7 +673,7 @@ func projectCreationDocsDevelAdd_sub_serviceReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/devel/add_sub_service/README.md", size: 7984, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/devel/add_sub_service/README.md", size: 7984, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -693,7 +693,7 @@ func projectCreationDocsGrafanaReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/README.md", size: 2065, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/README.md", size: 2065, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -713,7 +713,7 @@ func projectCreationDocsGrafanaAssetsAdd_dashboard_1Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_1.png", size: 105863, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_1.png", size: 105863, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -733,7 +733,7 @@ func projectCreationDocsGrafanaAssetsAdd_dashboard_2Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_2.png", size: 40267, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_2.png", size: 40267, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -753,7 +753,7 @@ func projectCreationDocsGrafanaAssetsAdd_dashboard_3Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_3.png", size: 51332, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_dashboard_3.png", size: 51332, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -773,7 +773,7 @@ func projectCreationDocsGrafanaAssetsAdd_datasourcePng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_datasource.png", size: 59980, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/add_datasource.png", size: 59980, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -793,7 +793,7 @@ func projectCreationDocsGrafanaAssetsAll_dashboardsPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/all_dashboards.png", size: 159106, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grafana/assets/all_dashboards.png", size: 159106, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -813,7 +813,7 @@ func projectCreationDocsGrpcServicesDo_not_editTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/grpc-services/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/grpc-services/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -833,7 +833,7 @@ func projectCreationHackContainersCleanSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/containers-clean.sh", size: 1355, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/containers-clean.sh", size: 1355, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -853,7 +853,7 @@ func projectCreationHackContainersDownSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/containers-down.sh", size: 1427, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/containers-down.sh", size: 1427, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -873,7 +873,7 @@ func projectCreationHackContainersUpSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2515, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2515, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -893,7 +893,7 @@ func projectCreationHackDockerCleanupSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/docker-cleanup.sh", size: 1755, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/docker-cleanup.sh", size: 1755, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -913,7 +913,7 @@ func projectCreationHackDockerImagesBuildSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/docker-images-build.sh", size: 1052, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/docker-images-build.sh", size: 1052, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -933,7 +933,7 @@ func projectCreationHackDockerImagesCleanSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/docker-images-clean.sh", size: 967, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/docker-images-clean.sh", size: 967, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -953,7 +953,7 @@ func projectCreationHackGenCaSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/gen-ca.sh", size: 1272, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/gen-ca.sh", size: 1272, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -973,7 +973,7 @@ func projectCreationHackGenCertSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/gen-cert.sh", size: 1985, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/gen-cert.sh", size: 1985, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -993,7 +993,7 @@ func projectCreationHackGrpcEditAllMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-all-method.sh", size: 351, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-all-method.sh", size: 351, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1013,7 +1013,7 @@ func projectCreationHackGrpcEditMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-method.sh", size: 668, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-method.sh", size: 668, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1033,7 +1033,7 @@ func projectCreationHackGrpcListMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-list-method.sh", size: 250, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-list-method.sh", size: 250, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1053,7 +1053,7 @@ func projectCreationHackGrpcMethodFilesListSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-method-files-list.sh", size: 719, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-method-files-list.sh", size: 719, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1073,7 +1073,7 @@ func projectCreationHackGrpcRmAllMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-rm-all-method.sh", size: 351, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-rm-all-method.sh", size: 351, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1093,7 +1093,7 @@ func projectCreationHackGrpcRmMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-rm-method.sh", size: 1071, mode: os.FileMode(493), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-rm-method.sh", size: 1071, mode: os.FileMode(493), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1113,7 +1113,7 @@ func projectCreationHackRunEnvSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 6660, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 6660, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1133,7 +1133,7 @@ func projectCreationHackRunTestSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-test.sh", size: 172, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-test.sh", size: 172, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1153,7 +1153,7 @@ func projectCreationInfraAlertmanagerConfigYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/alertmanager/config.yml", size: 234, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/alertmanager/config.yml", size: 234, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1173,7 +1173,7 @@ func projectCreationInfraConfigMonitoring() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/config.monitoring", size: 66, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/config.monitoring", size: 66, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1193,7 +1193,7 @@ func projectCreationInfraGrafanaDashboardsDocker_and_system_monitoringJson() (*a
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/docker_and_system_monitoring.json", size: 57475, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/docker_and_system_monitoring.json", size: 57475, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1213,7 +1213,7 @@ func projectCreationInfraGrafanaDashboardsDocker_monitoringJson() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/docker_monitoring.json", size: 16260, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/docker_monitoring.json", size: 16260, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1233,7 +1233,7 @@ func projectCreationInfraGrafanaDashboardsGo_processesJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/go_processes.json", size: 23296, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/go_processes.json", size: 23296, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1253,7 +1253,7 @@ func projectCreationInfraGrafanaDashboardsGrpc_serversJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/grpc_servers.json", size: 6464, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/grpc_servers.json", size: 6464, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1273,7 +1273,7 @@ func projectCreationInfraGrafanaDashboardsPrometheus_statsJson() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/prometheus_stats.json", size: 20305, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/prometheus_stats.json", size: 20305, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1293,7 +1293,7 @@ func projectCreationInfraGrafanaDashboardsSystem_monitoringJson() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/system_monitoring.json", size: 21976, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/system_monitoring.json", size: 21976, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1313,7 +1313,7 @@ func projectCreationInfraGrafanaDashboardsSystem_monitoring_detailJson() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/system_monitoring_detail.json", size: 63155, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/grafana/dashboards/system_monitoring_detail.json", size: 63155, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1333,7 +1333,7 @@ func projectCreationInfraPrometheusAlertRules() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/infra/prometheus/alert.rules", size: 273, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/infra/prometheus/alert.rules", size: 273, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1353,7 +1353,7 @@ func projectCreationMainGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/main.go.tmpl", size: 163, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/main.go.tmpl", size: 163, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1373,7 +1373,7 @@ func projectCreationModelsModelsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/models/models.go.tmpl", size: 2115, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/models/models.go.tmpl", size: 2115, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1393,7 +1393,7 @@ func projectCreationPbProtoProtoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3330, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
+	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3330, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1413,7 +1413,7 @@ func projectCreationServiceAuth_and_acl_funcsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/auth_and_acl_funcs.go.tmpl", size: 1921, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "project-creation/service/auth_and_acl_funcs.go.tmpl", size: 1921, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1433,7 +1433,7 @@ func projectCreationServiceHttpGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 2402, mode: os.FileMode(420), modTime: time.Unix(1528715149, 0)}
+	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 2402, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1453,7 +1453,7 @@ func projectCreationThird_partyLicenseApache2() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/LICENSE-APACHE2", size: 11341, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/LICENSE-APACHE2", size: 11341, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1473,7 +1473,7 @@ func projectCreationThird_partyLicenseProtobuf() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/LICENSE-PROTOBUF", size: 2133, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/LICENSE-PROTOBUF", size: 2133, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1493,7 +1493,7 @@ func projectCreationThird_partyReadmeGomeet() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/README.gomeet", size: 1065, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/README.gomeet", size: 1065, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1513,7 +1513,7 @@ func projectCreationThird_partyGithubComGogoProtobufGogoprotoGogoProto() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/github.com/gogo/protobuf/gogoproto/gogo.proto", size: 4621, mode: os.FileMode(420), modTime: time.Unix(1527596891, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/github.com/gogo/protobuf/gogoproto/gogo.proto", size: 4621, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1533,7 +1533,7 @@ func projectCreationThird_partyGithubComGomeetGoProtoGomeetfakerGomeetfakerProto
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/github.com/gomeet/go-proto-gomeetfaker/gomeetfaker.proto", size: 9820, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/github.com/gomeet/go-proto-gomeetfaker/gomeetfaker.proto", size: 9820, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1553,7 +1553,7 @@ func projectCreationThird_partyGithubComMwitkowGoProtoValidatorsValidatorProto()
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/github.com/mwitkow/go-proto-validators/validator.proto", size: 2813, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/github.com/mwitkow/go-proto-validators/validator.proto", size: 2813, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1573,7 +1573,7 @@ func projectCreationThird_partyGoogleApiAnnotationsProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/api/annotations.proto", size: 1051, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/api/annotations.proto", size: 1051, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1593,7 +1593,7 @@ func projectCreationThird_partyGoogleApiHttpProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/api/http.proto", size: 10669, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/api/http.proto", size: 10669, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1613,7 +1613,7 @@ func projectCreationThird_partyGoogleProtobufAnyProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/any.proto", size: 5483, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/any.proto", size: 5483, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1633,7 +1633,7 @@ func projectCreationThird_partyGoogleProtobufApiProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/api.proto", size: 7734, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/api.proto", size: 7734, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1653,7 +1653,7 @@ func projectCreationThird_partyGoogleProtobufCompilerPluginProto() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/compiler/plugin.proto", size: 8200, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/compiler/plugin.proto", size: 8200, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1673,7 +1673,7 @@ func projectCreationThird_partyGoogleProtobufDescriptorProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/descriptor.proto", size: 36277, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/descriptor.proto", size: 36277, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1693,7 +1693,7 @@ func projectCreationThird_partyGoogleProtobufDurationProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/duration.proto", size: 4890, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/duration.proto", size: 4890, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1713,7 +1713,7 @@ func projectCreationThird_partyGoogleProtobufEmptyProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/empty.proto", size: 2422, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/empty.proto", size: 2422, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1733,7 +1733,7 @@ func projectCreationThird_partyGoogleProtobufField_maskProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/field_mask.proto", size: 8196, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/field_mask.proto", size: 8196, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1753,7 +1753,7 @@ func projectCreationThird_partyGoogleProtobufSource_contextProto() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/source_context.proto", size: 2352, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/source_context.proto", size: 2352, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1773,7 +1773,7 @@ func projectCreationThird_partyGoogleProtobufStructProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/struct.proto", size: 3781, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/struct.proto", size: 3781, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1793,7 +1793,7 @@ func projectCreationThird_partyGoogleProtobufTimestampProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/timestamp.proto", size: 5975, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/timestamp.proto", size: 5975, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1813,7 +1813,7 @@ func projectCreationThird_partyGoogleProtobufTypeProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/type.proto", size: 6283, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/type.proto", size: 6283, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1833,12 +1833,12 @@ func projectCreationThird_partyGoogleProtobufWrappersProto() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/wrappers.proto", size: 3745, mode: os.FileMode(420), modTime: time.Unix(1527339755, 0)}
+	info := bindataFileInfo{name: "project-creation/third_party/google/protobuf/wrappers.proto", size: 3745, mode: os.FileMode(420), modTime: time.Unix(1532434154, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _projectCreationToolsJsonTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xbc\x96\x4d\x8f\xdb\x46\x0f\xc7\xef\xfb\x29\x04\x9f\xe3\xf5\x68\x5e\x38\x33\xb9\x3e\x87\xe0\xb9\x15\x41\xd1\x4b\xd1\x03\xc9\x21\x15\x75\x6d\x8f\x2b\xc9\xeb\x04\x86\xbf\x7b\x61\xef\x26\xd9\x6d\x15\x60\x95\x43\x2f\xf3\x42\x89\xf8\xff\x66\x48\x91\x3a\xdf\x35\xcd\xea\xd7\x5a\xb7\xe3\xea\x7d\xf3\xfb\x5d\xd3\x34\xcd\xf9\x36\x36\xcd\xea\xa3\x1c\xea\xd8\x4f\x75\xf8\xb2\x7a\xdf\xac\xba\x7e\xfa\x74\xa4\x7b\xae\xbb\xcd\x74\xea\x27\xfe\x34\x3d\x6e\x06\x99\x6a\xdd\xae\xde\x7d\xf5\xf8\x5f\xdd\xed\xfa\xe9\xfa\x76\xa6\x36\x6b\xb2\xe2\x5d\xd1\x12\x8b\xb3\x9c\x0c\x6b\xf0\x59\x15\xc8\x45\x67\x7c\x60\xc7\x31\xac\x6e\xae\x97\x77\x6f\x54\xee\xea\x16\xf7\xdd\xa6\xc8\x61\xc3\xbb\x72\x9d\xe7\xc4\x63\x09\x26\xe4\x10\x5b\x97\xd1\x11\x14\x63\x39\x13\x7a\xf4\x25\xf8\xe8\x2c\x5b\x72\x41\xbd\x6b\x17\x8a\x8f\x07\x6d\xdd\x86\x2b\x0d\xf8\x34\xce\x69\x8b\x26\x5b\x24\x1a\x22\xa7\x60\x18\x82\x52\x12\x21\x64\x22\x5b\x5a\x6b\x45\x43\x1b\x5d\x5a\x7a\x70\xf9\x8c\x43\xbf\xef\x36\xa3\xec\x1e\x65\x98\x13\x76\xaa\xe2\x5d\x56\xb0\x6d\xb0\xe0\x59\xc1\x19\x6f\x43\x36\x84\x51\x53\x8e\x96\x53\x06\x8e\x6e\xe9\xa1\xff\x3a\xe2\x20\x1b\x96\x61\x1a\xa7\x01\x67\xef\x3b\xb3\xd8\xe0\x8b\x23\xcf\x09\x88\x5c\x31\xc2\x1a\x8b\x8d\x21\x00\x47\x41\xdb\xb2\x49\x29\xfb\x85\xd2\x38\x4e\xf8\xb9\x97\x0d\xe1\x34\x7b\x60\x76\x29\xb5\x9c\xc0\xb2\x55\x8f\x86\x9d\x92\x28\xc4\xa0\x0e\x34\x5a\x9f\x0d\xb5\x9c\x6c\x5a\xa8\xfa\xe7\x24\x72\x3c\xc9\x7e\xd3\xd5\x35\xf5\xfb\x82\x13\xbe\x58\xce\x81\x80\xb1\x41\x52\x11\x80\x40\xae\x55\x8c\x1e\xa9\x45\x00\xb5\x5c\x4a\x49\x6c\x90\x34\xa5\x28\x3f\x97\xeb\x87\xa1\x4e\x95\x8e\xfa\xb4\xe0\x75\x27\xfb\x75\x57\x67\xc3\x60\x23\x41\xc8\xad\x0f\xd6\x60\xa2\x58\xbc\xd7\xc0\xd9\x84\x08\x6d\xcb\x2a\x0c\x64\xc5\x16\xf3\x95\xe3\x7c\x6e\x7a\x6d\xee\xff\x3f\x7e\xa8\x5d\xfd\x20\xfb\xe6\x72\x79\x33\x5a\x57\x7f\x00\x36\x8f\xe6\x0c\x6b\x44\x76\x0e\x22\x50\x88\x09\x24\x26\x8e\x1e\x20\x39\x35\xc5\x73\x01\xaf\x18\x03\xbd\x40\x93\x7d\x59\x00\x34\x1c\x78\x2d\x5c\xc7\x2f\xe3\x24\xcf\xdb\x0e\x27\x39\xe1\x97\x97\x78\xe3\x09\xbb\x6e\xfe\xf3\xc1\xe0\x50\x4d\xcc\x0a\x90\x09\x5c\x0c\xa5\x64\xe0\xa2\x41\x72\x12\x88\x9a\x12\x60\x22\x5f\x96\x06\xf1\x6d\x60\x2f\xed\xff\x21\xdd\xee\xd4\x4f\x0f\xf5\x74\xcd\xef\x1b\xcc\xfa\x11\xb7\x7d\xc1\xa9\x0e\xe3\xeb\xa8\x7e\xb7\xcf\xd1\x99\x1c\x0c\xc6\x9c\x8d\x31\xb1\x95\xac\x4e\x43\x8e\x99\x62\x32\x31\x71\xc8\xd9\x45\xf0\xd6\xea\x52\xba\xc3\x28\xc7\x52\x77\xc7\xa9\xbe\x84\x29\x95\x6f\xb5\xff\xb5\x69\x16\x8b\x7d\x01\x00\x56\x69\xdb\x18\x00\x1c\xab\x81\x98\xc1\xb9\x0c\x68\x28\x93\xf3\x1a\xbc\xd3\x85\x58\x7a\xdc\x6e\xc7\xab\xbd\xc8\xe3\x2d\xa0\x9f\x70\xff\x4f\xa2\x67\xf3\x1c\x15\x93\xc4\x2c\xad\x98\x9c\x4a\x22\x4b\xe4\x73\xb0\x14\xcd\x95\x14\xaf\x55\x2c\x0a\xb6\x25\x2d\xaf\x16\x3b\x91\xe9\x79\x5a\x5f\xdb\xf2\xb8\xde\xe1\xf0\x50\xea\x69\xbf\x1e\x65\xf8\x41\xd7\x28\x0e\x5d\x40\x0c\x49\x42\x16\x62\x8a\x18\x0a\x46\x49\xc6\x70\xb4\x39\x10\x52\x02\x36\x61\x69\xab\xfc\x46\xf3\x9c\x57\x4f\x7b\xc5\x07\x19\x5e\x27\xd6\x37\xf3\x6c\x61\x75\x60\x5d\x68\xbd\x42\x6a\x8d\xbb\x16\x7a\xc9\x2c\xc9\x10\x58\x06\x88\x9e\x13\xf9\xb7\xf6\xf1\xf3\xb9\xb9\xff\x70\x93\xfb\xe5\xa1\x6b\x2e\x97\x7f\x63\xdc\x6e\xa9\x67\x99\x23\xf9\xee\xfd\xf1\xf6\xcb\xf3\x51\x1e\x9b\xcb\xe5\xa7\x74\x9f\xc4\x16\x8b\xdc\x35\xcd\x1f\x57\x9f\xd5\xd3\xb3\xdf\x64\x18\xfb\xba\xbf\xba\xb5\xf7\xee\x1e\x56\x77\x97\xbb\xbf\x03\x00\x00\xff\xff\xa7\x4f\x6e\x5c\xcc\x09\x00\x00")
+var _projectCreationToolsJsonTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xbc\x96\x4d\x6f\xe3\x46\x0f\xc7\xef\xf9\x14\x82\xcf\xeb\x78\x66\x38\xaf\x7b\x7d\x0e\xc1\x73\x2b\x82\xa2\x97\xa2\x07\x92\xc3\x51\xd4\xd8\x1e\x57\x92\xe3\x0d\x0c\x7f\xf7\x42\x4e\x76\x37\x69\xb5\x40\xb4\x87\x5e\xe6\x85\x12\xf1\xff\xcd\x90\x22\x75\xbe\x69\x9a\xd5\xaf\xb5\x6e\x87\xd5\xe7\xe6\xf7\x9b\xa6\x69\x9a\xf3\x75\x6c\x9a\xd5\xbd\x1c\xea\xd0\x8d\xb5\x7f\x5e\x7d\x6e\x56\x6d\x37\x3e\x1c\xe9\x96\xeb\x6e\x33\x9e\xba\x91\x1f\xc6\xa7\x4d\x2f\x63\xad\xdb\xd5\xa7\xaf\x1e\xff\xab\xbb\x5d\x37\x4e\x6f\x27\xd2\xa9\x44\x23\x16\x72\xc9\x21\x83\xe1\xa8\xb8\x38\x9b\x4a\xf1\x04\x01\x94\x75\x0c\x1c\xdc\xea\xea\x7a\xf9\xf4\x41\xe5\xb6\x6e\x71\xdf\x6e\xb2\x1c\x36\xbc\xcb\xd3\x3c\x27\x1e\xb2\x53\x2e\xb9\xa0\x21\x21\x90\xcf\xca\x70\x22\xb4\x68\xb3\xb3\x01\x0c\x1b\x02\x57\x2c\xe8\x85\xe2\xc3\xa1\x68\xd8\x70\xa5\x1e\x5f\xc6\x39\x6d\x29\xd1\x64\x09\x8a\x08\x8a\x57\xec\x5d\xa1\x28\x42\xc8\x44\x26\x6b\x63\xa4\x38\x1d\x20\x2e\x3d\xb8\x7c\xc1\xbe\xdb\xb7\x9b\x41\x76\x4f\xd2\xcf\x09\x43\x29\x62\x21\x15\x6f\xb4\x33\xde\x72\xf1\xa0\xac\x71\x49\x11\x86\x12\x53\x30\x1c\x93\xe7\x00\x4b\x0f\xfd\xd7\x11\x7b\xd9\xb0\xf4\xe3\x30\xf6\x38\x7b\xdf\x89\xc5\x38\x9b\x81\x2c\x47\x4f\x04\x59\x09\x97\x90\x4d\x70\xce\x73\x10\x34\x9a\x55\x8c\xc9\x2e\x94\xc6\x61\xc4\x2f\x9d\x6c\x08\xc7\xd9\x03\x33\xc4\xa8\x39\x7a\xc3\xa6\x58\x54\x0c\x85\xa4\xf8\xe0\x0a\xf8\x12\x8c\x4d\x8a\x34\x47\x13\x17\xaa\xfe\x39\x8a\x1c\x4f\xb2\xdf\xb4\x75\x4d\xdd\x3e\xe3\x88\x6f\x96\x73\x20\x5e\x19\x27\x31\x8b\xf7\x8e\x40\x17\x0c\x16\x49\xa3\xf7\xc5\x70\xce\x39\xb2\x42\x2a\x31\x06\xf9\xb9\x5c\x3f\xf4\x75\xac\x74\x2c\x2f\x0b\x5e\xb7\xb2\x5f\xb7\x75\x36\x0c\x26\x90\x77\x49\x5b\x67\x14\x46\x0a\xd9\xda\xe2\x38\x29\x17\xbc\xd6\x5c\x84\x3d\x19\x31\x59\x7d\xe5\x38\x9f\x9b\xae\x34\xb7\xff\x1f\xee\x6a\x5b\xef\x64\xdf\x5c\x2e\x1f\x46\x6b\xeb\x0f\xc0\xe6\xd1\x40\x71\x09\xc8\x00\x3e\x78\x72\x21\x7a\x09\x91\x83\xf5\x3e\x42\x51\xd9\x72\xf6\xb6\x60\x70\xf4\x06\x4d\xf6\x79\x01\x50\x7f\xe0\xb5\x70\x1d\x9e\x87\x51\x5e\xb7\x2d\x8e\x72\xc2\xe7\xb7\x78\xc3\x09\xdb\x76\xfe\xf3\x31\x2a\xe5\xc0\xa2\x11\x00\x9c\x9b\x98\xc4\xd9\x8c\x39\x59\x0b\x46\x27\x23\x42\x46\x59\x4d\x4b\x83\xf8\x31\xb0\xb7\xf6\xff\x90\x6e\x77\xea\xc6\xc7\x7a\x9a\xf2\xfb\x0a\xb3\x7e\xc2\x6d\x97\x71\xac\xfd\xf0\x3e\xaa\xdf\xed\x73\x74\x2a\x39\x85\x21\x25\xa5\x54\xd0\x92\x0a\x14\x97\x42\xa2\x10\x55\x88\xec\x52\x82\xe0\xad\x31\x25\x2f\xa4\x3b\x0c\x72\xcc\x75\x77\x1c\xeb\x5b\x98\x5c\xf9\x5a\xfb\xdf\x9b\x66\xb1\xd8\x66\xef\x3d\x17\xd1\x3a\x38\xef\x81\x8b\xf2\x21\x79\x80\xe4\x51\x51\x22\xb0\xc5\x59\x28\x0b\xb1\xca\x71\xbb\x1d\x26\x7b\x96\xa7\x6b\x40\x1f\x70\xff\x4f\xa2\x57\xf3\x1c\x15\x93\x84\x24\x5a\x54\x8a\x39\x92\x21\xb2\xc9\x19\x0a\x6a\x22\xc5\xa9\x8a\x05\x41\x9d\xe3\xf2\x6a\xb1\x13\x19\x5f\xa7\xf5\xd4\x96\x87\xf5\x0e\xfb\xc7\x5c\x4f\xfb\xf5\x20\xfd\x0f\xba\x46\x06\x04\x87\xe8\xa2\xb8\x24\xc4\x14\xd0\x65\x0c\x12\x95\xe2\x60\x92\x23\xa4\xe8\x59\xb9\xa5\xad\xf2\x1b\xcd\x6b\x5e\xbd\xec\x0b\x3e\x4a\xff\x3e\xb1\xbe\x99\x67\x0b\x2b\x78\x03\x4e\xdb\xe2\xa3\x56\x30\x15\x7a\x49\x2c\x51\x91\x37\xec\x7d\xb0\x1c\xc9\x7e\xb4\x8f\x9f\xcf\xcd\xed\xdd\x55\xee\x97\xc7\xb6\xb9\x5c\xfe\x8d\x71\xbd\xa5\x8e\x65\x8e\xe4\xbb\xf7\xfd\xf5\x97\xe7\x5e\x9e\x9a\xcb\xe5\xa7\x74\x5f\xc4\x16\x8b\xdc\x34\xcd\x1f\x93\xcf\xea\xe5\xd9\x6f\xd2\x0f\x5d\xdd\x4f\x6e\xfa\x16\x6e\xfd\xea\xe6\x72\xf3\x77\x00\x00\x00\xff\xff\x49\xb9\x69\x70\xcc\x09\x00\x00")
 
 func projectCreationToolsJsonTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -1853,7 +1853,7 @@ func projectCreationToolsJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2508, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2508, mode: os.FileMode(420), modTime: time.Unix(1532434043, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1873,7 +1873,7 @@ func protocGenTravisYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/.travis.yml.tmpl", size: 1577, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
+	info := bindataFileInfo{name: "protoc-gen/.travis.yml.tmpl", size: 1577, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1893,7 +1893,7 @@ func protocGenClientGomeet_clientGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 4852, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 4852, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1913,7 +1913,7 @@ func protocGenCmdCliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 2903, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 2903, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1933,7 +1933,7 @@ func protocGenCmdFunctestGrpc_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_services_status.go.tmpl", size: 1248, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_services_status.go.tmpl", size: 1248, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1953,7 +1953,7 @@ func protocGenCmdFunctestGrpc_stream_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_stream_stream.go.tmpl", size: 717, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_stream_stream.go.tmpl", size: 717, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1973,7 +1973,7 @@ func protocGenCmdFunctestGrpc_stream_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_stream_unary.go.tmpl", size: 716, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_stream_unary.go.tmpl", size: 716, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1993,7 +1993,7 @@ func protocGenCmdFunctestGrpc_unary_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_unary_stream.go.tmpl", size: 716, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_unary_stream.go.tmpl", size: 716, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2013,7 +2013,7 @@ func protocGenCmdFunctestGrpc_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_unary_unary.go.tmpl", size: 1475, mode: os.FileMode(420), modTime: time.Unix(1531833458, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_unary_unary.go.tmpl", size: 1475, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2033,7 +2033,7 @@ func protocGenCmdFunctestGrpc_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_version.go.tmpl", size: 1220, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_version.go.tmpl", size: 1220, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2053,7 +2053,7 @@ func protocGenCmdFunctestHelpers_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_services_status.go.tmpl", size: 2766, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_services_status.go.tmpl", size: 2766, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2073,7 +2073,7 @@ func protocGenCmdFunctestHelpers_stream_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_stream_stream.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_stream_stream.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2093,7 +2093,7 @@ func protocGenCmdFunctestHelpers_stream_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_stream_unary.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_stream_unary.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2113,7 +2113,7 @@ func protocGenCmdFunctestHelpers_unary_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_stream.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_stream.go.tmpl", size: 47, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2133,7 +2133,7 @@ func protocGenCmdFunctestHelpers_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_unary.go.tmpl", size: 3309, mode: os.FileMode(420), modTime: time.Unix(1531833458, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_unary.go.tmpl", size: 3309, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2153,7 +2153,7 @@ func protocGenCmdFunctestHelpers_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_version.go.tmpl", size: 948, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_version.go.tmpl", size: 948, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2173,7 +2173,7 @@ func protocGenCmdFunctestHttp_metricsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_metrics.go.tmpl", size: 2959, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_metrics.go.tmpl", size: 2959, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2193,7 +2193,7 @@ func protocGenCmdFunctestHttp_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_services_status.go.tmpl", size: 1551, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_services_status.go.tmpl", size: 1551, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2213,7 +2213,7 @@ func protocGenCmdFunctestHttp_stream_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_stream_stream.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_stream_stream.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2233,7 +2233,7 @@ func protocGenCmdFunctestHttp_stream_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_stream_unary.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_stream_unary.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2253,7 +2253,7 @@ func protocGenCmdFunctestHttp_unary_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_unary_stream.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_unary_stream.go.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2273,7 +2273,7 @@ func protocGenCmdFunctestHttp_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_unary_unary.go.tmpl", size: 3329, mode: os.FileMode(420), modTime: time.Unix(1531833458, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_unary_unary.go.tmpl", size: 3329, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2293,7 +2293,7 @@ func protocGenCmdFunctestHttp_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_version.go.tmpl", size: 1512, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/http_version.go.tmpl", size: 1512, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2313,7 +2313,7 @@ func protocGenCmdFunctestTypesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 1745, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 1745, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2333,7 +2333,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 15096, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 15096, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2353,7 +2353,7 @@ func protocGenCmdMigrateGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 8914, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 8914, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2373,7 +2373,7 @@ func protocGenCmdRemotecliCmd_helpGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_help.go.tmpl", size: 877, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_help.go.tmpl", size: 877, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2393,7 +2393,7 @@ func protocGenCmdRemotecliCmd_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_services_status.go.tmpl", size: 1036, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_services_status.go.tmpl", size: 1036, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2413,7 +2413,7 @@ func protocGenCmdRemotecliCmd_stream_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_stream_stream.go.tmpl", size: 260, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_stream_stream.go.tmpl", size: 260, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2433,7 +2433,7 @@ func protocGenCmdRemotecliCmd_stream_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_stream_unary.go.tmpl", size: 259, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_stream_unary.go.tmpl", size: 259, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2453,7 +2453,7 @@ func protocGenCmdRemotecliCmd_unary_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_unary_stream.go.tmpl", size: 259, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_unary_stream.go.tmpl", size: 259, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2473,7 +2473,7 @@ func protocGenCmdRemotecliCmd_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_unary_unary.go.tmpl", size: 1024, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_unary_unary.go.tmpl", size: 1024, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2493,7 +2493,7 @@ func protocGenCmdRemotecliCmd_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_version.go.tmpl", size: 326, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_version.go.tmpl", size: 326, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2513,7 +2513,7 @@ func protocGenCmdRemotecliRemotecliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3891, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3891, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2533,7 +2533,7 @@ func protocGenCmdRootGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 3074, mode: os.FileMode(420), modTime: time.Unix(1531744540, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 3074, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2553,7 +2553,7 @@ func protocGenCmdServeGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 12809, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 12809, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2573,7 +2573,7 @@ func protocGenDockerComposeYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11719, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11719, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2593,7 +2593,7 @@ func protocGenDocsDevelWorking_with_the_sourcesDo_not_editTxt() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2613,7 +2613,7 @@ func protocGenDocsDevelWorking_with_the_sourcesReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 16362, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 16362, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2633,7 +2633,7 @@ func protocGenDocsDockerDo_not_editTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2653,7 +2653,7 @@ func protocGenDocsDockerReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2702, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2702, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2673,7 +2673,7 @@ func protocGenDocsDockerComposeDo_not_editTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2693,7 +2693,7 @@ func protocGenDocsDockerComposeReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1443, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1443, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2713,7 +2713,7 @@ func protocGenDocsUsageDo_not_editTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/usage/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/usage/DO_NOT_EDIT.txt", size: 131, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2733,7 +2733,7 @@ func protocGenDocsUsageReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4031, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4031, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2753,7 +2753,7 @@ func protocGenHackRunConsoleShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3583, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3583, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2773,7 +2773,7 @@ func protocGenHackRunShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 26532, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 26532, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2793,7 +2793,7 @@ func protocGenInfraPrometheusPrometheusYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1689, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1689, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2813,7 +2813,7 @@ func protocGenModelsMigrate_schemaGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5789, mode: os.FileMode(420), modTime: time.Unix(1531745967, 0)}
+	info := bindataFileInfo{name: "protoc-gen/models/migrate_schema.go.tmpl", size: 5789, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2833,7 +2833,7 @@ func protocGenModelsModels_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/models/models_test.go.tmpl", size: 2883, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/models/models_test.go.tmpl", size: 2883, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2853,7 +2853,7 @@ func protocGenPbGeneratorMainGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/pb/generator/main.go.tmpl", size: 904, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/pb/generator/main.go.tmpl", size: 904, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2873,7 +2873,7 @@ func protocGenPbSwaggerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/pb/swagger.go.tmpl", size: 339, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/pb/swagger.go.tmpl", size: 339, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2893,7 +2893,7 @@ func protocGenServerServerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 12556, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 12556, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2913,7 +2913,7 @@ func protocGenServiceGrpcGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 1724, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 1724, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2933,7 +2933,7 @@ func protocGenServiceGrpc_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status.go.tmpl", size: 4553, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status.go.tmpl", size: 4553, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2953,7 +2953,7 @@ func protocGenServiceGrpc_services_status_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status_test.go.tmpl", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1527339703, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status_test.go.tmpl", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2973,7 +2973,7 @@ func protocGenServiceGrpc_stream_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream.go.tmpl", size: 862, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream.go.tmpl", size: 862, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2993,7 +2993,7 @@ func protocGenServiceGrpc_stream_stream_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream_test.go.tmpl", size: 659, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream_test.go.tmpl", size: 659, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3013,7 +3013,7 @@ func protocGenServiceGrpc_stream_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary.go.tmpl", size: 1030, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary.go.tmpl", size: 1030, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3033,7 +3033,7 @@ func protocGenServiceGrpc_stream_unary_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary_test.go.tmpl", size: 685, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary_test.go.tmpl", size: 685, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3053,7 +3053,7 @@ func protocGenServiceGrpc_unary_streamGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream.go.tmpl", size: 890, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream.go.tmpl", size: 890, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3073,7 +3073,7 @@ func protocGenServiceGrpc_unary_stream_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream_test.go.tmpl", size: 781, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream_test.go.tmpl", size: 781, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3093,7 +3093,7 @@ func protocGenServiceGrpc_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary.go.tmpl", size: 767, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary.go.tmpl", size: 767, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3113,7 +3113,7 @@ func protocGenServiceGrpc_unary_unary_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary_test.go.tmpl", size: 971, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary_test.go.tmpl", size: 971, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3133,7 +3133,7 @@ func protocGenServiceGrpc_versionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_version.go.tmpl", size: 724, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_version.go.tmpl", size: 724, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3153,7 +3153,7 @@ func protocGenServiceGrpc_version_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_version_test.go.tmpl", size: 763, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_version_test.go.tmpl", size: 763, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3173,7 +3173,7 @@ func protocGenServiceInit_databasesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 4466, mode: os.FileMode(420), modTime: time.Unix(1527339640, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 4466, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3193,7 +3193,7 @@ func protocGenServiceInit_subservice_clientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_subservice_clients.go.tmpl", size: 1896, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_subservice_clients.go.tmpl", size: 1896, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3213,7 +3213,7 @@ func protocGenServiceServiceGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 6903, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 6903, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3233,7 +3233,7 @@ func protocGenServiceService_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 12761, mode: os.FileMode(420), modTime: time.Unix(1532102572, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 12761, mode: os.FileMode(420), modTime: time.Unix(1532433734, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
