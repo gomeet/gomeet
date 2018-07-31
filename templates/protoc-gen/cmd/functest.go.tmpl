@@ -20,8 +20,6 @@ import (
 var (
 	useEmbeddedServer bool
 	useRandomPort     bool
-	{{ range .DbTypes }}{{ lowerPascalCase . }}FunctestMigrate        bool
-	{{ end }}
 
 	// funcTestCmd represents the functest command
 	funcTestCmd = &cobra.Command{
@@ -82,7 +80,7 @@ func init() {
 	funcTestCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
 
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
-	funcTestCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}FunctestMigrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
+	funcTestCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	funcTestCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
