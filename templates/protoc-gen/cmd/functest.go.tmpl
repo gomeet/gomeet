@@ -6,11 +6,7 @@ import (
 	"fmt"
 	"net"
 	"os"
-	{{ range .DbTypes }}{{ if eq . "mysql" }}"strings"{{ end }}{{ end }}
 
-	{{ if .DbTypes }}"github.com/jinzhu/gorm"
-	{{ range .DbTypes }}_ "github.com/jinzhu/gorm/dialects/{{ lower . }}"
-	{{ end }}{{ end -}}
 	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
 
@@ -19,7 +15,6 @@ import (
 
 	"{{ .GoPkg }}/server"
 	"{{ .GoPkg }}/cmd/functest"
-	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 )
 
 var (
@@ -196,36 +191,10 @@ func runFunctionalTests() {
 			os.Exit(1)
 		}
 	}
-	{{ range .DbTypes }}
-	// initialize the {{ lower . }} database schema
-	if {{ lowerPascalCase . }}DataSourceName != "" && {{ lowerPascalCase . }}FunctestMigrate {
-		{{ if eq . "mysql" }}if strings.Contains({{ lowerPascalCase . }}DataSourceName, "?") {
-			fmt.Println("database connection error: data source name cannot contain options")
-			os.Exit(1)
-		}
-		{{ lowerPascalCase . }}DSN := fmt.Sprintf("%s?charset=utf8&parseTime=True", {{ lowerPascalCase . }}DataSourceName)
-		{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
-		{{ else }}{{ lowerPascalCase . }}DSN := {{ lowerPascalCase . }}DataSourceName
-		{{ end }}
-		{{ lowerPascalCase . }}DB, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", {{ lowerPascalCase . }}DSN)
-		if err != nil {
-			fmt.Printf("Database connection error (DSN \"%s\"): %v\n", {{ lowerPascalCase . }}DSN, err)
-			os.Exit(1)
-		}
-		// ping the {{ lower . }} database server
-		err = {{ lowerPascalCase . }}DB.DB().Ping()
-		if err != nil {
-			fmt.Printf("Ping database connection error (DSN \"%s\"): %v\n", {{ lowerPascalCase . }}DSN, err)
-			os.Exit(1)
-		}
-		{{ if eq (len $.DbTypes) 1 }}err = models.MigrateSchema({{ lowerPascalCase . }}DataSourceName)
-		{{ else }}err = models.MigrateSchema("{{ lower . }}", {{ lowerPascalCase . }}DataSourceName){{ end }}
-		if err != nil {
-			fmt.Printf("{{ upperPascalCase . }} schema migration error: %s\n", err)
-			os.Exit(1)
-		}
-	}
-	{{ end }}
+	// databases migration
+	databaseMigration()
+
+	//initialize config
 	testConfig := functest.FunctionalTestConfig{
 		ServerAddress:      serverAddress,
 		GrpcServerAddress:  grpcServerAddress,

@@ -107,7 +107,7 @@ func new(cmd *cobra.Command, args []string) {
 
 	keepProtoModel := true
 	if force {
-		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf and models files ?")
+		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf, models, tools, package, auth_and_acl_funcs and cli helpers files ?")
 	}
 
 	p.UseGogoGen(!noGogo)
@@ -186,7 +186,7 @@ func askIsOK(msg string) bool {
 		msg = "Is this OK?"
 	}
 
-	fmt.Fprintf(out, "%s %ses/%so\n",
+	fmt.Fprintf(out, "\n%s\n%ses/%so\n",
 		msg,
 		color.YellowString("[y]"),
 		color.CyanString("[N]"),

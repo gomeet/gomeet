@@ -487,7 +487,26 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 	f := newFolder(p.Name(), p.Path())
 	f.addTree(".", "project-creation", nil, keepFile)
 	pbFolder := f.getFolder("pb")
-	modelsFolder := f.getFolder("models")
+
+	// keep some files if needed
+	keepFiles := map[string]*folder{
+		"tools.json":            f,
+		"Gopkg.toml":            f,
+		"CHANGELOG.md":          f,
+		"VERSION":               f,
+		"proto.proto":           pbFolder,
+		"run-env.sh":            f.getFolder("hack"),
+		"models.go":             f.getFolder("models"),
+		"auth_and_acl_funcs.go": f.getFolder("service"),
+		"helpers.go":            f.getFolder("cmd").getFolder("remotecli"),
+	}
+	for myFileName, myFolder := range keepFiles {
+		myFile, err := myFolder.getFile(myFileName)
+		if err != nil {
+			return err
+		}
+		myFile.KeepIfExists = keepProtoModel
+	}
 
 	// reset "pb" folder if proto alias isn't "pb"
 	protoAlias, err := p.GoProtoPkgAlias()
@@ -501,18 +520,6 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 		}
 		f.delete("pb")
 	}
-
-	pbFile, err := pbFolder.getFile("proto.proto")
-	if err != nil {
-		return err
-	}
-	pbFile.KeepIfExists = keepProtoModel
-
-	modelsFile, err := modelsFolder.getFile("models.go")
-	if err != nil {
-		return err
-	}
-	modelsFile.KeepIfExists = keepProtoModel
 
 	// rename generic proto.proto to <short project name>.proto
 	err = pbFolder.renameFile(

@@ -19,7 +19,6 @@ OS_ARCH=$(shell go env GOARCH)
 # eg. no comma, no semicolon or no colon
 EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}
 
-#DB_TYPES={{ .DbTypes | join "," }}
 DB_TYPES={{ range $i, $e := .DbTypes }}{{ if $i }},{{ end }}{{ if eq $e "postgres" }}{{ if $.HasPostgis }}postgis{{ else }}{{ $e }}{{ end }}{{ else }}{{ $e }}{{ end }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
@@ -183,12 +182,17 @@ define package_builder
 	@echo ""
 endef
 
+define package_zipper
+	@echo "$(NAME): compress package $(1) $(2)"
+	cd $(1) && tar czvf $(2).tar.gz $(2) && rm -rf $(2)
+endef
+
 define package_shasum
 	@echo "$(NAME): package_shasum"
+	rm -f $(PACKAGE_DIR)/SHA256SUM
 	cd $(PACKAGE_DIR) \
-	  &&	find */* '!' -name 'VERSION' '!' -name 'LICENSE' '!' -name '*SUM' '!' -name '*SUMS' \
+		&& find * '!' -name '*SUM' '!' -name '*SUMS' \
 		| xargs $(CMD_SHASUM) > SHA256SUMS
-	cd $(PACKAGE_DIR) && [ -f "$(PACKAGE_PROTO_NAME)" ] && $(CMD_SHASUM) $(PACKAGE_PROTO_NAME) >> SHA256SUMS
 endef
 
 .PHONY: build
@@ -280,43 +284,56 @@ package-arm32: proto
 	@echo "$(NAME): package-arm32 task"
 	$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32)
 	#$(call package_builder,linux,arm,$(PACKAGE_DIR)/linux-arm32,arm-linux-gnueabihf-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-arm32)
+	$(call package_shasum)
 
 .PHONY: package-arm64
 package-arm64: proto
 	@echo "$(NAME): package-arm64 task"
 	$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64)
 	#$(call package_builder,linux,arm64,$(PACKAGE_DIR)/linux-arm64,arm-linux-gnueabihf-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-arm64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-linux
 package-amd64-linux: proto
 	@echo "$(NAME): package-amd64-linux task"
 	$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64)
 	#$(call package_builder,linux,amd64,$(PACKAGE_DIR)/linux-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),linux-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-darwin
 package-amd64-darwin: proto
 	@echo "$(NAME): package-amd64-darwin task"
 	$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64)
 	#$(call package_builder,darwin,amd64,$(PACKAGE_DIR)/darwin-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),darwin-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-openbsd
 package-amd64-openbsd: proto
 	@echo "$(NAME): package-amd64-openbsd task"
 	$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64)
 	#$(call package_builder,openbsd,amd64,$(PACKAGE_DIR)/openbsd-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),openbsd-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64-windows
 package-amd64-windows: proto
 	@echo "$(NAME): package-amd64-windows task"
 	$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64)
 	#$(call package_builder,windows,amd64,$(PACKAGE_DIR)/windows-amd64,x86_64-pc-linux-gcc)
+	$(call package_zipper,$(PACKAGE_DIR),windows-amd64)
+	$(call package_shasum)
 
 .PHONY: package-amd64
-package-amd64: package-amd64-linux  package-amd64-darwin  package-amd64-openbsd  package-amd64-windows
+package-amd64: package-amd64-linux package-amd64-darwin package-amd64-openbsd package-amd64-windows
 	@echo "$(NAME): package-amd64 task"
+	$(call package_shasum)
 
 .PHONY: package
-package: clean package-proto package-arm32 package-arm64 package-amd64 docker
+package: clean tools-sync tools proto package-proto package-arm32 package-arm64 package-amd64 docker
 	@echo "$(NAME): package task"
 	cp VERSION $(PACKAGE_DIR)/VERSION
 	cp LICENSE $(PACKAGE_DIR)/LICENSE
@@ -384,9 +401,9 @@ endif
 .PHONY: docker
 docker:
 	echo "TAG=$(DOCKER_TAG)" > .env
-	echo "JWT_SECRET=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET)" > .env
-	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" > .env
-	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" > .env
+	echo "JWT_SECRET=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET)" >> .env
+	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" >> .env
+	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" >> .env
 {{ range .SubServices }}	echo "TAG_SVC_{{ upperSnakeCase .ShortName }}=$(DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }})" >> .env
 {{ end -}}
 {{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}

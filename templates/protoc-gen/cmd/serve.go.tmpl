@@ -134,6 +134,10 @@ func init() {
 }
 
 func databaseMigration() {
+	//SubServices databaseMigration
+	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
+	{{ end }}
+
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	if {{ lowerPascalCase . }}Migrate {
 		if {{ lowerPascalCase . }}DataSourceName == "" {
@@ -180,9 +184,7 @@ func serve() {
 
 	log.Infof("%s version %s - %s", svc.Name, svc.Version, svcName)
 
-	//SubServices databaseMigration
-	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
-	{{ end }}databaseMigration()
+	databaseMigration()
 	var ok bool
 	if grpcServerAddress != "" && httpServerAddress != "" {
 		ok = server.OnMultipleAddresses(
