@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.18 - 2018-07-31
+
+- Nothing
+
 ## 0.0.17 - 2018-07-20
 
 - Added `max-recv-msg-size` and `max-send-msg-size` flags to set maximum gRPC message sizes (default 10)
