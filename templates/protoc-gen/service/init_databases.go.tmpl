@@ -36,7 +36,7 @@ func (*gormLogger) Print(v ...interface{}) {
 		{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
 		{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
 		{{ end }}
-    {{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
+		{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 		if err != nil {
 			log.WithFields(log.Fields{
 				"DSN": s.{{ lowerPascalCase . }}DataSourceName,

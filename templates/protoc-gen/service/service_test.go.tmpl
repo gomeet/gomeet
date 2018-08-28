@@ -48,6 +48,24 @@ var (
 	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string
 	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}{{ end }}
+
+	// Main server queue
+	{{ range .QueueTypes }}{{ if eq . "memory" }}
+	{{ lowerPascalCase . }}QueueWorkerCount  int
+	{{ lowerPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
+	// SubService queue
+	{{ range .SubServices }}{{ $ss := . }}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount  int
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}{{ end }}
 )
 
 func init() {
@@ -66,6 +84,14 @@ func init() {
 	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
 	flag.IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
 
+	{{ range .QueueTypes }}// Main queue system
+	{{ if eq . "memory" }}
+	flag.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
+	flag.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .DbTypes }}
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
@@ -80,7 +106,14 @@ func init() {
 	flag.{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
 	{{ end }}
 	{{ range .SubServices }}
-	{{ $ss := . }}{{ range .DbTypes }}
+	{{ $ss := . }}{{ range .QueueTypes }}// {{ upperPascalCase $ss.ShortName }} queue system
+	{{ if eq . "memory" }}
+	flag.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-worker-count", runtime.NumCPU(), "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} number of spawned workers (default is num cpu)")
+	flag.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-max-size", 100, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}{{ range .DbTypes }}
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	flag.StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
@@ -231,6 +264,11 @@ func TestMain(m *testing.M) {
 		jwtKey, caCert, serverCert, serverKey,
 		maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
 	)
@@ -241,6 +279,11 @@ func TestMain(m *testing.M) {
 		jwtKey, caCert, serverCert, serverKey,
 		maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
 		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
 	)

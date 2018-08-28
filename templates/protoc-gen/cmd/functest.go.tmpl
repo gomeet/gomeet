@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
+	{{ if .HasMemoryQueue }}"runtime"{{ end }}
 
 	{{ if .SubServices }}gomeetService "{{ .GomeetPkg }}/utils/service"{{ end }}
 	"{{ .GomeetPkg }}/utils/jwt"
@@ -79,6 +80,15 @@ func init() {
 	// cors flag
 	funcTestCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
 
+	{{ range .QueueTypes }}// Main queue system
+	{{ if eq . "memory" }}
+	funcTestCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
+	funcTestCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
+
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	funcTestCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
@@ -96,7 +106,15 @@ func init() {
 
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
 	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
-	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
+	{{ $ss := . }}{{ range .QueueTypes }}// {{ upperPascalCase $ss.ShortName }} queue system
+	{{ if eq . "memory" }}
+	funcTestCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-worker-count", runtime.NumCPU(), "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} number of spawned workers (default is num cpu)")
+	funcTestCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-max-size", 100, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
+	{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	funcTestCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	funcTestCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
@@ -150,10 +168,19 @@ func runFunctionalTests() {
 					corsAllowedOrigins,
 					caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 					{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+					{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+					{{ else if eq . "sqs" }}// sqs support is not yet implemented
+					{{ end }}{{ end }}
 					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
-					{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+					{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+					{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+					{{ else if eq . "sqs" }}// sqs support is not yet implemented
+					{{ end }}{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 				{{ end }})
 			} else {
 				ok = server.OnSingleAddress(
@@ -161,10 +188,19 @@ func runFunctionalTests() {
 					corsAllowedOrigins,
 					caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 					{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+					{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+					{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+					{{ else if eq . "sqs" }}// sqs support is not yet implemented
+					{{ end }}{{ end }}
 					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
-					{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+					{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+					{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+					{{ else if eq . "sqs" }}// sqs support is not yet implemented
+					{{ end }}{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 				{{ end }})
 			}
 			if !ok {
@@ -214,11 +250,23 @@ func runFunctionalTests() {
 
 		{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName: {{ lowerPascalCase . }}DataSourceName,
 		{{ end }}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ upperPascalCase . }}QueueWorkerCount:  {{ lowerPascalCase . }}QueueWorkerCount,
+		{{ upperPascalCase . }}QueueMaxSize:  {{ lowerPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end }}
 		{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,
 		{{ end }}
 		{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
 		{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
 		{{ end }}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount,
+		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end }}
 		{{ range .ExtraServeFlags }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
 		{{ end }}{{ end }}{{ end }}
 	}

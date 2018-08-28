@@ -28,11 +28,23 @@ type FunctionalTestConfig struct {
 	IsRandomPort        bool
 	{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}{{ upperPascalCase . }}QueueWorkerCount int
+	{{ upperPascalCase . }}QueueMaxSize     int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address string
 	{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount int
+	Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize     int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .ExtraServeFlags }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}{{ end }}{{ end }}
 }

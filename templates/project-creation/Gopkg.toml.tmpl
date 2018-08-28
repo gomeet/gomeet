@@ -130,6 +130,15 @@
   name = "github.com/jinzhu/gorm"
 {{ end }}
 
+{{ if .QueueTypes }}{{ range .QueueTypes }}{{ if eq . "memory" }}[[constraint]]
+  branch = "master"
+  name = "github.com/gomeet/gomeet-memory-queue"
+
+{{ else if eq . "rabbitmq" }}
+{{ else if eq . "zeromq" }}
+{{ else if eq . "sqs" }}
+{{ end }}{{ end }}{{ end }}
+
 {{ range .SubServices }}[[constraint]]
   branch = "develop"
   name = "{{ .GoPkg }}"
