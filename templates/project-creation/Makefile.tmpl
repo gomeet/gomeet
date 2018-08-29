@@ -458,7 +458,7 @@ docker:
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
 	{{ end }}{{ end }}{{ end }}
-	{{ range $.ExtraServeFlags }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
+{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
 {{ end }}{{ range $.SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})' >> .env
 {{ end }}{{ end -}}
 {{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
