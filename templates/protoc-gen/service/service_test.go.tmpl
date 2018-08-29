@@ -9,6 +9,7 @@ import (
 	"os"{{ if .CountSubServicesWithDbTypes }}
 	"sync"{{ end }}
 	"testing"
+	{{ if .HasMemoryQueue }}"runtime"{{ end }}
 	{{ if .HasDb }}"errors"
 
 	"github.com/stretchr/testify/assert"{{ end }}
