@@ -11,6 +11,9 @@ GO_PROTO_PACKAGE = $(GO_PACKAGE_NAME)/$(GO_PROTO_PACKAGE_ALIAS)
 GO_CGO_ENABLED?={{ .GoCGOEnabled }}
 VERSION = $(shell cat VERSION)
 
+MKFILE_PATH= $(abspath $(lastword $(MAKEFILE_LIST)))
+CURRENT_DIR= $(patsubst %/,%,$(dir $(MKFILE_PATH)))
+
 OS_NAME=$(shell go env GOOS)
 OS_ARCH=$(shell go env GOARCH)
 
