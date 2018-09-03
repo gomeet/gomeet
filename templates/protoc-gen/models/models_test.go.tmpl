@@ -6,7 +6,7 @@ import (
 	"flag"{{ if .DbTypes }}
 	"fmt"{{ end }}
 	"os"
-	{{ if .HasMemoryQueue }}"runtime"{{ end }}
+	{{ if .QueueTypes }}"runtime"{{ end }}
 	"testing"{{ if .DbTypes }}
 	"github.com/stretchr/testify/assert"{{ end }}
 	log "github.com/sirupsen/logrus"
