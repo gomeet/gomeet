@@ -51,6 +51,7 @@ func main() {
 		defaultPrefixes string
 		dbTypes         string
 		uiType          string
+		queueTypes      string
 		extraServeFlags string
 	)
 	useGogoImport := false
@@ -68,6 +69,8 @@ func main() {
 				dbTypes = parts[1]
 			case "ui_type":
 				uiType = parts[1]
+			case "queue_types":
+				queueTypes = parts[1]
 			case "default_prefixes":
 				defaultPrefixes = parts[1]
 			case "project_pkg":
@@ -106,6 +109,13 @@ func main() {
 		err := p.SetUiType(uiType)
 		if err != nil {
 			g.Error(err, "bad ui_type parameter")
+		}
+	}
+
+	if queueTypes != "" {
+		err := p.SetQueueTypes(queueTypes)
+		if err != nil {
+			g.Error(err, "bad queue_types parameter")
 		}
 	}
 

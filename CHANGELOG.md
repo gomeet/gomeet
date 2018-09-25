@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.18 - 2018-07-31
+
+- Nothing
+
+## 0.0.17 - 2018-07-20
+
+- Added `max-recv-msg-size` and `max-send-msg-size` flags to set maximum gRPC message sizes (default 10)
+- Upgrading `go-proto-gomeetfaker`
+  - Removes [github.com/dmgk/faker](https://github.com/dmgk/faker) dependency to use the [github.com/gomeet/faker](https://github.com/gomeet/faker) fork
+
+## 0.0.16 - 2018-07-17
+
+- Added utility functions for geo manipulation
+
+## 0.0.15 - 2018-07-16
+
+- Added utility functions for date/time manipulation
+
+## 0.0.14 - 2018-06-11
+
+- Improvements
+
 ## 0.0.13 - 2018-05-29
 
 - BUG FIX for using grpc-gateway with gogo/protobuf

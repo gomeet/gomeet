@@ -7,6 +7,12 @@ import (
 	{{ if .DbTypes }}"github.com/jinzhu/gorm"
 	{{ end }}
 
+	{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}Queue "github.com/gomeet/gomeet-memory-queue/models"
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// zeromq support is not yet implemented
+	{{ end }}{{ end }}
+
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Pb "{{ .GoPkg }}/pb"
 	{{ end }}// END SUB-SERVICES DEFINITION : import-pb
 )
@@ -20,11 +26,21 @@ type {{ lowerPascalCase .ShortName }}Server struct {
 	caCertificate       string
 	certificate         string
 	privateKey          string
+	maxRecvMsgSize      int // The max message size in mega bytes the server can receive
+	maxSendMsgSize      int // The max message size in mega bytes the server can send
 
 	// EXTRA : var
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName string
-	{{ lowerPascalCase . }}Handle         *gorm.DB
-	{{ end }}
+	{{ lowerPascalCase . }}Handle            *gorm.DB
+	{{ end }}{{ range .QueueTypes }}
+	{{ if eq . "memory" }}
+	{{ lowerPascalCase . }}Queue             *{{ lowerPascalCase . }}Queue.Dispatcher
+	{{ lowerPascalCase . }}QueueWorkerCount  int
+	{{ lowerPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }} {{ .Type }}
 	{{ end }}// END EXTRA : var
 

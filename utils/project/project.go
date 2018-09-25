@@ -24,8 +24,11 @@ import (
 
 const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
-var allowedDbTypes = []string{"mysql", "postgres", "sqlite", "mssql"}
-var allowedUiTypes = []string{"none", "simple", "elm"} //TODO "react", "vuejs", ....
+var (
+	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
+	allowedUiTypes    = []string{"none", "simple", "elm"} //TODO "react", "vuejs", ....
+	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
+)
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
@@ -33,6 +36,10 @@ func GomeetDefaultPrefixes() string {
 
 func GomeetAllowedDbTypes() []string { return allowedDbTypes }
 func GomeetAllowedUiTypes() []string { return allowedUiTypes }
+
+func GomeetAllowedQueueTypes() []string {
+	return allowedQueueTypes
+}
 
 type serveFlag struct {
 	Name         string
@@ -47,6 +54,8 @@ type Project struct {
 	SubServices          map[string]*Project
 	dbTypes              []string
 	uiType               string
+	queueTypes           []string
+	hasPostgis           bool
 	extraServeFlags      []*serveFlag
 	folder               *folder
 	protoRegistry        *ggdescriptor.Registry
@@ -67,7 +76,7 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, "none", nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{pkgNfo, nil, []string{}, "none", []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -148,6 +157,15 @@ func (p *Project) SetExtraServeFlags(s string) error {
 func (p *Project) SetDbTypes(s string) error {
 	if s != "" {
 		dbTypes := strings.Split(s, ",")
+		pgFind := 0
+		for _, dbType := range dbTypes {
+			if dbType == "postgres" || dbType == "postgis" {
+				pgFind++
+			}
+		}
+		if pgFind > 1 {
+			return errors.New(`"postgis" is a specal alias for "postgres" these dbTypes aren't allowed together`)
+		}
 		for _, dbType := range dbTypes {
 			dbType = strings.ToLower(strings.TrimSpace(dbType))
 			ok := false
@@ -159,6 +177,10 @@ func (p *Project) SetDbTypes(s string) error {
 			}
 			if !ok {
 				return fmt.Errorf("%s isn't allowed dbType", dbType)
+			}
+			if dbType == "postgis" {
+				dbType = "postgres"
+				p.hasPostgis = true
 			}
 			p.dbTypes = append(p.dbTypes, dbType)
 		}
@@ -187,6 +209,28 @@ func (p *Project) SetUiType(s string) error {
 	return nil
 }
 
+func (p *Project) SetQueueTypes(s string) error {
+	if s != "" {
+		queueTypes := strings.Split(s, ",")
+		for _, queueType := range queueTypes {
+			queueType = strings.ToLower(strings.TrimSpace(queueType))
+			ok := false
+			for _, allowedQueueType := range GomeetAllowedQueueTypes() {
+				if queueType == allowedQueueType {
+					ok = true
+					break
+				}
+			}
+			if !ok {
+				return fmt.Errorf("%s isn't allowed queueType", queueType)
+			}
+			p.queueTypes = append(p.queueTypes, queueType)
+		}
+	}
+
+	return nil
+}
+
 func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 	if s == "" {
 		s = DEFAULT_PROTO_PKG_ALIAS
@@ -205,6 +249,7 @@ func (p Project) Version() string                               { return p.versi
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) UiType() string                                { return p.uiType }
+func (p Project) QueueTypes() []string                          { return p.queueTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
 func (p Project) GoCGOEnabled() int {
@@ -237,6 +282,43 @@ func (p Project) HasDb() bool {
 func (p Project) HasUi() bool {
 	uiT := p.UiType()
 	return (uiT != "" && uiT != "none")
+}
+
+func (p Project) HasMemoryQueue() bool {
+	if len(p.QueueTypes()) > 0 {
+		for _, queueType := range p.QueueTypes() {
+			if queueType == "memory" {
+				return true
+			}
+		}
+	}
+	for _, ss := range p.SubServices {
+		if ss.HasMemoryQueue() {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p Project) HasPostgis() bool {
+	dbT := p.DbTypes()
+	if len(dbT) < 1 {
+		return false
+	}
+	for _, ss := range p.SubServices {
+		if ss.HasPostgis() {
+			return true
+		}
+	}
+
+	for _, typ := range p.DbTypes() {
+		if typ == "postgres" {
+			return p.hasPostgis
+		}
+	}
+
+	return false
 }
 
 func (p *Project) UseGogoGen(b bool) {
@@ -311,6 +393,33 @@ func (p *Project) SubServicesMonolithHelp() string {
 				)
 			}
 		}
+		if len(ss.QueueTypes()) > 0 {
+			for _, queueType := range ss.QueueTypes() {
+				switch queueType {
+				case "memory":
+					ssFlags = append(
+						ssFlags,
+						fmt.Sprintf(
+							"\"svc-%s-%s-queue-worker-count\"",
+							ss.ShortName(),
+							strings.ToLower(queueType),
+						),
+					)
+					ssFlags = append(
+						ssFlags,
+						fmt.Sprintf(
+							"\"svc-%s-%s-queue-max-size\"",
+							ss.ShortName(),
+							strings.ToLower(queueType),
+						),
+					)
+				case "rabbitmq", "zeromq", "sqs":
+				// rabbitmq, zeromq, sqs support is not yet implemented
+				default:
+					// FIXME what to do?
+				}
+			}
+		}
 		if len(ss.ExtraServeFlags()) > 0 {
 			for _, ssf := range ss.ExtraServeFlags() {
 				ssFlags = append(
@@ -328,7 +437,7 @@ func (p *Project) SubServicesMonolithHelp() string {
 			ssString,
 			strings.Join(ssFlags, ", "),
 		)
-		if len(ss.DbTypes()) > 0 || len(ss.ExtraServeFlags()) > 0 {
+		if len(ss.DbTypes()) > 0 || len(ss.QueueTypes()) > 0 || len(ss.ExtraServeFlags()) > 0 {
 			ssString = fmt.Sprintf(
 				"%s flags are used to launch \"svc-%s\" server in the main process",
 				ssString,
@@ -366,6 +475,13 @@ func (p *Project) SubServicesDef() string {
 				"%s[db_types@%s]",
 				ssString,
 				strings.Join(ss.DbTypes(), "|"),
+			)
+		}
+		if len(ss.QueueTypes()) > 0 {
+			ssString = fmt.Sprintf(
+				"%s[queue_types@%s]",
+				ssString,
+				strings.Join(ss.QueueTypes(), "|"),
 			)
 		}
 		if len(ss.SubServices) > 0 {
@@ -421,6 +537,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 			var (
 				ssVersion     string
 				ssDbTypes     []string
+				ssQueueTypes  []string
 				ssFlags       []string
 				ssSubServices []string
 			)
@@ -428,6 +545,8 @@ func (p *Project) SetSubServices(subServices []string) error {
 				switch {
 				case strings.HasPrefix(ssFlag, "db_types@"):
 					ssDbTypes = strings.Split(strings.TrimPrefix(ssFlag, "db_types@"), "|")
+				case strings.HasPrefix(ssFlag, "queue_types@"):
+					ssQueueTypes = strings.Split(strings.TrimPrefix(ssFlag, "queue_types@"), "|")
 				case strings.HasPrefix(ssFlag, "version@"):
 					ssVersion = strings.TrimPrefix(ssFlag, "version@")
 				case strings.HasPrefix(ssFlag, "sub_services@"):
@@ -445,6 +564,9 @@ func (p *Project) SetSubServices(subServices []string) error {
 			}
 			if len(ssDbTypes) > 0 {
 				subSvc.SetDbTypes(strings.Join(ssDbTypes, ","))
+			}
+			if len(ssQueueTypes) > 0 {
+				subSvc.SetQueueTypes(strings.Join(ssQueueTypes, ","))
 			}
 			if len(ssSubServices) > 0 {
 				neededSubServices = append(neededSubServices, ssSubServices...)
@@ -480,7 +602,26 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 	f := newFolder(p.Name(), p.Path())
 	f.addTree(".", "project-creation", nil, keepFile)
 	pbFolder := f.getFolder("pb")
-	modelsFolder := f.getFolder("models")
+
+	// keep some files if needed
+	keepFiles := map[string]*folder{
+		"tools.json":            f,
+		"Gopkg.toml":            f,
+		"CHANGELOG.md":          f,
+		"VERSION":               f,
+		"proto.proto":           pbFolder,
+		"run-env.sh":            f.getFolder("hack"),
+		"models.go":             f.getFolder("models"),
+		"auth_and_acl_funcs.go": f.getFolder("service"),
+		"helpers.go":            f.getFolder("cmd").getFolder("remotecli"),
+	}
+	for myFileName, myFolder := range keepFiles {
+		myFile, err := myFolder.getFile(myFileName)
+		if err != nil {
+			return err
+		}
+		myFile.KeepIfExists = keepProtoModel
+	}
 
 	// reset "pb" folder if proto alias isn't "pb"
 	protoAlias, err := p.GoProtoPkgAlias()
@@ -494,18 +635,6 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 		}
 		f.delete("pb")
 	}
-
-	pbFile, err := pbFolder.getFile("proto.proto")
-	if err != nil {
-		return err
-	}
-	pbFile.KeepIfExists = keepProtoModel
-
-	modelsFile, err := modelsFolder.getFile("models.go")
-	if err != nil {
-		return err
-	}
-	modelsFile.KeepIfExists = keepProtoModel
 
 	// rename generic proto.proto to <short project name>.proto
 	err = pbFolder.renameFile(
@@ -562,7 +691,8 @@ func (p Project) AfterProjectCreationCmd() (r []string) {
 	r = append(r, "git init")
 	r = append(r, "git add .")
 	r = append(r, fmt.Sprintf("git commit -m 'First commit (gomeet new %s)'", p.GoPkg()))
-	r = append(r, "make tools-sync proto dep dep-prune test")
+	//r = append(r, "make tools-sync proto dep dep-prune test")
+	r = append(r, "make tools-sync proto dep")
 	r = append(r, "git add .")
 	r = append(r, "git commit -m 'Added tools and dependencies'")
 	return r
@@ -703,6 +833,7 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	svc.addFile("service_test.go", "protoc-gen/service/service_test.go.tmpl", nil, false)
 	svc.addFile("init_subservice_clients.go", "protoc-gen/service/init_subservice_clients.go.tmpl", nil, false)
 	svc.addFile("init_databases.go", "protoc-gen/service/init_databases.go.tmpl", nil, false)
+	svc.addFile("init_queues.go", "protoc-gen/service/init_queues.go.tmpl", nil, false)
 	f.addTree("infra", "protoc-gen/infra", nil, false)
 	f.addTree("hack", "protoc-gen/hack", nil, false)
 	protoPkg, err := p.GoProtoPkgAlias()

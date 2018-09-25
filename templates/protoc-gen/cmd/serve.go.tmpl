@@ -8,11 +8,12 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	{{ if .HasMemoryQueue }}"runtime"{{ end }}
 
 	{{ if .SubServices }}gomeetService "{{ .GomeetPkg }}/utils/service"
 	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
 	{{ end }}{{ end }}
-  {{- end -}}
+	{{- end -}}
 	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 	"{{ .GoPkg }}/server"
 )
@@ -24,6 +25,8 @@ var (
 	httpServerAddress  string
 	corsAllowedOrigins string
 	jwtSecret          string
+	maxRecvMsgSize     int
+	maxSendMsgSize     int
 
 	//Main server database and extra flags
 	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate bool
@@ -36,6 +39,24 @@ var (
 	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}{{ end }}
+
+	// Main server queue
+	{{ range .QueueTypes }}{{ if eq . "memory" }}
+	{{ lowerPascalCase . }}QueueWorkerCount  int
+	{{ lowerPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
+	// SubService queue
+	{{ range .SubServices }}{{ $ss := . }}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount  int
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}{{ end }}
 
 	// serveCmd represents the serve serve command
 	serveCmd = &cobra.Command{
@@ -79,6 +100,12 @@ func init() {
 	// JWT secret signing key
 	serveCmd.PersistentFlags().StringVarP(&jwtSecret, "jwt-secret", "j", "", "JSON Web Token secret signing key (required for JWT support)")
 
+	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
+
+	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
+
 	// CA certificate
 	serveCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
 
@@ -89,6 +116,14 @@ func init() {
 	serveCmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
 
 	// EXTRA : flags
+	{{ range .QueueTypes }}// Main queue system
+	{{ if eq . "memory" }}
+	serveCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
+	serveCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	serveCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
@@ -106,7 +141,15 @@ func init() {
 
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
 	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
-	{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
+	{{ $ss := . }}{{ range .QueueTypes }}// {{ upperPascalCase $ss.ShortName }} queue system
+	{{ if eq . "memory" }}
+	serveCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-worker-count", runtime.NumCPU(), "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} number of spawned workers (default is num cpu)")
+	serveCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-max-size", 100, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}{{ range .DbTypes }}
+	// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	serveCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
@@ -126,6 +169,10 @@ func init() {
 }
 
 func databaseMigration() {
+	//SubServices databaseMigration
+	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
+	{{ end }}
+
 	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
 	if {{ lowerPascalCase . }}Migrate {
 		if {{ lowerPascalCase . }}DataSourceName == "" {
@@ -172,30 +219,42 @@ func serve() {
 
 	log.Infof("%s version %s - %s", svc.Name, svc.Version, svcName)
 
-	//SubServices databaseMigration
-	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
-	{{ end }}databaseMigration()
+	databaseMigration()
 	var ok bool
 	if grpcServerAddress != "" && httpServerAddress != "" {
 		ok = server.OnMultipleAddresses(
 			grpcServerAddress, httpServerAddress,
 			corsAllowedOrigins,
-			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+			{{ else if eq . "sqs" }}// sqs support is not yet implemented
+			{{ end }}{{ end }}
 			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
-			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
+			{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+			{{ else if eq . "sqs" }}// sqs support is not yet implemented
+			{{ end }}{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 		{{ end }})
 	} else {
 		ok = server.OnSingleAddress(
 			serverAddress,
 			corsAllowedOrigins,
-			caCertificate, serverCertificate, serverPrivateKey, jwtSecret,
+			caCertificate, serverCertificate, serverPrivateKey, jwtSecret, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}{{ lowerPascalCase . }}DataSourceName, {{ end -}}
-			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
+			{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+			{{ else if eq . "sqs" }}// sqs support is not yet implemented
+			{{ end }}{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
+			{{ range .QueueTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, {{ end -}}
 			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 		{{ end }})
 	}

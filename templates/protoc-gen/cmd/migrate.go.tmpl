@@ -2,21 +2,22 @@
 // source:{{ range .ProtoFiles }} {{.Name}}{{ end }}
 package cmd
 
-{{ if not .DbTypes }}
-// Empty DB_TYPES in Makefile nothing to generate
-{{ else }}
+{{ if .HasDb }}
 import (
 	"bufio"
 	"fmt"
 	"os"
 	"strings"
+
 	"github.com/fatih/color"
 	"github.com/mattn/go-colorable"
-
-	"{{ .GoPkg }}/models"
-
 	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
+
+	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
+	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
+	{{ end }}{{ end }}
+
 )
 
 var (
@@ -29,6 +30,9 @@ var (
 	{{ range .DbTypes }}{{ lowerPascalCase . }}MigrateDataSourceName string
 	{{ lowerPascalCase . }}MigrateFlush bool
 	{{ end }}
+	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName string
+	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateFlush bool
+	{{ end }}{{ end }}
 	migrateOut = colorable.NewColorableStdout()
 )
 
@@ -50,7 +54,17 @@ func init() {
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	migrateCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}MigrateDataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
 	{{ end }}{{ end -}}
-}
+	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration
+	migrateCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateFlush, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-flush-data", false, "Flush svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data")
+	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	migrateCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
+	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	migrateCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
+	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	migrateCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
+	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
+	migrateCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
+	{{ end }}{{ end }}{{ end }}}
 
 func askIsOK(msg string) bool {
 	if os.Getenv("CI") != "" {
@@ -112,10 +126,37 @@ func migrateSchema(cmd *cobra.Command, args []string) {
 	}
 	{{ end }}
 
+	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
+	// initialize the {{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} database schema
+	if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName != "" {
+		hasOne = true
+		{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName)
+		{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.MigrateSchema("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName){{ end }}
+		if err != nil {
+			log.Errorf("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} Database schema migration failure: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} database schema was successfully migrated")
+
+		if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateFlush {
+			if migrateSkipPrompt || askIsOK("Are you sure you want flush svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data ?") {
+				{{ if eq (len $ss.DbTypes) 1 }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush(svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName)
+				{{ else }}err = svc{{ upperPascalCase $ss.ShortName }}Models.Flush("{{ lower . }}", svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}MigrateDataSourceName){{ end }}
+				if err != nil {
+					fmt.Printf("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} database flush error: %s\n", err)
+					os.Exit(1)
+				}
+				fmt.Println("svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} database is flushed")
+			}
+		}
+	}
+	{{ end }}{{ end }}
 	if !hasOne {
 		fmt.Println("No migration found")
 		fmt.Println("Use one of flags :")
 		{{ range .DbTypes }}fmt.Println("   --{{ lower . }}-dsn")
 	{{ end }}}
 }
+{{ else }}
+// There is nothing to generate because this service has no defined databases
 {{ end }}

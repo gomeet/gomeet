@@ -53,6 +53,12 @@ func init() {
 	// JSON Web Token
 	cliCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token")
 
+	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
+	cliCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the client can receive")
+
+	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
+	cliCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the client can send")
+
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// cliCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
@@ -67,15 +73,10 @@ func cli(cmd *cobra.Command, args []string) {
 
 	// Initialize remote cli
 	c, err := rcli.NewRemoteCli(
-		svc.Name,
-		svc.Version,
-		rcli.CliCall,
-		cliAddress,
-		timeoutSeconds,
-		caCertificate,
-		clientCertificate,
-		clientPrivateKey,
-		jwtToken,
+		svc.Name, svc.Version,
+		rcli.CliCall, cliAddress, timeoutSeconds,
+		caCertificate, clientCertificate, clientPrivateKey, jwtToken,
+		maxRecvMsgSize, maxSendMsgSize,
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

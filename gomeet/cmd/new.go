@@ -39,6 +39,7 @@ var (
 	noGogo          bool
 	dbTypes         string
 	uiType          string
+	queueTypes      string
 	extraServeFlags string
 	out             = colorable.NewColorableStdout()
 )
@@ -51,6 +52,7 @@ func init() {
 	newCmd.PersistentFlags().BoolVar(&noGogo, "no-gogo", false, "if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file")
 	newCmd.PersistentFlags().StringVar(&dbTypes, "db-types", "", fmt.Sprintf("DB types [%s] (comma separated)", strings.Join(project.GomeetAllowedDbTypes(), ",")))
 	newCmd.PersistentFlags().StringVar(&uiType, "ui-type", "", fmt.Sprintf("UI type [%s] default (none)", strings.Join(project.GomeetAllowedUiTypes(), "|")))
+	newCmd.PersistentFlags().StringVar(&queueTypes, "queue-types", "", fmt.Sprintf("Queue types [%s] (comma separated)", strings.Join(project.GomeetAllowedQueueTypes(), ",")))
 	newCmd.PersistentFlags().StringVar(&extraServeFlags, "extra-serve-flags", "", "extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)")
 
 	rootCmd.AddCommand(newCmd)
@@ -103,6 +105,13 @@ func new(cmd *cobra.Command, args []string) {
 		}
 	}
 
+	if queueTypes != "" {
+		err := p.SetQueueTypes(queueTypes)
+		if err != nil {
+			er(err)
+		}
+	}
+
 	if extraServeFlags != "" {
 		err := p.SetExtraServeFlags(extraServeFlags)
 		if err != nil {
@@ -116,7 +125,7 @@ func new(cmd *cobra.Command, args []string) {
 
 	keepProtoModel := true
 	if force {
-		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf and models files ?")
+		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf, models, tools, package, auth_and_acl_funcs and cli helpers files ?")
 	}
 
 	p.UseGogoGen(!noGogo)
@@ -195,7 +204,7 @@ func askIsOK(msg string) bool {
 		msg = "Is this OK?"
 	}
 
-	fmt.Fprintf(out, "%s %ses/%so\n",
+	fmt.Fprintf(out, "\n%s\n%ses/%so\n",
 		msg,
 		color.YellowString("[y]"),
 		color.CyanString("[N]"),

@@ -43,15 +43,10 @@ type remoteCli struct {
 }
 
 func NewRemoteCli(
-	name string,
-	version string,
-	ctxCall ContextCall,
-	addr string,
-	timeout int,
-	caCertificate string,
-	clientCertificate string,
-	clientPrivateKey string,
-	jwt string,
+	name, version string,
+	ctxCall ContextCall, addr string, timeout int,
+	caCertificate, clientCertificate, clientPrivateKey, jwt string,
+	maxRecvMsgSize, maxSendMsgSize int,
 ) (RemoteCli, error) {
 	cli, err := client.NewGomeetClient(
 		addr,
@@ -59,6 +54,8 @@ func NewRemoteCli(
 		caCertificate,
 		clientCertificate,
 		clientPrivateKey,
+		maxRecvMsgSize,
+		maxSendMsgSize,
 	)
 
 	if err != nil {

@@ -10,6 +10,8 @@
 #   {{ upperSnakeCase .ProjectGroupName }}_PATH="$GOPATH/src/{{ .ProjectGroupGoPkg }}"
 #   {{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE="make" # go, make
 #   {{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
+#   {{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
+#   {{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
 #   {{ upperSnakeCase .Name }}_ADDRESS=":13000"
 
 ########
@@ -29,6 +31,8 @@ fi;
 {{ upperSnakeCase .ProjectGroupName }}_PATH="$GOPATH/src/{{ .ProjectGroupGoPkg }}"
 [ -z "${{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE" ] && {{ upperSnakeCase .ProjectGroupName }}_EXEC_TYPE="make" # go, make
 [ -z "${{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET" ] && {{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
+[ -z "${{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE" ] && {{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
+[ -z "${{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE" ] && {{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
 [ -z "${{ upperSnakeCase .Name }}_ADDRESS" ] && {{ upperSnakeCase .Name }}_ADDRESS=":13000"
 
 ##################
@@ -36,6 +40,8 @@ fi;
 ##################
 cd ${{ upperSnakeCase $.ProjectGroupName }}_PATH/{{ lowerKebabCase $.Name }}
 {{ upperSnakeCase $.Name }}_CONSOLE_OPTS='console --address="${{ upperSnakeCase .Name }}_ADDRESS"
+	--max-recv-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE"
+	--max-send-msg-size="${{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE"
 '
 case ${{ upperSnakeCase $.ProjectGroupName }}_EXEC_TYPE in
 	"go")
