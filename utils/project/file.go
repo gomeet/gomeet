@@ -256,7 +256,10 @@ func (f folder) render(p Project) error {
 			continue
 		}
 
-		if strings.HasSuffix(v.AbsPath, ".png") {
+		if strings.HasSuffix(v.AbsPath, ".png") ||
+			strings.HasSuffix(v.AbsPath, ".ico") ||
+			strings.HasSuffix(v.AbsPath, ".jpg") ||
+			strings.HasSuffix(v.AbsPath, ".jpeg") {
 			if _, err := os.Stat(v.AbsPath); err == nil {
 				fileExist = true
 				if v.KeepIfExists {
@@ -276,6 +279,7 @@ func (f folder) render(p Project) error {
 			Funcs(tmplHelpers.ProtoHelpersFuncMap()).
 			Parse(string(contents))
 		if err != nil {
+			helpers.Log(helpers.LogError, fmt.Sprintf("file: %s -- %s", v.Template, err.Error()))
 			continue
 		}
 

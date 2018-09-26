@@ -127,6 +127,10 @@ PROTOC_VERSION=3.5.1
 PROTOC_REPO_URL=https://github.com/google/protobuf/releases/download/v$(PROTOC_VERSION)
 PROTOC_BIN=_tools/bin/protoc
 
+{{ if .HasUi }}{{ if eq .UiType "elm" }}ELMC_VERSION=0.19.0
+ELMC_REPO_URL=https://github.com/elm/compiler/releases/download/$(ELMC_VERSION)
+ELMC_BIN=_tools/bin/elm{{ end }}
+{{ end }}
 ifeq ($(DEBUG_TEST),0)
 DEBUG_TEST_FLAG=
 else
@@ -141,16 +145,19 @@ endif
 
 ifeq ($(OS_NAME),windows)
   PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-win32.zip
-endif
+{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-windows.tar.gz
+{{ end }}{{ end }}endif
 ifeq ($(OS_NAME),darwin)
-  ifeq ($(OS_ARCH),amd64)
+{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-mac.tar.gz
+{{ end }}{{ end }}  ifeq ($(OS_ARCH),amd64)
     PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-osx-x86_64.zip
   else
     PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-osx-x86_32.zip
   endif
 endif
 ifeq ($(OS_NAME),linux)
-  ifeq ($(OS_ARCH),arm64)
+{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-linux.tar.gz
+{{ end }}{{ end }}  ifeq ($(OS_ARCH),arm64)
     PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-linux-aarch_64.zip
   else
     ifeq ($(OS_ARCH),amd64)
@@ -228,7 +235,8 @@ clean: tools-clean package-clean proto-clean
 {{ if .HasUi }}
 .PHONY: ui
 ui: tools
-	@echo "$(NAME): ui task"
+	@echo "$(NAME): ui task"{{ if eq .UiType "elm" }}
+	cd ui/elm && $(MAKE) build{{ end }}
 	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...{{ end }}
 
 .PHONY: proto
@@ -544,9 +552,9 @@ endif
 	GOPATH=$(shell pwd)/_tools/ && \
 		go install github.com/twitchtv/retool
 	_tools/bin/retool build
-ifeq ("$(wildcard $(PROTOC_BIN))","")
 	$(MAKE) tools-sync-protoc
-endif
+{{ if .HasUi }}{{ if eq .UiType "elm" }}	$(MAKE) tools-sync-elmc{{ end }}
+{{ end }}
 
 .PHONY: tools-clean
 tools-clean:
@@ -567,6 +575,7 @@ tools-sync-retool:
 
 .PHONY: tools-sync-protoc
 tools-sync-protoc:
+ifeq ("$(wildcard $(PROTOC_BIN))","")
 	@echo "$(NAME): tools-sync-protoc task"
 	@rm -rf _tools/protoc
 	@mkdir -p _tools/protoc
@@ -575,7 +584,20 @@ tools-sync-protoc:
 	@cd _tools/protoc && unzip $(PROTOC_PKG_NAME)
 	@cp _tools/protoc/bin/protoc $(PROTOC_BIN)
 	@cp -r _tools/protoc/include/google/protobuf/* third_party/google/protobuf/
+endif
 
+{{ if .HasUi }}{{ if eq .UiType "elm" }}.PHONY: tools-sync-elmc
+tools-sync-elmc:
+ifeq ("$(wildcard $(ELMC_BIN))","")
+	@echo "$(NAME): tools-sync-elmc task"
+	@rm -rf _tools/elm
+	@mkdir -p _tools/elmc
+	@mkdir -p _tools/bin
+	@curl -L -o _tools/elmc/$(ELMC_PKG_NAME) $(ELMC_REPO_URL)/$(ELMC_PKG_NAME)
+	@cd _tools/elmc && tar xzvf $(ELMC_PKG_NAME)
+	@cp _tools/elmc/elm $(ELMC_BIN)
+endif{{ end }}
+{{ end }}
 .PHONY: tools-upgrade-gomeet
 tools-upgrade-gomeet: tools
 	@echo "$(NAME): tools-upgrade-gomeet task"
