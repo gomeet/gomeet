@@ -56,7 +56,7 @@ func (s {{ lowerPascalCase .ShortName }}HTTPController) RegisterRoutes(mux *mux.
 	//     ))
 	// }
 }
-{{ if .HasUi }}func (s *wwwHTTPController) initUiFS() {
+{{ if .HasUi }}func (s *{{ lowerPascalCase .ShortName }}HTTPController) initUiFS() {
 	s.uiFs = &assetfs.AssetFS{
 		Asset:     ui.Asset,
 		AssetDir:  ui.AssetDir,
@@ -66,8 +66,8 @@ func (s {{ lowerPascalCase .ShortName }}HTTPController) RegisterRoutes(mux *mux.
 	s.uiFileServer = http.FileServer(s.uiFs)
 }{{ end }}
 
-func (s wwwHTTPController) NotFound(w http.ResponseWriter, r *http.Request) {
-	log.Infof("wwwHTTPController.NotFound: %s", r.URL.Path)
+func (s {{ lowerPascalCase .ShortName }}HTTPController) NotFound(w http.ResponseWriter, r *http.Request) {
+	log.Infof("{{ lowerPascalCase .ShortName }}HTTPController.NotFound: %s", r.URL.Path)
 {{ if .HasUi }}
 	contents, err := s.uiFs.Asset(path.Join(s.uiFs.Prefix, "404.html"))
 	if err != nil {
