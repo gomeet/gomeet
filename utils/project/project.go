@@ -26,7 +26,7 @@ const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
 var (
 	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
-	allowedUiTypes    = []string{"none", "simple", "elm"} //TODO "react", "vuejs", ....
+	allowedUiTypes    = []string{"none", "simple"} //TODO "react", "vuejs", ....
 	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
 )
 
@@ -650,8 +650,12 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 		f.delete("third_party/github.com/gogo")
 	}
 
-	if !p.HasUi() {
-		f.delete("ui")
+	f.delete("ui")
+	if p.HasUi() {
+		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepFile)
+		if err != nil {
+			return err
+		}
 	}
 
 	p.folder = f
