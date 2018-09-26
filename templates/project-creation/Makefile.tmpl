@@ -127,7 +127,7 @@ PROTOC_VERSION=3.5.1
 PROTOC_REPO_URL=https://github.com/google/protobuf/releases/download/v$(PROTOC_VERSION)
 PROTOC_BIN=_tools/bin/protoc
 
-{{ if .HasUi }}{{ if eq .UiType "elm" }}ELMC_VERSION=0.19.0
+{{ if .HasUi }}{{ if .HasUiElm }}ELMC_VERSION=0.19.0
 ELMC_REPO_URL=https://github.com/elm/compiler/releases/download/$(ELMC_VERSION)
 ELMC_BIN=_tools/bin/elm{{ end }}
 {{ end }}
@@ -145,10 +145,10 @@ endif
 
 ifeq ($(OS_NAME),windows)
   PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-win32.zip
-{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-windows.tar.gz
+{{ if .HasUi }}{{ if .HasUiElm }}  ELMC_PKG_NAME := binaries-for-windows.tar.gz
 {{ end }}{{ end }}endif
 ifeq ($(OS_NAME),darwin)
-{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-mac.tar.gz
+{{ if .HasUi }}{{ if .HasUiElm }}  ELMC_PKG_NAME := binaries-for-mac.tar.gz
 {{ end }}{{ end }}  ifeq ($(OS_ARCH),amd64)
     PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-osx-x86_64.zip
   else
@@ -156,7 +156,7 @@ ifeq ($(OS_NAME),darwin)
   endif
 endif
 ifeq ($(OS_NAME),linux)
-{{ if .HasUi }}{{ if eq .UiType "elm" }}  ELMC_PKG_NAME := binaries-for-linux.tar.gz
+{{ if .HasUi }}{{ if .HasUiElm }}  ELMC_PKG_NAME := binaries-for-linux.tar.gz
 {{ end }}{{ end }}  ifeq ($(OS_ARCH),arm64)
     PROTOC_PKG_NAME := protoc-$(PROTOC_VERSION)-linux-aarch_64.zip
   else
@@ -235,7 +235,7 @@ clean: tools-clean package-clean proto-clean
 {{ if .HasUi }}
 .PHONY: ui
 ui: tools
-	@echo "$(NAME): ui task"{{ if eq .UiType "elm" }}
+	@echo "$(NAME): ui task"{{ if .HasUiElm }}
 	cd ui/elm && $(MAKE) build{{ end }}
 	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...{{ end }}
 
@@ -553,7 +553,7 @@ endif
 		go install github.com/twitchtv/retool
 	_tools/bin/retool build
 	$(MAKE) tools-sync-protoc
-{{ if .HasUi }}{{ if eq .UiType "elm" }}	$(MAKE) tools-sync-elmc{{ end }}
+{{ if .HasUi }}{{ if .HasUiElm }}	$(MAKE) tools-sync-elmc{{ end }}
 {{ end }}
 
 .PHONY: tools-clean
@@ -586,7 +586,7 @@ ifeq ("$(wildcard $(PROTOC_BIN))","")
 	@cp -r _tools/protoc/include/google/protobuf/* third_party/google/protobuf/
 endif
 
-{{ if .HasUi }}{{ if eq .UiType "elm" }}.PHONY: tools-sync-elmc
+{{ if .HasUi }}{{ if .HasUiElm }}.PHONY: tools-sync-elmc
 tools-sync-elmc:
 ifeq ("$(wildcard $(ELMC_BIN))","")
 	@echo "$(NAME): tools-sync-elmc task"

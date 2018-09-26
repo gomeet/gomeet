@@ -26,7 +26,7 @@ const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
 var (
 	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
-	allowedUiTypes    = []string{"none", "simple", "elm"} //TODO "react", "vuejs", ....
+	allowedUiTypes    = []string{"none", "simple", "elm", "elm-http"} //TODO "react", "vuejs", ....
 	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
 )
 
@@ -282,6 +282,11 @@ func (p Project) HasDb() bool {
 func (p Project) HasUi() bool {
 	uiT := p.UiType()
 	return (uiT != "" && uiT != "none")
+}
+
+func (p Project) HasUiElm() bool {
+	uiT := p.UiType()
+	return strings.HasPrefix(uiT, "elm")
 }
 
 func (p Project) HasMemoryQueue() bool {
