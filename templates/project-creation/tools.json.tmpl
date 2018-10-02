@@ -56,13 +56,17 @@
       "Repository": "github.com/fullstorydev/grpchan/cmd/protoc-gen-grpchan",
       "Commit": "cbe79e1e098d8b2bb4952b70666caa0c37ea1d8e"
     },
+    {{ if .HasUi }}{{ if .HasUiElm }}{
+      "Repository": "github.com/gomeet/elm-protobuf/protoc-gen-elm",
+      "Commit": "64f684921b72179f2fdb022d8ebf2e0f45d3848f"
+    },{{ end }}{{ end }}
     {
       "Repository": "github.com/gomeet/gomeet-tools-markdown-server",
       "Commit": "d3a35aa58e59ebcb7a5da7e800c7295bab86c051"
     },
     {
       "Repository": "github.com/gomeet/go-proto-gomeetfaker/protoc-gen-gomeetfaker",
-      "Commit": "63623514f68103862ce9ce80b62c6674c8b4f431"
+      "Commit": "c3255e30d142c3ac9d37ba838f2dff7ea2a93a69"
     },
     {
       "Repository": "{{ .GomeetPkg }}/protoc-gen-gomeet-service",

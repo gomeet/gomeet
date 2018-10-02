@@ -23,14 +23,21 @@
   unused-packages = true
   non-go = true
   go-tests = true
+{{ if .HasUi }}{{ if .HasUiElm }}
+  [[prune.project]]
+    name = "github.com/gomeet/elm-protobuf"
+    unused-packages = false
+    non-go = false
+    go-tests = false
+{{ end }}{{ end }}
 {{ range .SubServices }}
   [[prune.project]]
     name = "{{ .GoPkg }}"
     unused-packages = false
     non-go = false
     go-tests = false
-
-{{ end }}[[constraint]]
+{{ end }}
+[[constraint]]
   #branch = "master"
   name = "github.com/sirupsen/logrus"
   version = "1.0.3"
@@ -133,7 +140,11 @@
 {{ if .HasUi }}[[constraint]]
   name = "github.com/elazarl/go-bindata-assetfs"
   version = "v1.0.0"
-{{ end }}
+
+{{ if .HasUiElm }}[[ override ]]
+  branch = "master"
+  name = "github.com/gomeet/elm-protobuf"
+{{ end }}{{ end }}
 
 {{ if .QueueTypes }}{{ range .QueueTypes }}{{ if eq . "memory" }}[[constraint]]
   branch = "master"

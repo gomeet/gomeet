@@ -1,7 +1,15 @@
+module Main exposing (Model, Msg(..), getServerVersion, init, main, subscriptions, update, view, viewServerVersion)
+
+import Api.Endpoint as Endpoint
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Request as Request
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html.Events exposing (..)
+import Http
+import Json.Decode as Decode
+import Url.Builder as Url
 
 
 
@@ -9,7 +17,12 @@ import Html.Events exposing (onInput)
 
 
 main =
-  Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
 
 
 
@@ -17,15 +30,16 @@ main =
 
 
 type alias Model =
-  { name : String
-  , password : String
-  , passwordAgain : String
-  }
+    { serverVersion : {{ upperPascalCase .ShortName }}Pb.VersionResponse
+    , serverVersionLoaded : Bool
+    }
 
 
-init : Model
-init =
-  Model "" "" ""
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Model ({{ upperPascalCase .ShortName }}Pb.VersionResponse "..." "...") False
+    , getServerVersion
+    )
 
 
 
@@ -33,22 +47,38 @@ init =
 
 
 type Msg
-  = Name String
-  | Password String
-  | PasswordAgain String
+    = GetServerVersion
+    | NewServerVersion (Result Http.Error {{ upperPascalCase .ShortName }}Pb.VersionResponse)
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    Name name ->
-      { model | name = name }
+    case msg of
+        GetServerVersion ->
+            ( { model | serverVersion = {{ upperPascalCase .ShortName }}Pb.VersionResponse "..." "...", serverVersionLoaded = False }
+            , getServerVersion
+            )
 
-    Password password ->
-      { model | password = password }
+        NewServerVersion result ->
+            case result of
+                Ok newServerVersion ->
+                    ( { model | serverVersion = newServerVersion, serverVersionLoaded = True }
+                    , Cmd.none
+                    )
 
-    PasswordAgain password ->
-      { model | passwordAgain = password }
+                Err _ ->
+                    ( model
+                    , Cmd.none
+                    )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 
@@ -57,27 +87,38 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div []
-    [ div [] [ text "{{ .ShortName }} - inside elm - OK" ]
-    , viewInputWrapper "text" "Name" model.name Name
-    , viewInputWrapper "password" "Password" model.password Password
-    , viewInputWrapper "password" "Re-enter Password" model.passwordAgain PasswordAgain
-    , viewValidation model
-    ]
+    div []
+        [ div [] [ text "{{ upperPascalCase .ShortName }} - inside elm - OK" ]
+        , if model.serverVersionLoaded then
+            viewServerVersion model.serverVersion
 
-viewInputWrapper : String -> String -> String -> (String -> msg) -> Html msg
-viewInputWrapper t p v toMsg =
-  div []
-    [ viewInput t p v toMsg ]
-
-viewInput : String -> String -> String -> (String -> msg) -> Html msg
-viewInput t p v toMsg =
-  input [ type_ t, placeholder p, value v, onInput toMsg ] []
+          else
+            div [] [ text "Waiting..." ]
+        ]
 
 
-viewValidation : Model -> Html msg
-viewValidation model =
-  if model.password == model.passwordAgain then
-    div [ style "color" "green" ] [ text "OK" ]
-  else
-    div [ style "color" "red" ] [ text "Passwords do not match!" ]
+viewServerVersion : {{ upperPascalCase .ShortName }}Pb.VersionResponse -> Html Msg
+viewServerVersion serverVersion =
+    div []
+        [ h2 [] [ text "Server Version" ]
+        , div []
+            [ span [] [ text "Name : " ]
+            , span [] [ text serverVersion.name ]
+            ]
+        , div []
+            [ span [] [ text "Version : " ]
+            , span [] [ text serverVersion.version ]
+            ]
+        , button [ onClick GetServerVersion ] [ text "Refresh" ]
+        , div [] [ text (Debug.toString Endpoint.version) ]
+        ]
+
+
+
+-- HTTP
+
+
+getServerVersion : Cmd Msg
+getServerVersion =
+    Http.send NewServerVersion <|
+        Request.version Nothing

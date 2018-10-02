@@ -240,7 +240,7 @@ ui: tools
 	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...{{ end }}
 
 .PHONY: proto
-proto: tools proto-gen-doc
+proto: tools proto-gen-doc{{ if .HasUi }}{{ if .HasUiElm }} proto-gen-elm{{ end }}{{ end }}
 	@echo "$(NAME): proto task"
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
 		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
@@ -303,7 +303,23 @@ proto-gen-doc:
 	done
 	-mv docs/grpc-services/$(NAME).md docs/grpc-services/README.md
 	-mv docs/grpc-services/$(NAME).html docs/grpc-services/index.html
-
+{{ if .HasUi }}{{ if .HasUiElm }}
+.PHONY: proto-gen-elm
+proto-gen-elm:
+	@echo "$(NAME)::proto-gen-elm"
+	mkdir -p ui/elm/src/Api
+	PATH=$(shell pwd)/_tools/bin:${PATH} && \
+		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+			protoc -I. \
+				-I$(shell pwd)/third_party \
+				-I$(shell pwd)/pb \
+				--plugin=$(shell pwd)/_tools/bin/protoc-gen-elm \
+				--elm_out=elm_prefix=Api,debug=false:ui/elm/src/Api/ \
+			$$f; \
+			echo "$(NAME)::proto-gen-elm generation from " $$f; \
+			echo ""; \
+		done
+{{ end }}{{ end }}
 .PHONY: proto-clean
 proto-clean:
 	@echo "$(NAME): proto-clean task"
@@ -562,7 +578,7 @@ tools-clean:
 	-rm -rf _tools/bin _tools/pkg _tools/manifest.json _tools/protoc
 
 .PHONY: tools-sync
-tools-sync: tools-sync-retool tools-sync-protoc
+tools-sync: tools-sync-retool tools-sync-protoc{{ if .HasUi }}{{ if .HasUiElm }} tools-sync-elmc{{ end }}{{ end }}
 	@echo "$(NAME): tools-sync task"
 
 .PHONY: tools-sync-retool
@@ -605,7 +621,8 @@ tools-upgrade-gomeet: tools
 	_tools/bin/retool upgrade github.com/gomeet/go-proto-gomeetfaker/protoc-gen-gomeetfaker origin/master
 	_tools/bin/retool upgrade github.com/gomeet/gomeet/protoc-gen-gomeet-service origin/master
 	_tools/bin/retool upgrade github.com/gomeet/gomeet/gomeet origin/master
-
+{{ if .HasUi }}{{ if .HasUiElm }}	_tools/bin/retool upgrade github.com/gomeet/elm-protobuf/protoc-gen-elm origin/master{{ end }}
+{{ end }}
 .PHONY: tools-upgrade
 tools-upgrade: tools
 	@echo "$(NAME): tools-upgrade task"
