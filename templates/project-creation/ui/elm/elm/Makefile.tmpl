@@ -5,5 +5,6 @@ NAME = $(SVC_PREFIX){{ .ShortName }}::ui
 build:
 	@echo "$(NAME)::build"
 	cd ../.. && $(MAKE) tools-sync-elmc
-	../../_tools/bin/elm make src/Main.elm --output ../assets/elm.js
+	../../_tools/bin/elm make src/Main.elm --optimize --output ../assets/elm.js
+	../../_tools/bin/elm make src/Main.elm --debug --output ../assets/elm-debug.js
 

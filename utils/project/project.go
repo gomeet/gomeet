@@ -704,6 +704,13 @@ func (p Project) AfterProjectCreationCmd() (r []string) {
 	r = append(r, "make tools-sync proto dep")
 	r = append(r, "git add .")
 	r = append(r, "git commit -m 'Added tools and dependencies'")
+	switch {
+	case p.HasUi() && p.HasUiElm():
+		r = append(r, "make ui-setup ui")
+		r = append(r, "git add .")
+		r = append(r, "git commit -m 'Added ui'")
+	}
+
 	return r
 }
 

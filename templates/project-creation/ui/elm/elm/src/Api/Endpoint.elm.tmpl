@@ -1,4 +1,11 @@
-module Api.Endpoint exposing (Endpoint, echo, request, servicesStatus, version)
+module Api.Endpoint exposing
+    ( Endpoint
+    , echo
+    , request
+    , servicesStatus
+    , toString
+    , version
+    )
 
 import Http
 import Url.Builder exposing (QueryParameter)
@@ -23,12 +30,12 @@ request config =
         , headers = config.headers
         , method = config.method
         , timeout = config.timeout
-        , url = unwrap config.url
+        , url = toString config.url
         , withCredentials = config.withCredentials
         }
 
 
-{-| Get a URL to the {{ upperPascalCase .ShortName }} API.
+{-| Get a URL to the {{ .Name }} API.
 
 This is not publicly exposed, because we want to make sure the only way to get one of these URLs is from this module.
 
@@ -43,8 +50,8 @@ type Endpoint
     = Endpoint String
 
 
-unwrap : Endpoint -> String
-unwrap (Endpoint str) =
+toString : Endpoint -> String
+toString (Endpoint str) =
     str
 
 
@@ -74,4 +81,3 @@ servicesStatus =
 echo : Endpoint
 echo =
     url [ "echo" ] []
-

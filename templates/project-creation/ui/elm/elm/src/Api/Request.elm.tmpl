@@ -1,6 +1,21 @@
-port module Api.Request exposing (Cred, addServerError, application, decodeErrors, delete, get, logout, post, put, storeCredWith, version, viewerChanges)
+port module Api.Request exposing
+    ( Cred
+    , addServerError
+    , application
+    , decodeErrors
+    , delete
+    , echo
+    , get
+    , logout
+    , post
+    , put
+    , servicesStatus
+    , storeCredWith
+    , version
+    , viewerChanges
+    )
 
-{-| This module is responsible for communicating to the Conduit API.
+{-| This module is responsible for communicating to the {{ .Name }} API
 
 It exposes an opaque Endpoint type which is guaranteed to point to the correct URL.
 
@@ -71,15 +86,6 @@ credDecoder =
 -- PERSISTENCE
 
 
-decode : Decoder (Cred -> viewer) -> Value -> Result Decode.Error viewer
-decode decoder value =
-    -- It's stored in localStorage as a JSON String;
-    -- first decode the Value as a String, then
-    -- decode that String as JSON.
-    Decode.decodeValue Decode.string value
-        |> Result.andThen (\str -> Decode.decodeString (Decode.field "user" (decoderFromCred decoder)) str)
-
-
 port onStoreChange : (Value -> msg) -> Sub msg
 
 
@@ -97,11 +103,6 @@ decodeFromChange viewerDecoder val =
         |> Result.toMaybe
 
 
-
---storeCredWith : Cred -> Avatar -> Cmd msg
---storeCredWith (Cred uname token) avatar =
-
-
 storeCredWith : Cred -> Cmd msg
 storeCredWith (Cred uname token) =
     let
@@ -109,12 +110,11 @@ storeCredWith (Cred uname token) =
             Encode.object
                 [ ( "user"
                   , Encode.object
-                        [ ( "token", Encode.string token )
+                        [ ( "username", Encode.string uname )
+                        , ( "token", Encode.string token )
+
+                        --, ( "image", Avatar.encode avatar )
                         ]
-                    --[ ( "username", Username.encode uname )
-                    --, ( "token", Encode.string token )
-                    --, ( "image", Avatar.encode avatar )
-                    --]
                   )
                 ]
     in
@@ -130,14 +130,13 @@ port storeCache : Maybe Value -> Cmd msg
 
 
 
--- SERIALIZATION
 -- APPLICATION
 
 
 application :
     Decoder (Cred -> viewer)
     ->
-        { init : Maybe viewer -> Url -> Nav.Key -> ( model, Cmd msg )
+        { init : Maybe Int -> Maybe viewer -> Url -> Nav.Key -> ( model, Cmd msg )
         , onUrlChange : Url -> msg
         , onUrlRequest : Browser.UrlRequest -> msg
         , subscriptions : model -> Sub msg
@@ -149,12 +148,20 @@ application viewerDecoder config =
     let
         init flags url navKey =
             let
-                maybeViewer =
+                decodedFlags =
                     Decode.decodeValue Decode.string flags
+
+                maybeViewer =
+                    decodedFlags
                         |> Result.andThen (Decode.decodeString (storageDecoder viewerDecoder))
                         |> Result.toMaybe
+
+                maybeRandomSeed =
+                    decodedFlags
+                        |> Result.andThen (Decode.decodeString randomSeedDecoder)
+                        |> Result.toMaybe
             in
-            config.init maybeViewer url navKey
+            config.init maybeRandomSeed maybeViewer url navKey
     in
     Browser.application
         { init = init
@@ -166,9 +173,25 @@ application viewerDecoder config =
         }
 
 
+
+-- SERIALIZATION
+
+
+randomSeedDecoder : Decoder Int
+randomSeedDecoder =
+    Decode.field "seed" Decode.int
+
+
 storageDecoder : Decoder (Cred -> viewer) -> Decoder viewer
 storageDecoder viewerDecoder =
     Decode.field "user" (decoderFromCred viewerDecoder)
+
+
+decoderFromCred : Decoder (Cred -> a) -> Decoder a
+decoderFromCred decoder =
+    Decode.map2 (\fromCred cred -> fromCred cred)
+        decoder
+        credDecoder
 
 
 
@@ -240,17 +263,8 @@ delete url cred body decoder =
 
 
 
-decoderFromCred : Decoder (Cred -> a) -> Decoder a
-decoderFromCred decoder =
-    Decode.map2 (\fromCred cred -> fromCred cred)
-        decoder
-        credDecoder
-
-
-
 -- SERVER REQUEST
 -- TODO generate it from protobuf file
-
 {-
    login : Http.Body -> Decoder (Cred -> a) -> Http.Request a
    login body decoder =
@@ -335,4 +349,3 @@ cacheStorageKey =
 credStorageKey : String
 credStorageKey =
     "cred"
-

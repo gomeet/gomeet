@@ -236,9 +236,16 @@ clean: tools-clean package-clean proto-clean
 .PHONY: ui
 ui: tools
 	@echo "$(NAME): ui task"{{ if .HasUiElm }}
-	cd ui/elm && $(MAKE) build{{ end }}
-	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...{{ end }}
+	cd ui/elm && $(MAKE) build
+	-[ -d "ui/scss" ] && cd ui/scss && $(MAKE) build{{ end }}
+	_tools/bin/go-bindata -o ui/assets.go -pkg ui -prefix ui ui/assets/...
 
+.PHONY: ui-setup
+ui-setup:
+	@echo "$(NAME): ui-setup task"{{ if .HasUiElm }}
+	-[ -d "ui/scss" ] && cd ui/scss && yarn install
+{{ end }}
+{{ end }}
 .PHONY: proto
 proto: tools proto-gen-doc{{ if .HasUi }}{{ if .HasUiElm }} proto-gen-elm{{ end }}{{ end }}
 	@echo "$(NAME): proto task"
