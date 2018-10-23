@@ -1,0 +1,51 @@
+module Components.Loading exposing (error, errorBox, errorText, icon, slowThreshold)
+
+{-| A loading spinner icon.
+-}
+
+import Asset
+import Html exposing (Attribute, Html, div, i, span, text)
+import Html.Attributes exposing (alt, class, height, src, width)
+import Process
+import Task exposing (Task)
+
+
+icon_ : Html msg
+icon_ =
+    Html.img
+        [ Asset.src Asset.loading
+        , width 64
+        , height 64
+        , alt "Loading..."
+        ]
+        []
+
+
+icon : Html msg
+icon =
+    span []
+        [ i [ class "fa fa-spinner fa-pulse fa-fw" ]
+            []
+        , span [ class "sr-only" ]
+            [ text "Loading..." ]
+        ]
+
+
+errorText : String -> Html msg
+errorText str =
+    Html.text ("Error loading " ++ str ++ ".")
+
+
+error : String -> Html msg
+error str =
+    span [ class "error" ] [ errorText str ]
+
+
+errorBox : String -> Html msg
+errorBox str =
+    div [ class "container error" ] [ errorText str ]
+
+
+slowThreshold : Task x ()
+slowThreshold =
+    Process.sleep 500

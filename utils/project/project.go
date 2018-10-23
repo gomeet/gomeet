@@ -26,7 +26,7 @@ const DEFAULT_PROTO_PKG_ALIAS = "pb"
 
 var (
 	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
-	allowedUiTypes    = []string{"none", "simple", "elm", "elm-minimal", "elm-minimal-http"} //TODO "react", "vuejs", ....
+	allowedUiTypes    = []string{"none", "simple", "elm", "elm-milligram", "elm-minimal", "elm-minimal-http"} //TODO "react", "vuejs", ....
 	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
 )
 
