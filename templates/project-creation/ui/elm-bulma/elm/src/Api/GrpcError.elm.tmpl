@@ -1,0 +1,268 @@
+module Api.GrpcError exposing
+    ( GrpcError(..)
+    , decodeGrpcError
+    , decodeInvalidArgumentError
+    , encodeInvalidArgumentError
+    , toString
+    )
+
+import Json.Decode as Decode exposing (Decoder, Value)
+import Regex
+import String.Extra as XString
+
+
+
+-- gRPC ERRORS
+-- cf https://github.com/grpc/grpc-go/blob/master/codes/codes.go
+
+
+type GrpcError
+    = OK
+    | Canceled
+    | Unknown
+    | InvalidArgument
+    | DeadlineExceeded
+    | NotFound
+    | AlreadyExists
+    | PermissionDenied
+    | ResourceExhausted
+    | FailedPrecondition
+    | Aborted
+    | OutOfRange
+    | Unimplemented
+    | Internal
+    | Unavailable
+    | DataLoss
+    | Unauthenticated
+
+
+grpcCodeToError : Int -> GrpcError
+grpcCodeToError code =
+    case code of
+        0 ->
+            OK
+
+        1 ->
+            Canceled
+
+        2 ->
+            Unknown
+
+        3 ->
+            InvalidArgument
+
+        4 ->
+            DeadlineExceeded
+
+        5 ->
+            NotFound
+
+        6 ->
+            AlreadyExists
+
+        7 ->
+            PermissionDenied
+
+        8 ->
+            ResourceExhausted
+
+        9 ->
+            FailedPrecondition
+
+        10 ->
+            Aborted
+
+        11 ->
+            OutOfRange
+
+        12 ->
+            Unimplemented
+
+        13 ->
+            Internal
+
+        14 ->
+            Unavailable
+
+        15 ->
+            DataLoss
+
+        16 ->
+            Unauthenticated
+
+        _ ->
+            Unknown
+
+
+grpcErrorToCode : GrpcError -> Int
+grpcErrorToCode err =
+    case err of
+        OK ->
+            0
+
+        Canceled ->
+            1
+
+        Unknown ->
+            2
+
+        InvalidArgument ->
+            3
+
+        DeadlineExceeded ->
+            4
+
+        NotFound ->
+            5
+
+        AlreadyExists ->
+            6
+
+        PermissionDenied ->
+            7
+
+        ResourceExhausted ->
+            8
+
+        FailedPrecondition ->
+            9
+
+        Aborted ->
+            10
+
+        OutOfRange ->
+            11
+
+        Unimplemented ->
+            12
+
+        Internal ->
+            13
+
+        Unavailable ->
+            14
+
+        DataLoss ->
+            15
+
+        Unauthenticated ->
+            16
+
+
+toString : GrpcError -> String
+toString err =
+    case err of
+        OK ->
+            "OK"
+
+        Canceled ->
+            "Canceled"
+
+        Unknown ->
+            "Unknown"
+
+        InvalidArgument ->
+            "InvalidArgument"
+
+        DeadlineExceeded ->
+            "DeadlineExceeded"
+
+        NotFound ->
+            "NotFound"
+
+        AlreadyExists ->
+            "AlreadyExists"
+
+        PermissionDenied ->
+            "PermissionDenied"
+
+        ResourceExhausted ->
+            "ResourceExhausted"
+
+        FailedPrecondition ->
+            "FailedPrecondition"
+
+        Aborted ->
+            "Aborted"
+
+        OutOfRange ->
+            "OutOfRange"
+
+        Unimplemented ->
+            "Unimplemented"
+
+        Internal ->
+            "Internal"
+
+        Unavailable ->
+            "Unavailable"
+
+        DataLoss ->
+            "DataLoss"
+
+        Unauthenticated ->
+            "Unauthenticated"
+
+
+decodeGrpcErrorCode : Int -> Decoder GrpcError
+decodeGrpcErrorCode code =
+    grpcCodeToError code
+        |> Decode.succeed
+
+
+decodeGrpcError : Decoder GrpcError
+decodeGrpcError =
+    Decode.int
+        |> Decode.andThen decodeGrpcErrorCode
+
+
+
+-- HELPERS
+
+
+invalidArgumentPattern : Regex.Regex
+invalidArgumentPattern =
+    "^invalid field(?:\\s+)(\\w+)(?:[:\\s]+)?(.*)$"
+        |> Regex.fromStringWith { caseInsensitive = True, multiline = False }
+        |> Maybe.withDefault Regex.never
+
+
+encodeInvalidArgumentError : String -> String -> String
+encodeInvalidArgumentError field msg =
+    "invalid field "
+        ++ XString.classify field
+        ++ (if String.isEmpty msg then
+                ""
+
+            else
+                ": " ++ msg
+           )
+
+
+decodeInvalidArgumentError : String -> ( Maybe String, Maybe String )
+decodeInvalidArgumentError eMsg =
+    let
+        errors =
+            Regex.find invalidArgumentPattern eMsg
+                |> List.map .submatches
+                |> List.concat
+                |> List.map
+                    (\e ->
+                        e
+                            |> Maybe.withDefault ""
+                            |> String.trim
+                    )
+    in
+    case errors of
+        [ field, msg ] ->
+            ( field |> XString.underscored |> XString.nonEmpty
+            , XString.nonEmpty msg
+            )
+
+        [ field ] ->
+            ( field |> XString.underscored |> XString.nonEmpty
+            , Nothing
+            )
+
+        _ ->
+            ( Nothing, Nothing )

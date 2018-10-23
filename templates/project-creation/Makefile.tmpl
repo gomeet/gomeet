@@ -321,7 +321,7 @@ proto-gen-elm:
 				-I$(shell pwd)/third_party \
 				-I$(shell pwd)/pb \
 				--plugin=$(shell pwd)/_tools/bin/protoc-gen-elm \
-				--elm_out=elm_prefix=Api,debug=false:ui/elm/src/Api/ \
+				--elm_out=elm_prefix=Api,debug=false,json_name_type=proto:ui/elm/src/Api/ \
 			$$f; \
 			echo "$(NAME)::proto-gen-elm generation from " $$f; \
 			echo ""; \

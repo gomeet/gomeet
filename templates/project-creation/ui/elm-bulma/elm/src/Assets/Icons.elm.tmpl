@@ -1,0 +1,64 @@
+module Assets.Icons exposing
+    ( Icon(..)
+    , icon
+    , iconBody
+    , iconText
+    )
+
+import Bulma.Elements as Ui
+import Bulma.Modifiers as Ui exposing (Size)
+import Html exposing (Html, i, span, text)
+import Html.Attributes exposing (class)
+
+
+type alias Size =
+    Ui.Size
+
+
+type Icon
+    = CodeBranch
+    | Comment
+    | Home
+    | InfoCircle
+    | Loading
+    | Warning
+
+
+iconText : Icon -> Size -> String -> Html msg
+iconText ico siz t =
+    span
+        []
+        [ icon ico siz
+        , span [] [ text t ]
+        ]
+
+
+icon : Icon -> Size -> Html msg
+icon ico siz =
+    Ui.icon siz [] [ iconBody ico ]
+
+
+iconBody : Icon -> Html msg
+iconBody ico =
+    let
+        cls =
+            case ico of
+                CodeBranch ->
+                    "fas fa-code-branch"
+
+                Comment ->
+                    "fas fa-comment"
+
+                Home ->
+                    "fas fa-home"
+
+                InfoCircle ->
+                    "fas fa-info-circle"
+
+                Loading ->
+                    "fa fa-spinner fa-pulse fa-fw"
+
+                Warning ->
+                    "fas fa-exclamation-triangle"
+    in
+    i [ class cls ] []

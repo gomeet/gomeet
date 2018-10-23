@@ -1,0 +1,96 @@
+module Page.Login exposing
+    ( Model
+    , Msg
+    , init
+    , subscriptions
+    , toSession
+    , update
+    , view
+    )
+
+import Api.Endpoint as Endpoint exposing (Endpoint)
+import Bulma.Elements as Ui
+import Bulma.Modifiers as Ui
+import Bulma.Modifiers.Typography as UiTypo
+import Html exposing (Html, text)
+import Html.Attributes exposing (class)
+import Http
+import Route exposing (Route)
+import Session exposing (Session)
+import Viewer exposing (Viewer)
+
+
+type alias Model =
+    { session : Session
+    }
+
+
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( { session = session
+      }
+    , Cmd.none
+    )
+
+
+
+-- VIEW
+
+
+view : Model -> { title : String, content : Html Msg }
+view model =
+    { title = "Login"
+    , content = viewContent model
+    }
+
+
+viewContent : Model -> Html Msg
+viewContent model =
+    Ui.content Ui.Standard
+        [ UiTypo.textCentered ]
+        [ Ui.title Ui.H1 [] [ text "501" ]
+        , Ui.subtitle Ui.H3 [] [ text "Not Yet Implemented" ]
+        , Ui.content Ui.Standard [] [ text "Here come the login page" ]
+        ]
+
+
+
+-- UPDATE
+
+
+type Msg
+    = GotSession Session
+    | CompletedLoginSave (Result Http.Error Viewer)
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotSession session ->
+            ( { model | session = session }, Cmd.none )
+
+        CompletedLoginSave (Err error) ->
+            ( model, Cmd.none )
+
+        CompletedLoginSave (Ok viewer) ->
+            ( model
+            , Viewer.store viewer
+            )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changes GotSession (Session.navKey model.session) (Session.randomSeed model.session)
+
+
+
+-- EXPORT
+
+
+toSession : Model -> Session
+toSession model =
+    model.session

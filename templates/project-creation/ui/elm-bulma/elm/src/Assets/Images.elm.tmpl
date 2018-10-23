@@ -1,0 +1,82 @@
+module Assets.Images exposing
+    ( Image(..)
+    , img
+    , logo
+    , src
+    )
+
+{-| usage
+
+import Assets.Images as Images
+
+    Html.div []
+        [ Html.img [ Images.src Images.logo ] []
+        , Images.img Images.Logo
+        ]
+
+-}
+
+import Html exposing (Attribute, Html)
+import Html.Attributes as Attr
+
+
+
+-- INTERNAL HELPERS
+
+
+imageSrc : String -> Image
+imageSrc filename =
+    Image (baseUrl ++ filename)
+
+
+baseUrl : String
+baseUrl =
+    "/images/"
+
+
+
+-- EXPORTED FUNCTIONS
+
+
+img : Image -> Html msg
+img i =
+    Html.img [ src i ] []
+
+
+src : Image -> Attribute msg
+src i =
+    case i of
+        Image url ->
+            url
+                |> Attr.src
+
+        _ ->
+            toString i
+                |> imageSrc
+                |> toString
+                |> Attr.src
+
+
+
+-- IMAGES DEFINITION
+
+
+type Image
+    = Image String
+    | Logo
+
+
+toString : Image -> String
+toString i =
+    case i of
+        -- map type and string name
+        Logo ->
+            "logo.png"
+
+        Image s ->
+            s
+
+
+logo : Image
+logo =
+    imageSrc <| toString Logo

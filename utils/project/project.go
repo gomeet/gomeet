@@ -22,11 +22,14 @@ import (
 	tmplHelpers "github.com/gomeet/gomeet/utils/project/templates/helpers"
 )
 
-const DEFAULT_PROTO_PKG_ALIAS = "pb"
+const (
+	DEFAULT_PROTO_PKG_ALIAS = "pb"
+	DEFAULT_ELM             = "elm-bulma"
+)
 
 var (
 	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
-	allowedUiTypes    = []string{"none", "simple", "elm", "elm-milligram", "elm-minimal", "elm-minimal-http"} //TODO "react", "vuejs", ....
+	allowedUiTypes    = []string{"none", "simple", "elm", "elm-bulma", "elm-milligram", "elm-minimal", "elm-minimal-http"} //TODO "react", "vuejs", ....
 	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
 )
 
@@ -202,6 +205,9 @@ func (p *Project) SetUiType(s string) error {
 		}
 		if !ok {
 			return fmt.Errorf("\"%s\" isn't allowed in ui_type - allowed ui_type : [%s]", uiType, strings.Join(GomeetAllowedUiTypes(), "|"))
+		}
+		if uiType == "elm" {
+			uiType = DEFAULT_ELM
 		}
 		p.uiType = uiType
 	}

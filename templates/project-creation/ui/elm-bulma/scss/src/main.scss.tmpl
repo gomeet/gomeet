@@ -1,0 +1,39 @@
+// icons fontawesome
+@import 'fontawesome';
+@import 'regular';
+@import 'solid';
+@import 'brands';
+// bulma
+@import 'bulma';
+@import 'bulma-tooltip/src/sass/index';
+
+
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+body {
+  //background-color: $color-teal-base;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+}
+body>main {
+  flex: 1 0 auto;
+}
+body>footer {
+  flex-shrink: 0;
+  margin: 3rem 0 0 0;
+  text-align: right;
+  &.footer {
+    padding: 0 5px 0 0;
+    background-color: inherit;
+  }
+}
+

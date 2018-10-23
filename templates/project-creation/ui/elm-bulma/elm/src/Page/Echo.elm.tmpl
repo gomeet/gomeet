@@ -1,0 +1,423 @@
+module Page.Echo exposing (Model, Msg, init, subscriptions, toSession, update, view)
+
+import Api.Endpoint as Endpoint
+import Api.GrpcError as GrpcError exposing (GrpcError)
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Request as Request
+import Api.Validator as Validator
+import Assets.Icons as Icons
+import Bulma.Components as Ui
+import Bulma.Elements as Ui
+import Bulma.Form as Ui
+import Bulma.Layout as Ui
+import Bulma.Modifiers as Ui
+import Bulma.Modifiers.Typography as UiTypo
+import Html exposing (Html, span, text)
+import Html.Attributes exposing (attribute, class, href, placeholder, style, value)
+import Html.Events exposing (onClick, onInput)
+import Http
+import Random exposing (Seed)
+import Session exposing (Session)
+import Task exposing (Task)
+import Uuid as Uuid exposing (Uuid)
+
+
+type alias Model =
+    { session : Session
+    , echoRequest : {{ upperPascalCase .ShortName }}Pb.EchoRequest
+
+    -- Loaded independently from server
+    , echoResponse : Status {{ upperPascalCase .ShortName }}Pb.EchoRequest
+    }
+
+
+type Status a
+    = Empty
+    | Loading
+    | Loaded a
+    | Failed Request.Error
+
+
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( { session = session
+      , echoRequest = {{ upperPascalCase .ShortName }}Pb.EchoRequest "" ""
+      , echoResponse = Empty
+      }
+    , Cmd.batch
+        [ Task.perform (always GenerateNewUuid) (Task.succeed ()) ]
+    )
+
+
+
+-- VIEW
+
+
+view : Model -> { title : String, content : Html Msg }
+view model =
+    { title = ""
+    , content = Ui.content Ui.Standard [ style "padding" "20px" ] [ viewContent model ]
+    }
+
+
+viewContent : Model -> Html Msg
+viewContent model =
+    let
+        msgMod =
+            Ui.messageModifiers
+
+        loadingMsg mod =
+            Ui.message mod
+                []
+                [ Ui.messageBody [] [ Icons.iconText Icons.Loading Ui.Standard "Loading..." ]
+                ]
+
+        endpointMsg =
+            Ui.content Ui.Large
+                []
+                [ text "Submit form to load echo response from server "
+                , span [ UiTypo.textColor UiTypo.Primary ] [ text <| Endpoint.toString Endpoint.echo ]
+                , text " endpoint."
+                ]
+
+        ( contentResponse, formEnabled, error ) =
+            case model.echoResponse of
+                Empty ->
+                    ( text ""
+                    , True
+                    , Nothing
+                    )
+
+                Loading ->
+                    ( loadingMsg msgMod
+                    , False
+                    , Nothing
+                    )
+
+                Failed err ->
+                    ( Ui.message { msgMod | color = Ui.Danger }
+                        []
+                        [ Ui.messageBody []
+                            [ text "Error loading echo : "
+                            , text <| Request.errorToString err
+                            ]
+                        ]
+                    , True
+                    , Just err
+                    )
+
+                Loaded echoResponse ->
+                    ( Ui.content Ui.Standard
+                        []
+                        [ Ui.message { msgMod | color = Ui.Success }
+                            []
+                            [ Ui.messageBody [] [ viewEchoResponse echoResponse ]
+                            ]
+                        , fieldButtons True "Again" <|
+                            "Send form again to "
+                                ++ Endpoint.toString Endpoint.echo
+                                ++ " endpoint."
+                        ]
+                    , False
+                    , Nothing
+                    )
+    in
+    Ui.card []
+        [ Ui.cardHeader [] [ Ui.cardTitle [] [ text "Echo" ] ]
+        , Ui.cardContent []
+            [ endpointMsg
+            , formEcho formEnabled error model.echoRequest
+            , contentResponse
+            ]
+        , Ui.cardFooter [] []
+        ]
+
+
+inputModifiers : Ui.ControlInputModifiers msg
+inputModifiers =
+    Ui.controlInputModifiers
+
+
+buttonModifiers : Ui.ButtonModifiers msg
+buttonModifiers =
+    Ui.buttonModifiers
+
+
+formEcho : Bool -> Maybe Request.Error -> {{ upperPascalCase .ShortName }}Pb.EchoRequest -> Html Msg
+formEcho enabled maybeError echoRequest =
+    Ui.content Ui.Standard
+        []
+        [ fieldUuid enabled maybeError echoRequest.uuid
+        , fieldContent enabled maybeError echoRequest.content
+        , if enabled then
+            fieldButtons enabled "Send" <|
+                "Send form to "
+                    ++ Endpoint.toString Endpoint.echo
+                    ++ " endpoint."
+
+          else
+            text ""
+        ]
+
+
+errorFieldInfo :
+    Maybe Request.Error
+    -> String
+    -> String
+    -> ( Ui.Color, String, Maybe ( Ui.Size, List (Html.Attribute msg), Ui.IconBody msg ) )
+errorFieldInfo maybeError field defaultHelp =
+    let
+        default =
+            ( Ui.Default, defaultHelp, Nothing )
+
+        warningIcon =
+            Just ( Ui.Standard, [], Icons.iconBody Icons.Warning )
+    in
+    case Request.decodeInvalidArgumentError maybeError of
+        ( Just errorField, eMsg ) ->
+            if errorField == field then
+                case eMsg of
+                    Just m ->
+                        ( Ui.Danger, m, warningIcon )
+
+                    _ ->
+                        ( Ui.Danger, "Unknown error", warningIcon )
+
+            else
+                default
+
+        _ ->
+            default
+
+
+fieldUuid : Bool -> Maybe Request.Error -> String -> Html Msg
+fieldUuid enabled maybeError uuid =
+    let
+        ( color, help, icon ) =
+            errorFieldInfo maybeError "content" ""
+    in
+    Ui.field []
+        [ Ui.controlLabel [] [ text "Uuid" ]
+        , Ui.connectedFields Ui.Centered
+            []
+            [ Ui.controlText
+                { inputModifiers
+                    | expanded = True
+                    , readonly = True
+                    , disabled = not enabled
+                    , color = color
+                    , iconRight = icon
+                }
+                []
+                [ placeholder "Uuid"
+                , value uuid
+                , onInput EchoUuidChange
+                ]
+                []
+            , Ui.controlButton
+                { buttonModifiers
+                    | color =
+                        if color == Ui.Default then
+                            Ui.Primary
+
+                        else
+                            color
+                    , disabled = not enabled
+                }
+                []
+                [ onClick GenerateNewUuid
+                , class "tooltip is-tooltip-bottom"
+                , attribute "data-tooltip" "Regenerate the id"
+                ]
+                [ text "New" ]
+            ]
+        , Ui.controlHelp color [ UiTypo.italicize ] [ text help ]
+        ]
+
+
+fieldContent : Bool -> Maybe Request.Error -> String -> Html Msg
+fieldContent enabled maybeError content =
+    let
+        ( color, help, icon ) =
+            errorFieldInfo maybeError "content" "This field is required"
+    in
+    Ui.field []
+        [ Ui.controlLabel [] [ text "Content" ]
+        , Ui.controlText
+            { inputModifiers
+                | expanded = True
+                , disabled = not enabled
+                , color = color
+                , iconRight = icon
+            }
+            []
+            [ placeholder "Content"
+            , value content
+            , onInput EchoContentChange
+            ]
+            []
+        , Ui.controlHelp color [ UiTypo.italicize ] [ text help ]
+        ]
+
+
+fieldButtons : Bool -> String -> String -> Html Msg
+fieldButtons enabled sendLabel tooltip =
+    Ui.field []
+        [ Ui.connectedFields Ui.Right
+            []
+            [ Ui.controlButton
+                { buttonModifiers
+                    | color = Ui.Light
+                    , disabled = not enabled
+                }
+                []
+                [ onClick Reset ]
+                [ text "Reset" ]
+            , Ui.controlButton
+                { buttonModifiers
+                    | color = Ui.Primary
+                    , disabled = not enabled
+                }
+                []
+                [ onClick SendEchoRequest
+                , class "tooltip is-tooltip-left"
+                , attribute "data-tooltip" tooltip
+                ]
+                [ text sendLabel ]
+            ]
+        ]
+
+
+viewEchoResponse : {{ upperPascalCase .ShortName }}Pb.EchoResponse -> Html Msg
+viewEchoResponse echoResponse =
+    Ui.field []
+        [ Ui.connectedFields Ui.Left
+            []
+            [ Ui.controlLabel [] [ text "Uuid :" ]
+            , Ui.controlLabel [] [ text <| "\u{00A0}" ++ echoResponse.uuid ]
+            ]
+        , Ui.connectedFields Ui.Left
+            []
+            [ Ui.controlLabel [] [ text "Content :" ]
+            , Ui.controlLabel [] [ text <| "\u{00A0}" ++ echoResponse.content ]
+            ]
+        ]
+
+
+
+-- UPDATE
+
+
+type Msg
+    = GotSession Session
+    | EchoUuidChange String
+    | EchoContentChange String
+    | CompletedEchoLoad (Result Http.Error {{ upperPascalCase .ShortName }}Pb.EchoResponse)
+    | SendEchoRequest
+    | GenerateNewUuid
+    | Reset
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotSession session ->
+            ( { model | session = session }, Cmd.none )
+
+        EchoUuidChange newUuid ->
+            ( { model
+                | echoRequest = model.echoRequest |> setEchoRequestUuid newUuid
+                , echoResponse = Empty
+              }
+            , Cmd.none
+            )
+
+        EchoContentChange content ->
+            ( { model
+                | echoRequest = model.echoRequest |> setEchoRequestContent content
+                , echoResponse = Empty
+              }
+            , Cmd.none
+            )
+
+        GenerateNewUuid ->
+            let
+                ( newUuid, newSeed ) =
+                    Random.step Uuid.uuidGenerator (Session.randomSeed model.session)
+            in
+            ( { model
+                | session = Session.fromViewer (Session.navKey model.session) newSeed (Session.viewer model.session)
+                , echoRequest = model.echoRequest |> setEchoRequestUuid (Uuid.toString newUuid)
+                , echoResponse = Empty
+              }
+            , Cmd.none
+            )
+
+        SendEchoRequest ->
+            case Validator.validateEchoRequest model.echoRequest of
+                Just error ->
+                    ( { model | echoResponse = Failed error }, Cmd.none )
+
+                Nothing ->
+                    ( { model | echoResponse = Loading }
+                    , sendEchoRequest model.session model.echoRequest
+                        |> Task.attempt CompletedEchoLoad
+                    )
+
+        Reset ->
+            update GenerateNewUuid
+                { model
+                    | echoResponse = Empty
+                    , echoRequest = model.echoRequest |> setEchoRequestContent ""
+                }
+
+        CompletedEchoLoad (Ok echoResponse) ->
+            ( { model | echoResponse = Loaded echoResponse }, Cmd.none )
+
+        CompletedEchoLoad (Err error) ->
+            ( { model | echoResponse = Failed (Request.decodeErrors error) }, Cmd.none )
+
+
+setEchoRequestUuid : String -> {{ upperPascalCase .ShortName }}Pb.EchoRequest -> {{ upperPascalCase .ShortName }}Pb.EchoRequest
+setEchoRequestUuid newUuid echoRequest =
+    { echoRequest | uuid = newUuid }
+
+
+setEchoRequestContent : String -> {{ upperPascalCase .ShortName }}Pb.EchoRequest -> {{ upperPascalCase .ShortName }}Pb.EchoRequest
+setEchoRequestContent newContent echoRequest =
+    { echoRequest | content = newContent }
+
+
+
+-- HTTP
+
+
+sendEchoRequest : Session -> {{ upperPascalCase .ShortName }}Pb.EchoRequest -> Task Http.Error {{ upperPascalCase .ShortName }}Pb.EchoResponse
+sendEchoRequest session echoRequest =
+    let
+        maybeCred =
+            Session.cred session
+
+        request =
+            Request.echo maybeCred echoRequest
+    in
+    Http.toTask request
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changes GotSession (Session.navKey model.session) (Session.randomSeed model.session)
+
+
+
+-- EXPORT
+
+
+toSession : Model -> Session
+toSession model =
+    model.session
