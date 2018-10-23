@@ -8,9 +8,11 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/Masterminds/sprig"
 	"github.com/fatih/color"
+
 	//gogoproto "github.com/gogo/protobuf/proto"
 
 	"github.com/golang/protobuf/proto"
@@ -67,6 +69,9 @@ var protoHelpersFuncMap = template.FuncMap{
 	"protoMessagesNeededImports":     protoMessagesNeededImports,
 	"httpMetricsRouteMap":            httpMetricsRouteMap,
 	"subSvcPkgString":                subSvcPkgString,
+	"currentYear": func() string {
+		return time.Now().Format("2006")
+	},
 	"string": func(i interface {
 		String() string
 	}) string {

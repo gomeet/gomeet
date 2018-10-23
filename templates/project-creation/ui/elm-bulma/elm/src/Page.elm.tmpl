@@ -1,4 +1,4 @@
-module Page exposing (Page(..), view, viewErrors, viewHeader)
+module Page exposing (LayoutMsg(..), LayoutOptions, Page(..), view)
 
 import Api.Request exposing (Cred)
 import Assets.Icons as Icons
@@ -8,8 +8,8 @@ import Bulma.Components as Ui
 import Bulma.Elements as Ui
 import Bulma.Layout as Ui
 import Bulma.Modifiers as Ui
-import Html exposing (Html, a, button, div, main_, p, span, text)
-import Html.Attributes exposing (class, href, style)
+import Html exposing (Html, a, main_, span, text)
+import Html.Attributes exposing (class, href)
 import Html.Attributes.Aria exposing (ariaExpanded, ariaLabel, role)
 import Html.Events exposing (onClick)
 import Route exposing (Route)
@@ -33,6 +33,20 @@ type Page
     | Login
 
 
+{-| layout options is the model of layout to determines some configuration of the layout
+-}
+type alias LayoutOptions =
+    { navbarOpened : Bool -- True if navbar must be openened
+    }
+
+
+{-| these messages are emit by the layout
+-}
+type LayoutMsg
+    = NoOp
+    | NavbarBurgerToggle -- toggle the navbar
+
+
 {-| Take a page's Html and frames it with a header and footer.
 
 The caller provides the current user, so we can display in either
@@ -42,10 +56,23 @@ isLoading is for determining whether we should show a loading spinner
 in the header. (This comes up during slow page transitions.)
 
 -}
-view : Maybe Viewer -> Page -> { title : String, content : Html msg } -> Document msg
-view maybeViewer page { title, content } =
+view :
+    { layoutMsg : LayoutMsg -> msg, contentMsg : contentMsg -> msg }
+    -> LayoutOptions
+    -> Maybe Viewer
+    -> Page
+    -> { title : String, content : Html contentMsg }
+    -> Document msg
+view { layoutMsg, contentMsg } config maybeViewer page { title, content } =
     { title = title ++ " - {{ upperPascalCase .ShortName }}"
-    , body = viewHeader page maybeViewer :: viewContent content :: [ viewFooter ]
+    , body =
+        [ viewHeader config maybeViewer page
+            |> Html.map layoutMsg
+        , viewContent content
+            |> Html.map contentMsg
+        , viewFooter
+            |> Html.map layoutMsg
+        ]
     }
 
 
@@ -54,13 +81,30 @@ viewContent content =
     main_ [ class "main-container" ] [ content ]
 
 
-viewHeader : Page -> Maybe Viewer -> Html msg
-viewHeader page maybeViewer =
-    Ui.navbar Ui.navbarModifiers
+viewFooter : Html msg
+viewFooter =
+    Ui.footer []
+        [ Ui.container []
+            [ Ui.content Ui.Standard
+                []
+                [ a [ Route.href Route.Home ] [ text "{{ upperPascalCase .ShortName }} ©{{ currentYear }}" ] ]
+            ]
+        ]
+
+
+viewHeader : LayoutOptions -> Maybe Viewer -> Page -> Html LayoutMsg
+viewHeader config maybeViewer page =
+    Ui.navbar
+        Ui.navbarModifiers
         []
         [ Ui.navbarBrand []
-            (Ui.navbarBurger False
-                []
+            (Ui.navbarBurger config.navbarOpened
+                [ role "button"
+                , ariaLabel "menu"
+                , ariaExpanded (stringFromBool config.navbarOpened)
+                , href "" -- IMPORTANT to Navigation
+                , onClick NavbarBurgerToggle
+                ]
                 [ span [] []
                 , span [] []
                 , span [] []
@@ -70,12 +114,22 @@ viewHeader page maybeViewer =
                 []
                 [ Images.img Images.Logo ]
             ]
-        , navbarMenu page maybeViewer
+        , navbarMenu config maybeViewer page
         ]
 
 
-navbarMenu : Page -> Maybe Viewer -> Ui.NavbarSection msg
-navbarMenu page maybeViewer =
+stringFromBool : Bool -> String
+stringFromBool val =
+    case val of
+        True ->
+            "true"
+
+        False ->
+            "false"
+
+
+navbarMenu : LayoutOptions -> Maybe Viewer -> Page -> Ui.NavbarSection msg
+navbarMenu config maybeViewer page =
     let
         navbarEnd =
             case maybeViewer of
@@ -87,11 +141,8 @@ navbarMenu page maybeViewer =
                     Ui.navbarEnd []
                         [ navbarLink page Route.Login [ text "login" ] ]
     in
-    Ui.navbarMenu True
-        [ role "button"
-        , ariaLabel "menu"
-        , ariaExpanded "false"
-        ]
+    Ui.navbarMenu config.navbarOpened
+        []
         [ Ui.navbarStart []
             [ navbarLink page Route.Home [ Icons.iconText Icons.Home Ui.Standard "Home" ]
             , navbarLink page Route.Version [ Icons.iconText Icons.CodeBranch Ui.Standard "Version" ]
@@ -108,17 +159,6 @@ navbarLink page route linkContent =
     Ui.navbarItemLink (isActive page route)
         [ Route.href route ]
         linkContent
-
-
-viewFooter : Html msg
-viewFooter =
-    Ui.footer []
-        [ Ui.container []
-            [ Ui.content Ui.Standard
-                []
-                [ a [ Route.href Route.Home ] [ text "BoGateway ©2018" ] ]
-            ]
-        ]
 
 
 isActive : Page -> Route -> Bool
@@ -141,24 +181,3 @@ isActive page route =
 
         _ ->
             False
-
-
-{-| Render dismissable errors. We use this all over the place!
--}
-viewErrors : msg -> List String -> Html msg
-viewErrors dismissErrors errors =
-    if List.isEmpty errors then
-        Html.text ""
-
-    else
-        div
-            [ class "error-messages"
-            , style "position" "fixed"
-            , style "top" "0"
-            , style "background" "rgb(250, 250, 250)"
-            , style "padding" "20px"
-            , style "border" "1px solid"
-            ]
-        <|
-            List.map (\error -> p [] [ text error ]) errors
-                ++ [ button [ onClick dismissErrors ] [ text "Ok" ] ]

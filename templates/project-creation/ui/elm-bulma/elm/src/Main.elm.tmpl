@@ -1,9 +1,8 @@
 module Main exposing (main)
 
-import Api.Request as Api exposing (Cred)
+import Api.Request as Api
 import Browser exposing (Document)
 import Browser.Navigation as Nav
-import Html exposing (..)
 import Json.Decode as Decode exposing (Value)
 import Page exposing (Page)
 import Page.Blank as Blank
@@ -16,7 +15,6 @@ import Page.Version as Version
 import Random
 import Route exposing (Route)
 import Session exposing (Session)
-import Task
 import Url exposing (Url)
 import Viewer exposing (Viewer)
 
@@ -37,7 +35,7 @@ type PageModel
 
 type alias Model =
     { currentPage : PageModel
-    , pageOptions : { navbarOpened : Bool }
+    , layoutOptions : Page.LayoutOptions
     }
 
 
@@ -54,7 +52,7 @@ init maybeSeed maybeViewer url navKey =
     in
     changeRouteTo (Route.fromUrl url)
         { currentPage = Redirect (Session.fromViewer navKey (Random.initialSeed seed) maybeViewer)
-        , pageOptions = { navbarOpened = False }
+        , layoutOptions = { navbarOpened = False }
         }
 
 
@@ -69,13 +67,17 @@ view model =
             let
                 sessionModel =
                     toSession model
-
-                { title, body } =
-                    Page.view (Session.viewer sessionModel) page config
             in
-            { title = title
-            , body = List.map (Html.map toMsg) body
-            }
+            Page.view
+                { layoutMsg = GotLayoutMsg
+                , contentMsg = toMsg
+                }
+                model.layoutOptions
+                (Session.viewer sessionModel)
+                page
+                { title = config.title
+                , content = config.content
+                }
     in
     case model.currentPage of
         Redirect _ ->
@@ -109,6 +111,7 @@ type Msg
     | ChangedRoute (Maybe Route)
     | ChangedUrl Url
     | ClickedLink Browser.UrlRequest
+    | GotLayoutMsg Page.LayoutMsg
     | GotSession Session
     | GotHomeMsg Home.Msg
     | GotVersionMsg Version.Msg
@@ -220,6 +223,22 @@ update msg model =
         ( ChangedRoute route, _ ) ->
             changeRouteTo route model
 
+        ( GotLayoutMsg subMsg, _ ) ->
+            case subMsg of
+                Page.NavbarBurgerToggle ->
+                    let
+                        layoutOptions =
+                            model.layoutOptions
+                    in
+                    ( { model
+                        | layoutOptions = { layoutOptions | navbarOpened = not layoutOptions.navbarOpened }
+                      }
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
         ( GotHomeMsg subMsg, Home home ) ->
             Home.update subMsg home
                 |> updateWith Home GotHomeMsg model
@@ -252,7 +271,14 @@ update msg model =
 
 updateWith : (subModel -> PageModel) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
 updateWith toModel toMsg model ( subModel, subCmd ) =
-    ( { model | currentPage = toModel subModel }
+    let
+        layoutOptions =
+            model.layoutOptions
+    in
+    ( { model
+        | currentPage = toModel subModel
+        , layoutOptions = { layoutOptions | navbarOpened = False }
+      }
     , Cmd.map toMsg subCmd
     )
 
