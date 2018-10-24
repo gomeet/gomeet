@@ -6,7 +6,7 @@
 // bulma
 @import 'bulma';
 @import 'bulma-tooltip/src/sass/index';
-
+@import '../node_modules/bulma/sass/utilities/mixins.sass';
 
 :focus {outline:none;}
 ::-moz-focus-inner {border:0;}
@@ -37,3 +37,16 @@ body>footer {
   }
 }
 
+@include touch {
+  .tooltip {
+    &:hover,
+    &.is-tooltip-active {
+      &:not(.is-loading) {
+        &::after,
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}

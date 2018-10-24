@@ -1,7 +1,6 @@
-port module Api.Request exposing
-    ( Cred
+module Api.Request exposing
+    ( Cred(..)
     , Error(..)
-    , application
     , decodeErrors
     , decodeInvalidArgumentError
     , delete
@@ -9,14 +8,11 @@ port module Api.Request exposing
     , encodeInvalidArgumentError
     , errorToString
     , get
-    , logout
     , post
     , put
     , servicesStatus
     , slowThreshold
-    , storeCredWith
     , version
-    , viewerChanges
     )
 
 {-| This module is responsible for communicating to the {{ .Name }} API
@@ -73,132 +69,6 @@ type Cred
 credHeader : Cred -> Http.Header
 credHeader (Cred _ str) =
     Http.header "authorization" ("Token " ++ str)
-
-
-{-| It's important that this is never exposed!
-
-We epxose `login` and `application` instead, so we can be certain that if anyone
-ever has access to a `Cred` value, it came from either the login API endpoint
-or was passed in via flags.
-
--}
-credDecoder : Decoder Cred
-credDecoder =
-    Decode.succeed Cred
-        |> required "username" Decode.string
-        |> required "token" Decode.string
-
-
-
--- PERSISTENCE
-
-
-port onStoreChange : (Value -> msg) -> Sub msg
-
-
-viewerChanges : (Maybe viewer -> msg) -> Decoder (Cred -> viewer) -> Sub msg
-viewerChanges toMsg decoder =
-    onStoreChange (\value -> toMsg (decodeFromChange decoder value))
-
-
-decodeFromChange : Decoder (Cred -> viewer) -> Value -> Maybe viewer
-decodeFromChange viewerDecoder val =
-    -- It's stored in localStorage as a JSON String;
-    -- first decode the Value as a String, then
-    -- decode that String as JSON.
-    Decode.decodeValue (storageDecoder viewerDecoder) val
-        |> Result.toMaybe
-
-
-storeCredWith : Cred -> Cmd msg
-storeCredWith (Cred uname token) =
-    let
-        json =
-            Encode.object
-                [ ( "user"
-                  , Encode.object
-                        [ ( "username", Encode.string uname )
-                        , ( "token", Encode.string token )
-
-                        --, ( "image", Avatar.encode avatar )
-                        ]
-                  )
-                ]
-    in
-    storeCache (Just json)
-
-
-logout : Cmd msg
-logout =
-    storeCache Nothing
-
-
-port storeCache : Maybe Value -> Cmd msg
-
-
-
--- APPLICATION
-
-
-application :
-    Decoder (Cred -> viewer)
-    ->
-        { init : Maybe Int -> Maybe viewer -> Url -> Nav.Key -> ( model, Cmd msg )
-        , onUrlChange : Url -> msg
-        , onUrlRequest : Browser.UrlRequest -> msg
-        , subscriptions : model -> Sub msg
-        , update : msg -> model -> ( model, Cmd msg )
-        , view : model -> Browser.Document msg
-        }
-    -> Program Value model msg
-application viewerDecoder config =
-    let
-        init flags url navKey =
-            let
-                decodedFlags =
-                    Decode.decodeValue Decode.string flags
-
-                maybeViewer =
-                    decodedFlags
-                        |> Result.andThen (Decode.decodeString (storageDecoder viewerDecoder))
-                        |> Result.toMaybe
-
-                maybeRandomSeed =
-                    decodedFlags
-                        |> Result.andThen (Decode.decodeString randomSeedDecoder)
-                        |> Result.toMaybe
-            in
-            config.init maybeRandomSeed maybeViewer url navKey
-    in
-    Browser.application
-        { init = init
-        , onUrlChange = config.onUrlChange
-        , onUrlRequest = config.onUrlRequest
-        , subscriptions = config.subscriptions
-        , update = config.update
-        , view = config.view
-        }
-
-
-
--- SERIALIZATION
-
-
-randomSeedDecoder : Decoder Int
-randomSeedDecoder =
-    Decode.field "seed" Decode.int
-
-
-storageDecoder : Decoder (Cred -> viewer) -> Decoder viewer
-storageDecoder viewerDecoder =
-    Decode.field "user" (decoderFromCred viewerDecoder)
-
-
-decoderFromCred : Decoder (Cred -> a) -> Decoder a
-decoderFromCred decoder =
-    Decode.map2 (\fromCred cred -> fromCred cred)
-        decoder
-        credDecoder
 
 
 
@@ -380,17 +250,3 @@ decodeErrors error =
 slowThreshold : Task x ()
 slowThreshold =
     Process.sleep 500
-
-
-
--- LOCALSTORAGE KEYS
-
-
-cacheStorageKey : String
-cacheStorageKey =
-    "cache"
-
-
-credStorageKey : String
-credStorageKey =
-    "cred"

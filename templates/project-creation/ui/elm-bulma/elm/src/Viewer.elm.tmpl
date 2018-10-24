@@ -6,8 +6,9 @@ impossible to have a Viewer if you aren't logged in.
 -}
 
 --module Viewer exposing (Viewer, avatar, cred, decoder, minPasswordChars, store, username)
+--import Api.Request as Api exposing (Cred)
 
-import Api.Request as Api exposing (Cred)
+import Api as Api exposing (Cred)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Pipeline exposing (custom, required)
 import Json.Encode as Encode exposing (Value)
