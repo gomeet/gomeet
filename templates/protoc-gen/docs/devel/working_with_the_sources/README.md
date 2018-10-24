@@ -12,8 +12,8 @@
 - [docker](https://docs.docker.com/engine/installation/)
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [Unzip](http://www.info-zip.org/UnZip.html)
-{{ if .HasUi }}{{ if .UiType eq "elm" }}- [NodeJS](https://guide.elm-lang.org/install.html)
-- [elm-platform](https://guide.elm-lang.org/install.html)
+{{ if .HasUi }}{{ if .HasUiElm }}- [NodeJS](https://guide.elm-lang.org/install.html)
+- [yarn package manager](https://yarnpkg.com/en/docs/install)
 {{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}- [{{ lower . }}](https://www.{{ lower . }}.com/) or [mariaDB clone](https://mariadb.com/)
 {{ else if eq . "postgres" }}- [postgreSQL](https://www.postgresql.org/){{ if $.HasPostgis }}
 - [postGIS](http://postgis.net/docs/manual-2.4/){{ end }}
