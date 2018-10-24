@@ -13,6 +13,7 @@ import Bulma.Form as Ui
 import Bulma.Layout as Ui
 import Bulma.Modifiers as Ui
 import Bulma.Modifiers.Typography as UiTypo
+import Helpers.Html.Events exposing (onEnter)
 import Html exposing (Html, span, text)
 import Html.Attributes exposing (attribute, class, href, placeholder, style, value)
 import Html.Events exposing (onClick, onInput)
@@ -195,7 +196,7 @@ fieldUuid : Bool -> Maybe Request.Error -> String -> Html Msg
 fieldUuid enabled maybeError uuid =
     let
         ( color, help, icon ) =
-            errorFieldInfo maybeError "content" ""
+            errorFieldInfo maybeError "uuid" ""
     in
     Ui.field []
         [ Ui.controlLabel [] [ text "Uuid" ]
@@ -213,6 +214,7 @@ fieldUuid enabled maybeError uuid =
                 [ placeholder "Uuid"
                 , value uuid
                 , onInput EchoUuidChange
+                , onEnter SendEchoRequest
                 ]
                 []
             , Ui.controlButton
@@ -294,13 +296,13 @@ viewEchoResponse echoResponse =
     Ui.field []
         [ Ui.connectedFields Ui.Left
             []
-            [ Ui.controlLabel [] [ text "Uuid :" ]
-            , Ui.controlLabel [] [ text <| "\u{00A0}" ++ echoResponse.uuid ]
+            [ Ui.controlLabel [] [ text "Uuid\u{00A0}:\u{00A0}" ]
+            , Ui.controlLabel [] [ text echoResponse.uuid ]
             ]
         , Ui.connectedFields Ui.Left
             []
-            [ Ui.controlLabel [] [ text "Content :" ]
-            , Ui.controlLabel [] [ text <| "\u{00A0}" ++ echoResponse.content ]
+            [ Ui.controlLabel [] [ text "Content\u{00A0}:\u{00A0}" ]
+            , Ui.controlLabel [] [ text echoResponse.content ]
             ]
         ]
 
