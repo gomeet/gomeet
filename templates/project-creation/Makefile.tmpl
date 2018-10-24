@@ -671,6 +671,21 @@ docker-test: docker
 doc-server: tools
 	_tools/bin/gomeet-tools-markdown-server
 
+.PHONY: run
+run:
+	@echo "$(NAME): run task"
+	hack/run.sh
+
+.PHONY: run-console
+run-console:
+	@echo "$(NAME): run-console task"
+	hack/run-console.sh
+
+.PHONY: run-dev
+run-dev: tools
+	@echo "$(NAME): run-dev task"
+	hack/run-dev.sh
+
 .PHONY: gomeet-regenerate-project
 gomeet-regenerate-project: tools
 	@echo "$(NAME): gomeet-regenerate-project task"

@@ -262,6 +262,9 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make dep-update-{{ .ProjectGroupName }} [individual svc name without {{ .Prefix }} prefix|default all]` - Executes the `dep ensure -update {{ .ProjectGroupGoPkg }}/{{ .Prefix }}[individual svc name without {{ .Prefix }} prefix|default all]`
 - `make dep-update-gomeet-utils` - Executes the `dep ensure -update github.com/gomeet/gomeet`
 - `make doc-server` - Run a markdown documentation server
+- `make run` - Run the server (via hack/run.sh script)
+- `make run-console` - Run the console (via hack/run-console.sh script)
+- `make run-dev` - Run the server with hot compile (via hack/run-dev.sh script)
 - `make gomeet-regenerate-project` - regenerate the project with [gomeet](https://github.com/gomeet/gomeet) be careful this replaces files except for the protobuf file
 
 #### Add a tool
