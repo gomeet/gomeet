@@ -214,7 +214,6 @@ fieldUuid enabled maybeError uuid =
                 [ placeholder "Uuid"
                 , value uuid
                 , onInput EchoUuidChange
-                , onEnter SendEchoRequest
                 ]
                 []
             , Ui.controlButton
@@ -257,6 +256,7 @@ fieldContent enabled maybeError content =
             [ placeholder "Content"
             , value content
             , onInput EchoContentChange
+            , onEnter SendEchoRequest
             ]
             []
         , Ui.controlHelp color [ UiTypo.italicize ] [ text help ]
