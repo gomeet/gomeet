@@ -4,6 +4,7 @@ package service
 
 {{ if not .SubServices }}//{{ end }}import (
 {{ if not .SubServices }}//{{ end }}	log "github.com/sirupsen/logrus"
+{{ if not .SubServices }}//{{ end }}	gomeetService "github.com/gomeet/gomeet/utils/service"
 {{ if not .SubServices }}//{{ end }}	// SUB-SERVICES DEFINITION : import-Client
 {{ if not .SubServices }}//{{ end }}	// svc{{ "{{SubServiceNamePascalCase}}" }}Client "{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/client"
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Client "{{ .GoPkg }}/client"
@@ -24,7 +25,7 @@ func (s *{{ lowerPascalCase $.ShortName }}Server) init{{ upperPascalCase .ShortN
 		err error
 	)
 
-	if s.svc{{ upperPascalCase .ShortName }}Address == "inprocgrpc" {
+	if s.svc{{ upperPascalCase .ShortName }}Address == gomeetService.INPROCESS_ADDRESS {
 		log.Debug("Init in process client for svc{{ upperPascalCase .ShortName}}")
 		cli, err = svc{{ upperPascalCase .ShortName }}Client.NewGomeetInProcessClient(
 			s.inProcessChannel,
