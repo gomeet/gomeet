@@ -401,7 +401,7 @@ func projectCreationFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.fsw.yml.tmpl", size: 1327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/.fsw.yml.tmpl", size: 1327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -421,7 +421,7 @@ func projectCreationGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 657, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 657, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -481,7 +481,7 @@ func projectCreationGopkgTomlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 3433, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/Gopkg.toml.tmpl", size: 3433, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -521,7 +521,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 44445, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 44445, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -541,7 +541,7 @@ func projectCreationReadmeMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1301,7 +1301,7 @@ func projectCreationHackRunDevSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-dev.sh", size: 404, mode: os.FileMode(493), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-dev.sh", size: 404, mode: os.FileMode(493), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1321,7 +1321,7 @@ func projectCreationHackRunEnvSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7480, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7480, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1601,7 +1601,7 @@ func projectCreationPbProtoProtoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3533, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3533, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1641,7 +1641,7 @@ func projectCreationServiceHttpGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 4311, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 4311, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2061,7 +2061,7 @@ func projectCreationToolsJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2081,7 +2081,7 @@ func projectCreationUiElmBulmaFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/.fsw.yml.tmpl", size: 422, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/.fsw.yml.tmpl", size: 422, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2101,7 +2101,7 @@ func projectCreationUiElmBulmaAssets404HtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2121,7 +2121,7 @@ func projectCreationUiElmBulmaAssetsCssGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/css/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/css/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2141,7 +2141,7 @@ func projectCreationUiElmBulmaAssetsDebugHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/debug.html.tmpl", size: 2148, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/debug.html.tmpl", size: 2148, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2161,7 +2161,7 @@ func projectCreationUiElmBulmaAssetsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2181,7 +2181,7 @@ func projectCreationUiElmBulmaAssetsIconsAndroidChrome192x192Png() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2201,7 +2201,7 @@ func projectCreationUiElmBulmaAssetsIconsAndroidChrome512x512Png() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2221,7 +2221,7 @@ func projectCreationUiElmBulmaAssetsIconsAppleTouchIconPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2241,7 +2241,7 @@ func projectCreationUiElmBulmaAssetsIconsBrowserconfigXml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2261,7 +2261,7 @@ func projectCreationUiElmBulmaAssetsIconsFavicon16x16Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2281,7 +2281,7 @@ func projectCreationUiElmBulmaAssetsIconsFavicon32x32Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2301,7 +2301,7 @@ func projectCreationUiElmBulmaAssetsIconsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2321,7 +2321,7 @@ func projectCreationUiElmBulmaAssetsIconsMstile144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2341,7 +2341,7 @@ func projectCreationUiElmBulmaAssetsIconsMstile150x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2361,7 +2361,7 @@ func projectCreationUiElmBulmaAssetsIconsMstile310x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2381,7 +2381,7 @@ func projectCreationUiElmBulmaAssetsIconsMstile310x310Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2401,7 +2401,7 @@ func projectCreationUiElmBulmaAssetsIconsMstile70x70Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2421,7 +2421,7 @@ func projectCreationUiElmBulmaAssetsIconsSafariPinnedTabSvg() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2441,7 +2441,7 @@ func projectCreationUiElmBulmaAssetsImagesLogoPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/images/logo.png", size: 11173, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/images/logo.png", size: 11173, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2461,7 +2461,7 @@ func projectCreationUiElmBulmaAssetsIndexHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/index.html.tmpl", size: 2141, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/index.html.tmpl", size: 2141, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2481,7 +2481,7 @@ func projectCreationUiElmBulmaAssetsSiteWebmanifestTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2501,7 +2501,7 @@ func projectCreationUiElmBulmaAssetsWebfontsGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/webfonts/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/assets/webfonts/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2521,7 +2521,7 @@ func projectCreationUiElmBulmaElmGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2541,7 +2541,7 @@ func projectCreationUiElmBulmaElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/Makefile.tmpl", size: 363, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/Makefile.tmpl", size: 363, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2561,7 +2561,7 @@ func projectCreationUiElmBulmaElmElmJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/elm.json.tmpl", size: 997, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/elm.json.tmpl", size: 997, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2581,7 +2581,7 @@ func projectCreationUiElmBulmaElmSrcApiEndpointElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Endpoint.elm.tmpl", size: 1581, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Endpoint.elm.tmpl", size: 1581, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2601,7 +2601,7 @@ func projectCreationUiElmBulmaElmSrcApiGrpcerrorElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/GrpcError.elm.tmpl", size: 4638, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/GrpcError.elm.tmpl", size: 4638, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2621,7 +2621,7 @@ func projectCreationUiElmBulmaElmSrcApiPbGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Pb/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Pb/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2641,7 +2641,7 @@ func projectCreationUiElmBulmaElmSrcApiRequestElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Request.elm.tmpl", size: 6518, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Request.elm.tmpl", size: 6518, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2661,7 +2661,7 @@ func projectCreationUiElmBulmaElmSrcApiValidateExtraElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Validate/Extra.elm.tmpl", size: 1464, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Validate/Extra.elm.tmpl", size: 1464, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2681,7 +2681,7 @@ func projectCreationUiElmBulmaElmSrcApiValidatorElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Validator.elm.tmpl", size: 2064, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Validator.elm.tmpl", size: 2064, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2701,7 +2701,7 @@ func projectCreationUiElmBulmaElmSrcApiElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api.elm.tmpl", size: 3933, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api.elm.tmpl", size: 3933, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2721,7 +2721,7 @@ func projectCreationUiElmBulmaElmSrcAssetsIconsElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Icons.elm.tmpl", size: 1160, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Icons.elm.tmpl", size: 1160, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2741,7 +2741,7 @@ func projectCreationUiElmBulmaElmSrcAssetsImagesElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Images.elm.tmpl", size: 1066, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Images.elm.tmpl", size: 1066, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2761,7 +2761,7 @@ func projectCreationUiElmBulmaElmSrcHelpersHtmlEventsElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Helpers/Html/Events.elm.tmpl", size: 403, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Helpers/Html/Events.elm.tmpl", size: 403, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2781,7 +2781,7 @@ func projectCreationUiElmBulmaElmSrcMainElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Main.elm.tmpl", size: 9088, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Main.elm.tmpl", size: 9088, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2801,7 +2801,7 @@ func projectCreationUiElmBulmaElmSrcPageBlankElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Blank.elm.tmpl", size: 170, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Blank.elm.tmpl", size: 170, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2821,7 +2821,7 @@ func projectCreationUiElmBulmaElmSrcPageEchoElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Echo.elm.tmpl", size: 12448, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Echo.elm.tmpl", size: 12448, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2841,7 +2841,7 @@ func projectCreationUiElmBulmaElmSrcPageHomeElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Home.elm.tmpl", size: 3431, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Home.elm.tmpl", size: 3431, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2861,7 +2861,7 @@ func projectCreationUiElmBulmaElmSrcPageLoginElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Login.elm.tmpl", size: 1773, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Login.elm.tmpl", size: 1773, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2881,7 +2881,7 @@ func projectCreationUiElmBulmaElmSrcPageNotfoundElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/NotFound.elm.tmpl", size: 664, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/NotFound.elm.tmpl", size: 664, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2901,7 +2901,7 @@ func projectCreationUiElmBulmaElmSrcPageServicesstatusElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/ServicesStatus.elm.tmpl", size: 6979, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/ServicesStatus.elm.tmpl", size: 6979, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2921,7 +2921,7 @@ func projectCreationUiElmBulmaElmSrcPageVersionElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Version.elm.tmpl", size: 5327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Version.elm.tmpl", size: 5327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2941,7 +2941,7 @@ func projectCreationUiElmBulmaElmSrcPageElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page.elm.tmpl", size: 4999, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page.elm.tmpl", size: 4999, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2961,7 +2961,7 @@ func projectCreationUiElmBulmaElmSrcRouteElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Route.elm.tmpl", size: 2014, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Route.elm.tmpl", size: 2014, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2981,7 +2981,7 @@ func projectCreationUiElmBulmaElmSrcSessionElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Session.elm.tmpl", size: 1748, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Session.elm.tmpl", size: 1748, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3001,7 +3001,7 @@ func projectCreationUiElmBulmaElmSrcViewerElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Viewer.elm.tmpl", size: 1093, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Viewer.elm.tmpl", size: 1093, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3021,7 +3021,7 @@ func projectCreationUiElmBulmaScssGitignore() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/.gitignore", size: 1078, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/.gitignore", size: 1078, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3041,7 +3041,7 @@ func projectCreationUiElmBulmaScssMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/Makefile.tmpl", size: 294, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/Makefile.tmpl", size: 294, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3061,7 +3061,7 @@ func projectCreationUiElmBulmaScssDistGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/dist/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/dist/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3081,7 +3081,7 @@ func projectCreationUiElmBulmaScssPackageJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/package.json.tmpl", size: 545, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/package.json.tmpl", size: 545, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3101,7 +3101,7 @@ func projectCreationUiElmBulmaScssSrcMainScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/src/main.scss.tmpl", size: 862, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/src/main.scss.tmpl", size: 862, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3121,7 +3121,7 @@ func projectCreationUiElmBulmaScssYarnLockTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/yarn.lock.tmpl", size: 50329, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/yarn.lock.tmpl", size: 50329, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3141,7 +3141,7 @@ func projectCreationUiElmMilligramFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/.fsw.yml.tmpl", size: 422, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/.fsw.yml.tmpl", size: 422, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3161,7 +3161,7 @@ func projectCreationUiElmMilligramAssets404HtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3181,7 +3181,7 @@ func projectCreationUiElmMilligramAssetsCssGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/css/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/css/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3201,7 +3201,7 @@ func projectCreationUiElmMilligramAssetsDebugHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/debug.html.tmpl", size: 2148, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/debug.html.tmpl", size: 2148, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3221,7 +3221,7 @@ func projectCreationUiElmMilligramAssetsIconsAndroidChrome192x192Png() (*asset, 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3241,7 +3241,7 @@ func projectCreationUiElmMilligramAssetsIconsAndroidChrome512x512Png() (*asset, 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3261,7 +3261,7 @@ func projectCreationUiElmMilligramAssetsIconsAppleTouchIconPng() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3281,7 +3281,7 @@ func projectCreationUiElmMilligramAssetsIconsBrowserconfigXml() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3301,7 +3301,7 @@ func projectCreationUiElmMilligramAssetsIconsFavicon16x16Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3321,7 +3321,7 @@ func projectCreationUiElmMilligramAssetsIconsFavicon32x32Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3341,7 +3341,7 @@ func projectCreationUiElmMilligramAssetsIconsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3361,7 +3361,7 @@ func projectCreationUiElmMilligramAssetsIconsMstile144x144Png() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3381,7 +3381,7 @@ func projectCreationUiElmMilligramAssetsIconsMstile150x150Png() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3401,7 +3401,7 @@ func projectCreationUiElmMilligramAssetsIconsMstile310x150Png() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3421,7 +3421,7 @@ func projectCreationUiElmMilligramAssetsIconsMstile310x310Png() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3441,7 +3441,7 @@ func projectCreationUiElmMilligramAssetsIconsMstile70x70Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3461,7 +3461,7 @@ func projectCreationUiElmMilligramAssetsIconsSafariPinnedTabSvg() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3481,7 +3481,7 @@ func projectCreationUiElmMilligramAssetsIndexHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/index.html.tmpl", size: 2141, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/index.html.tmpl", size: 2141, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3501,7 +3501,7 @@ func projectCreationUiElmMilligramAssetsSiteWebmanifestTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3521,7 +3521,7 @@ func projectCreationUiElmMilligramAssetsWebfontsGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/webfonts/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/assets/webfonts/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3541,7 +3541,7 @@ func projectCreationUiElmMilligramElmGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3561,7 +3561,7 @@ func projectCreationUiElmMilligramElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/Makefile.tmpl", size: 307, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/Makefile.tmpl", size: 307, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3581,7 +3581,7 @@ func projectCreationUiElmMilligramElmElmJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/elm.json.tmpl", size: 807, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/elm.json.tmpl", size: 807, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3601,7 +3601,7 @@ func projectCreationUiElmMilligramElmSrcApiEndpointElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Endpoint.elm.tmpl", size: 1581, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Endpoint.elm.tmpl", size: 1581, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3621,7 +3621,7 @@ func projectCreationUiElmMilligramElmSrcApiPbGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Pb/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Pb/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3641,7 +3641,7 @@ func projectCreationUiElmMilligramElmSrcApiRequestElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Request.elm.tmpl", size: 8799, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Api/Request.elm.tmpl", size: 8799, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3661,7 +3661,7 @@ func projectCreationUiElmMilligramElmSrcAssetElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Asset.elm.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Asset.elm.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3681,7 +3681,7 @@ func projectCreationUiElmMilligramElmSrcComponentsCardElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Card.elm.tmpl", size: 380, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Card.elm.tmpl", size: 380, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3701,7 +3701,7 @@ func projectCreationUiElmMilligramElmSrcComponentsColorElmTmpl() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Color.elm.tmpl", size: 719, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Color.elm.tmpl", size: 719, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3721,7 +3721,7 @@ func projectCreationUiElmMilligramElmSrcComponentsLoadingElmTmpl() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Loading.elm.tmpl", size: 992, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Loading.elm.tmpl", size: 992, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3741,7 +3741,7 @@ func projectCreationUiElmMilligramElmSrcComponentsTextElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Text.elm.tmpl", size: 306, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Text.elm.tmpl", size: 306, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3761,7 +3761,7 @@ func projectCreationUiElmMilligramElmSrcComponentsTotoElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Toto.elm.tmpl", size: 1112, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Toto.elm.tmpl", size: 1112, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3781,7 +3781,7 @@ func projectCreationUiElmMilligramElmSrcComponentsUuidElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Uuid.elm.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Components/Uuid.elm.tmpl", size: 621, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3801,7 +3801,7 @@ func projectCreationUiElmMilligramElmSrcMainElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Main.elm.tmpl", size: 7827, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Main.elm.tmpl", size: 7827, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3821,7 +3821,7 @@ func projectCreationUiElmMilligramElmSrcPageBlankElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Blank.elm.tmpl", size: 170, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Blank.elm.tmpl", size: 170, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3841,7 +3841,7 @@ func projectCreationUiElmMilligramElmSrcPageEchoElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Echo.elm.tmpl", size: 8385, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Echo.elm.tmpl", size: 8385, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3861,7 +3861,7 @@ func projectCreationUiElmMilligramElmSrcPageHomeElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Home.elm.tmpl", size: 2549, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Home.elm.tmpl", size: 2549, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3881,7 +3881,7 @@ func projectCreationUiElmMilligramElmSrcPageLoginElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Login.elm.tmpl", size: 1549, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Login.elm.tmpl", size: 1549, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3901,7 +3901,7 @@ func projectCreationUiElmMilligramElmSrcPageNotfoundElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/NotFound.elm.tmpl", size: 539, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/NotFound.elm.tmpl", size: 539, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3921,7 +3921,7 @@ func projectCreationUiElmMilligramElmSrcPageServicesstatusElmTmpl() (*asset, err
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/ServicesStatus.elm.tmpl", size: 5545, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/ServicesStatus.elm.tmpl", size: 5545, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3941,7 +3941,7 @@ func projectCreationUiElmMilligramElmSrcPageVersionElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Version.elm.tmpl", size: 4492, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page/Version.elm.tmpl", size: 4492, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3961,7 +3961,7 @@ func projectCreationUiElmMilligramElmSrcPageElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page.elm.tmpl", size: 3964, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Page.elm.tmpl", size: 3964, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3981,7 +3981,7 @@ func projectCreationUiElmMilligramElmSrcRouteElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Route.elm.tmpl", size: 2014, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Route.elm.tmpl", size: 2014, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4001,7 +4001,7 @@ func projectCreationUiElmMilligramElmSrcSessionElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Session.elm.tmpl", size: 1730, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Session.elm.tmpl", size: 1730, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4021,7 +4021,7 @@ func projectCreationUiElmMilligramElmSrcViewerElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Viewer.elm.tmpl", size: 1057, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/src/Viewer.elm.tmpl", size: 1057, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4041,7 +4041,7 @@ func projectCreationUiElmMilligramScssGitignore() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/.gitignore", size: 1078, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/.gitignore", size: 1078, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4061,7 +4061,7 @@ func projectCreationUiElmMilligramScssMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/Makefile.tmpl", size: 294, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/Makefile.tmpl", size: 294, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4081,7 +4081,7 @@ func projectCreationUiElmMilligramScssDistGitkeep() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/dist/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/dist/.gitkeep", size: 0, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4101,7 +4101,7 @@ func projectCreationUiElmMilligramScssPackageJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/package.json.tmpl", size: 567, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/package.json.tmpl", size: 567, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4121,7 +4121,7 @@ func projectCreationUiElmMilligramScssSrc_utilityScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_Utility.scss.tmpl", size: 1623, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_Utility.scss.tmpl", size: 1623, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4141,7 +4141,7 @@ func projectCreationUiElmMilligramScssSrc_mixinsScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_mixins.scss.tmpl", size: 1327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_mixins.scss.tmpl", size: 1327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4161,7 +4161,7 @@ func projectCreationUiElmMilligramScssSrc_navbarScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_navbar.scss.tmpl", size: 595, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_navbar.scss.tmpl", size: 595, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4181,7 +4181,7 @@ func projectCreationUiElmMilligramScssSrc_variablesScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_variables.scss.tmpl", size: 428, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/_variables.scss.tmpl", size: 428, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4201,7 +4201,7 @@ func projectCreationUiElmMilligramScssSrcMainScssTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/main.scss.tmpl", size: 657, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/src/main.scss.tmpl", size: 657, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4221,7 +4221,7 @@ func projectCreationUiElmMinimalFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/.fsw.yml.tmpl", size: 375, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/.fsw.yml.tmpl", size: 375, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4241,7 +4241,7 @@ func projectCreationUiElmMinimalAssets404HtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4261,7 +4261,7 @@ func projectCreationUiElmMinimalAssetsIconsAndroidChrome192x192Png() (*asset, er
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4281,7 +4281,7 @@ func projectCreationUiElmMinimalAssetsIconsAndroidChrome512x512Png() (*asset, er
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4301,7 +4301,7 @@ func projectCreationUiElmMinimalAssetsIconsAppleTouchIconPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4321,7 +4321,7 @@ func projectCreationUiElmMinimalAssetsIconsBrowserconfigXml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4341,7 +4341,7 @@ func projectCreationUiElmMinimalAssetsIconsFavicon16x16Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4361,7 +4361,7 @@ func projectCreationUiElmMinimalAssetsIconsFavicon32x32Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4381,7 +4381,7 @@ func projectCreationUiElmMinimalAssetsIconsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4401,7 +4401,7 @@ func projectCreationUiElmMinimalAssetsIconsMstile144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4421,7 +4421,7 @@ func projectCreationUiElmMinimalAssetsIconsMstile150x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4441,7 +4441,7 @@ func projectCreationUiElmMinimalAssetsIconsMstile310x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4461,7 +4461,7 @@ func projectCreationUiElmMinimalAssetsIconsMstile310x310Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4481,7 +4481,7 @@ func projectCreationUiElmMinimalAssetsIconsMstile70x70Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4501,7 +4501,7 @@ func projectCreationUiElmMinimalAssetsIconsSafariPinnedTabSvg() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4521,7 +4521,7 @@ func projectCreationUiElmMinimalAssetsIndexHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/index.html.tmpl", size: 832, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/index.html.tmpl", size: 832, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4541,7 +4541,7 @@ func projectCreationUiElmMinimalAssetsSiteWebmanifestTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4561,7 +4561,7 @@ func projectCreationUiElmMinimalElmGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4581,7 +4581,7 @@ func projectCreationUiElmMinimalElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/Makefile.tmpl", size: 216, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/Makefile.tmpl", size: 216, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4601,7 +4601,7 @@ func projectCreationUiElmMinimalElmElmJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/elm.json.tmpl", size: 516, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/elm.json.tmpl", size: 516, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4621,7 +4621,7 @@ func projectCreationUiElmMinimalElmSrcMainElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/src/Main.elm.tmpl", size: 1576, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/src/Main.elm.tmpl", size: 1576, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4641,7 +4641,7 @@ func projectCreationUiElmMinimalHttpFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/.fsw.yml.tmpl", size: 375, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/.fsw.yml.tmpl", size: 375, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4661,7 +4661,7 @@ func projectCreationUiElmMinimalHttpAssets404HtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4681,7 +4681,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsAndroidChrome192x192Png() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4701,7 +4701,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsAndroidChrome512x512Png() (*asset
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4721,7 +4721,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsAppleTouchIconPng() (*asset, erro
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4741,7 +4741,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsBrowserconfigXml() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4761,7 +4761,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsFavicon16x16Png() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4781,7 +4781,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsFavicon32x32Png() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4801,7 +4801,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4821,7 +4821,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsMstile144x144Png() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4841,7 +4841,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsMstile150x150Png() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4861,7 +4861,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsMstile310x150Png() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4881,7 +4881,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsMstile310x310Png() (*asset, error
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4901,7 +4901,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsMstile70x70Png() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4921,7 +4921,7 @@ func projectCreationUiElmMinimalHttpAssetsIconsSafariPinnedTabSvg() (*asset, err
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4941,7 +4941,7 @@ func projectCreationUiElmMinimalHttpAssetsIndexHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/index.html.tmpl", size: 832, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/index.html.tmpl", size: 832, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4961,7 +4961,7 @@ func projectCreationUiElmMinimalHttpAssetsSiteWebmanifestTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4981,7 +4981,7 @@ func projectCreationUiElmMinimalHttpElmGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/.gitignore.tmpl", size: 81, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5001,7 +5001,7 @@ func projectCreationUiElmMinimalHttpElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/Makefile.tmpl", size: 216, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/Makefile.tmpl", size: 216, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5021,7 +5021,7 @@ func projectCreationUiElmMinimalHttpElmElmJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/elm.json.tmpl", size: 585, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/elm.json.tmpl", size: 585, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5041,7 +5041,7 @@ func projectCreationUiElmMinimalHttpElmSrcMainElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/src/Main.elm.tmpl", size: 2361, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/src/Main.elm.tmpl", size: 2361, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5061,7 +5061,7 @@ func projectCreationUiSimpleAssets404HtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/404.html.tmpl", size: 656, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5081,7 +5081,7 @@ func projectCreationUiSimpleAssetsIconsAndroidChrome192x192Png() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/android-chrome-192x192.png", size: 2774, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5101,7 +5101,7 @@ func projectCreationUiSimpleAssetsIconsAndroidChrome512x512Png() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/android-chrome-512x512.png", size: 9631, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5121,7 +5121,7 @@ func projectCreationUiSimpleAssetsIconsAppleTouchIconPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/apple-touch-icon.png", size: 2327, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5141,7 +5141,7 @@ func projectCreationUiSimpleAssetsIconsBrowserconfigXml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/browserconfig.xml", size: 246, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5161,7 +5161,7 @@ func projectCreationUiSimpleAssetsIconsFavicon16x16Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon-16x16.png", size: 736, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5181,7 +5181,7 @@ func projectCreationUiSimpleAssetsIconsFavicon32x32Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon-32x32.png", size: 985, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5201,7 +5201,7 @@ func projectCreationUiSimpleAssetsIconsFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/favicon.ico", size: 15086, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5221,7 +5221,7 @@ func projectCreationUiSimpleAssetsIconsMstile144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-144x144.png", size: 1956, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5241,7 +5241,7 @@ func projectCreationUiSimpleAssetsIconsMstile150x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-150x150.png", size: 2285, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5261,7 +5261,7 @@ func projectCreationUiSimpleAssetsIconsMstile310x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-310x150.png", size: 2542, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5281,7 +5281,7 @@ func projectCreationUiSimpleAssetsIconsMstile310x310Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-310x310.png", size: 4166, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5301,7 +5301,7 @@ func projectCreationUiSimpleAssetsIconsMstile70x70Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/mstile-70x70.png", size: 1563, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5321,7 +5321,7 @@ func projectCreationUiSimpleAssetsIconsSafariPinnedTabSvg() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/icons/safari-pinned-tab.svg", size: 1468, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5341,7 +5341,7 @@ func projectCreationUiSimpleAssetsIndexHtmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/index.html.tmpl", size: 662, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/index.html.tmpl", size: 662, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5361,7 +5361,7 @@ func projectCreationUiSimpleAssetsSiteWebmanifestTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/simple/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/simple/assets/site.webmanifest.tmpl", size: 465, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5821,7 +5821,7 @@ func protocGenCmdFunctestTypesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2541, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2541, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5841,7 +5841,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 17665, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 17665, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6061,7 +6061,7 @@ func protocGenCmdServeGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 16699, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 16699, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6081,7 +6081,7 @@ func protocGenDockerComposeYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11717, mode: os.FileMode(420), modTime: time.Unix(1540460498, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11717, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6121,7 +6121,7 @@ func protocGenDocsDevelWorking_with_the_sourcesReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 17318, mode: os.FileMode(420), modTime: time.Unix(1540460554, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 17318, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6281,7 +6281,7 @@ func protocGenHackRunShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30021, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30021, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6341,7 +6341,7 @@ func protocGenModelsModels_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/models/models_test.go.tmpl", size: 3919, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/models/models_test.go.tmpl", size: 3919, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6401,7 +6401,7 @@ func protocGenServerServerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 17277, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 17277, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6421,7 +6421,7 @@ func protocGenServiceGrpcGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 2525, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 2525, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6681,7 +6681,7 @@ func protocGenServiceInit_databasesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 4464, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 4464, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6701,7 +6701,7 @@ func protocGenServiceInit_queuesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_queues.go.tmpl", size: 2704, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_queues.go.tmpl", size: 2704, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6741,7 +6741,7 @@ func protocGenServiceServiceGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 8989, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 8989, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6761,7 +6761,7 @@ func protocGenServiceService_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 16009, mode: os.FileMode(420), modTime: time.Unix(1537886111, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 16009, mode: os.FileMode(420), modTime: time.Unix(1540461167, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
