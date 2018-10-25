@@ -58,6 +58,7 @@ type Project struct {
 	dbTypes              []string
 	uiType               string
 	queueTypes           []string
+	cronTasks            []string
 	hasPostgis           bool
 	extraServeFlags      []*serveFlag
 	folder               *folder
@@ -79,7 +80,23 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, "none", []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	//p := &Project{pkgNfo, nil, []string{}, "none", []string{}, []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{
+		PkgNfo:               pkgNfo,
+		SubServices:          nil,
+		dbTypes:              []string{},
+		uiType:               "none",
+		queueTypes:           []string{},
+		cronTasks:            []string{},
+		hasPostgis:           false,
+		extraServeFlags:      nil,
+		folder:               nil,
+		protoRegistry:        nil,
+		protoFiles:           nil,
+		defaultProtoPkgAlias: nil,
+		isGogoGen:            false,
+		version:              "0.0.1+dev",
+	}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -237,6 +254,18 @@ func (p *Project) SetQueueTypes(s string) error {
 	return nil
 }
 
+func (p *Project) SetCronTasks(s string) error {
+	if s != "" {
+		cronTasks := strings.Split(s, ",")
+		for _, cronTask := range cronTasks {
+			cronTask = tmplHelpers.LowerSnakeCase(strings.TrimSpace(cronTask))
+			p.cronTasks = append(p.cronTasks, cronTask)
+		}
+	}
+
+	return nil
+}
+
 func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 	if s == "" {
 		s = DEFAULT_PROTO_PKG_ALIAS
@@ -256,6 +285,7 @@ func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.proto
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) UiType() string                                { return p.uiType }
 func (p Project) QueueTypes() []string                          { return p.queueTypes }
+func (p Project) CronTasks() []string                           { return p.cronTasks }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
 func (p Project) GoCGOEnabled() int {
@@ -839,6 +869,16 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
+	cmd.addFile("crontask.go", "protoc-gen/cmd/crontask.go.tmpl", nil, false)
+	if len(p.CronTasks()) > 0 {
+		crontaskFolder := cmd.addFolder("crontask")
+		for _, crontask := range p.CronTasks() {
+			// we fake a gRPC method to passe it to the template
+			grpcM := &grpcMethod{Method: &descriptor.MethodDescriptorProto{Name: &crontask}}
+			// we keep the file if exists
+			crontaskFolder.addFile(fmt.Sprintf("%s.go", crontask), "protoc-gen/cmd/crontask/crontask.go.tmpl", grpcM, true)
+		}
+	}
 	functest := cmd.addFolder("functest")
 	functest.addFile("http_metrics.go", "protoc-gen/cmd/functest/http_metrics.go.tmpl", nil, false)
 	functest.addFile("types.go", "protoc-gen/cmd/functest/types.go.tmpl", nil, false)
