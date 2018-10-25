@@ -1,0 +1,48 @@
+module Components.Color exposing (Color(..), toClass)
+
+
+type Color
+    = Initial
+    | Primary
+    | Secondary
+    | Tertiary
+    | Quaternary
+    | Quinary
+    | Info
+    | Success
+    | Warning
+    | Error
+
+
+toClass : Color -> String
+toClass c =
+    case c of
+        Initial ->
+            "color-initial"
+
+        Primary ->
+            "color-primary"
+
+        Secondary ->
+            "color-secondary"
+
+        Tertiary ->
+            "color-tertiary"
+
+        Quaternary ->
+            "color-quaternary"
+
+        Quinary ->
+            "color-quinary"
+
+        Info ->
+            "info"
+
+        Success ->
+            "success"
+
+        Warning ->
+            "warning"
+
+        Error ->
+            "error"

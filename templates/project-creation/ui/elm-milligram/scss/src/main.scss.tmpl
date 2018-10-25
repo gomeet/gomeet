@@ -1,0 +1,42 @@
+@import 'variables';
+@import 'mixins';
+@import 'Utility';
+// milligram css framework
+@import 'normalize';
+@import 'milligram';
+// icons fontawesome
+@import 'fontawesome';
+@import 'regular';
+@import 'solid';
+@import 'brands';
+// special components
+@import 'navbar';
+
+
+//@include sticky-footer(30px, "body", ".main-container", ".footer" );
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  background-color: $color-teal-base;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+body>main {
+  flex: 1 0 auto;
+}
+
+body>footer {
+  flex-shrink: 0;
+}
+.container.fluid {
+  max-width: 100%;
+}
+

@@ -1,0 +1,209 @@
+module Page.ServicesStatus exposing
+    ( Model
+    , Msg
+    , init
+    , subscriptions
+    , toSession
+    , update
+    , view
+    )
+
+import Api.Endpoint as Endpoint
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Request as Request
+import Components.Card as Card
+import Components.Color as Color exposing (Color)
+import Components.Loading as Loading
+import Components.Text as Text
+import Html exposing (Html, button, div, h3, li, span, text, ul)
+import Html.Attributes exposing (class, style)
+import Html.Events exposing (onClick)
+import Http
+import Session exposing (Session)
+import Task exposing (Task)
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { session : Session
+
+    -- Loaded independently from server
+    , servicesStatusList : Status {{ upperPascalCase .ShortName }}Pb.ServicesStatusList
+    }
+
+
+type Status a
+    = Loading
+    | LoadingSlowly
+    | Loaded a
+    | Failed
+
+
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( { session = session
+      , servicesStatusList = Loading
+      }
+    , Cmd.batch
+        [ fetchServicesStatusList session
+            |> Task.attempt CompletedServicesStatusListLoad
+        , Task.perform (\_ -> PassedSlowLoadThreshold) Loading.slowThreshold
+        ]
+    )
+
+
+
+-- VIEW
+
+
+view : Model -> { title : String, content : Html Msg }
+view model =
+    { title = ""
+    , content = div [ class "container" ] [ viewContent model ]
+    }
+
+
+viewContent : Model -> Html Msg
+viewContent model =
+    let
+        content =
+            div [ style "min-height" "50px" ] <|
+                case model.servicesStatusList of
+                    Loading ->
+                        []
+
+                    LoadingSlowly ->
+                        [ text "Services status list : "
+                        , Loading.icon
+                        ]
+
+                    Failed ->
+                        [ Loading.error "version" ]
+
+                    Loaded servicesStatusList ->
+                        [ viewServiceStatusList servicesStatusList
+                        ]
+    in
+    Card.view
+        []
+        [ div
+            []
+            [ h3 [] [ text "Services Status" ]
+            , content
+            , div [ class "row" ]
+                [ div [ class "column text-right screen-only" ]
+                    [ text "Touch REFRESH button to reload the services status from server "
+                    , Text.colored Color.Primary <| Endpoint.toString Endpoint.servicesStatus
+                    , text " endpoint."
+                    ]
+                , div [ class "text-right" ]
+                    [ button [ onClick ClickedRefresh ] [ text "Refresh" ] ]
+                ]
+            ]
+        ]
+
+
+viewServiceStatusList : {{ upperPascalCase .ShortName }}Pb.ServicesStatusList -> Html Msg
+viewServiceStatusList servicesStatusList =
+    servicesStatusList.services
+        |> List.map viewServiceStatus
+        |> ul []
+
+
+viewServiceStatus : {{ upperPascalCase .ShortName }}Pb.ServiceStatus -> Html Msg
+viewServiceStatus servicesStatus =
+    li []
+        [ Text.colored Color.Primary (servicesStatus.name ++ "@" ++ servicesStatus.version)
+        , case servicesStatus.status of
+            {{ upperPascalCase .ShortName }}Pb.ServiceStatus_Ok ->
+                Text.colored Color.Success " Ok"
+
+            {{ upperPascalCase .ShortName }}Pb.ServiceStatus_Unavailable ->
+                Text.colored Color.Error " Unavailable"
+        , if String.isEmpty servicesStatus.eMsg then
+            text ""
+
+          else
+            Text.colored Color.Error (" (" ++ servicesStatus.eMsg ++ ")")
+        ]
+
+
+
+-- UPDATE
+
+
+type Msg
+    = GotSession Session
+    | ClickedRefresh
+    | CompletedServicesStatusListLoad (Result Http.Error {{ upperPascalCase .ShortName }}Pb.ServicesStatusList)
+    | PassedSlowLoadThreshold
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotSession session ->
+            ( { model | session = session }, Cmd.none )
+
+        ClickedRefresh ->
+            ( { model | servicesStatusList = LoadingSlowly }
+            , fetchServicesStatusList model.session
+                |> Task.attempt CompletedServicesStatusListLoad
+            )
+
+        CompletedServicesStatusListLoad (Ok servicesStatusList) ->
+            ( { model | servicesStatusList = Loaded servicesStatusList }, Cmd.none )
+
+        CompletedServicesStatusListLoad (Err error) ->
+            ( { model | servicesStatusList = Failed }, Cmd.none )
+
+        PassedSlowLoadThreshold ->
+            let
+                -- If any data is still Loading, change it to LoadingSlowly
+                -- so `view` knows to render a spinner.
+                servicesStatusList =
+                    case model.servicesStatusList of
+                        Loading ->
+                            LoadingSlowly
+
+                        other ->
+                            other
+            in
+            ( { model | servicesStatusList = servicesStatusList }, Cmd.none )
+
+
+
+-- HTTP
+
+
+fetchServicesStatusList : Session -> Task Http.Error {{ upperPascalCase .ShortName }}Pb.ServicesStatusList
+fetchServicesStatusList session =
+    let
+        maybeCred =
+            Session.cred session
+
+        request =
+            Request.servicesStatus maybeCred
+    in
+    Http.toTask request
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changes GotSession (Session.navKey model.session) (Session.randomSeed model.session)
+
+
+
+-- EXPORT
+
+
+toSession : Model -> Session
+toSession model =
+    model.session

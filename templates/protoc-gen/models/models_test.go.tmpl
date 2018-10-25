@@ -6,6 +6,7 @@ import (
 	"flag"{{ if .DbTypes }}
 	"fmt"{{ end }}
 	"os"
+	{{ if .QueueTypes }}"runtime"{{ end }}
 	"testing"{{ if .DbTypes }}
 	"github.com/stretchr/testify/assert"{{ end }}
 	log "github.com/sirupsen/logrus"
@@ -17,11 +18,27 @@ var (
 	{{ range .DbTypes }}
 	{{ lowerPascalCase . }}DSN string
 	{{ end }}
+	// Main server queue
+	{{ range .QueueTypes }}{{ if eq . "memory" }}
+	{{ lowerPascalCase . }}QueueWorkerCount  int
+	{{ lowerPascalCase . }}QueueMaxSize      int
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 )
 
 func init() {
 	// force debug mode
 	flag.BoolVar(&debugMode, "d", false, "Force debug mode")
+	{{ range .QueueTypes }}// Main queue system
+	{{ if eq . "memory" }}
+	flag.IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
+	flag.IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end }}
 	{{ range .DbTypes }}
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	flag.StringVar(&{{ lowerPascalCase . }}DSN, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")

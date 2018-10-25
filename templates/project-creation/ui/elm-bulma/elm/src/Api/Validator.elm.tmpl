@@ -1,0 +1,75 @@
+module Api.Validator exposing
+    ( EchoRequestField(..)
+    , echoRequestValidator
+    , validate
+    , validateEchoRequest
+    )
+
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Request as Request
+import Api.Validate.Extra as XValidate exposing (ifGreaterThan, ifLessThan, ifNotUuid)
+import Validate as Validate exposing (Validator, fromErrors, ifBlank, ifTrue)
+
+
+
+-- HELPERS
+
+
+validate =
+    Validate.validate
+
+
+eMsgUnknown : String
+eMsgUnknown =
+    "Unknown Error"
+
+
+
+-- VALIDATORS
+
+
+type EchoRequestField
+    = EchoRequestFieldUuid
+    | EchoRequestFieldContent
+
+
+echoRequestValidator : Validator ( EchoRequestField, String ) {{ upperPascalCase .ShortName }}Pb.EchoRequest
+echoRequestValidator =
+    Validate.all
+        [ Validate.firstError
+            [ ifNotUuid .uuid ( EchoRequestFieldUuid, "Invalid uuid" )
+            , ifLessThan .content 3 (\content min -> ( EchoRequestFieldContent, "value '" ++ content ++ "' must length be greater than '" ++ String.fromInt min ++ "'" ))
+            , ifGreaterThan .content 255 (\content max -> ( EchoRequestFieldContent, "value '" ++ content ++ "' must length be less than '" ++ String.fromInt max ++ "'" ))
+            ]
+        ]
+
+
+validateEchoRequest : {{ upperPascalCase .ShortName }}Pb.EchoRequest -> Maybe Request.Error
+validateEchoRequest echoRequest =
+    case validate echoRequestValidator echoRequest of
+        Ok _ ->
+            Nothing
+
+        Err [] ->
+            Just (Request.encodeInvalidArgumentError "" eMsgUnknown)
+
+        Err (( field, eMsg ) :: _) ->
+            let
+                fieldName =
+                    case field of
+                        EchoRequestFieldUuid ->
+                            "uuid"
+
+                        EchoRequestFieldContent ->
+                            "content"
+            in
+            Just (Request.encodeInvalidArgumentError fieldName eMsg)
+
+
+
+--
+
+
+validateEmptyMessage : {{ upperPascalCase .ShortName }}Pb.EmptyMessage -> Maybe Request.Error
+validateEmptyMessage emptyMessage =
+    Nothing

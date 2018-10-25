@@ -33,9 +33,19 @@ import (
 func grpcServer(
 	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
 	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
 {{ end }}) *grpc.Server {
 	var (
@@ -94,6 +104,11 @@ func grpcServer(
 			reg, inProcessChannel,
 			jwtKey, caCert, serverCert, serverKey, maxRecvMsgSize, maxSendMsgSize,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+			{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+			{{ else if eq . "sqs" }}// sqs support is not yet implemented
+			{{ end }}{{ end -}}
 			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
 			{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
 		)
@@ -105,6 +120,11 @@ func grpcServer(
 		mainHandlers, inProcessChannel,
 		jwtKey, caCert, serverCert, serverKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
 		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
 	)
@@ -204,9 +224,19 @@ func OnMultipleAddresses(
 	corsAllowedOrigins string,
 	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
 	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
 {{ end }}) (ok bool) {
 	// create the gRPC listener
@@ -224,9 +254,19 @@ func OnMultipleAddresses(
 	grpcS := grpcServer(
 		caCert, serverCert, serverKey, jwtKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 	)
 
@@ -292,9 +332,19 @@ func OnSingleAddress(
 	corsAllowedOrigins string,
 	caCert string, serverCert string, serverKey string, jwtKey string, maxRecvMsgSize int, maxSendMsgSize int,
 	{{ range .DbTypes }}{{ lowerPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
 	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address string,
 	{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN string, {{ end -}}
+	{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize  int,
+	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+	{{ else if eq . "sqs" }}// sqs support is not yet implemented
+	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end }}{{ end }}
 {{ end }}) (ok bool) {
 	// listen on the specified address
@@ -313,9 +363,19 @@ func OnSingleAddress(
 	grpcS := grpcServer(
 		caCert, serverCert, serverKey, jwtKey, maxRecvMsgSize, maxSendMsgSize,
 		{{ range .DbTypes }}{{ lowerPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ lowerPascalCase . }}QueueWorkerCount, {{ lowerPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
 		{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
 		{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DSN, {{ end -}}
+		{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
+		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
+		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented
+		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}
 	)
 

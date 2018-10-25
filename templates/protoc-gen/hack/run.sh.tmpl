@@ -21,6 +21,13 @@
 {{ range .SubServices -}}{{ $ss := . }}{{ range .DbTypes -}}
 #   SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_MIGRATE="true"
 {{ end -}}{{ end -}}
+{{ range .QueueTypes }}{{ if eq . "memory" }}
+#   {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=4
+#   {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=100
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}
 {{ range .DbTypes }}{{ if eq . "mysql" }}
 #   {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME="gomeet"
 #   {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD="toto{{ lower . }}"
@@ -46,7 +53,13 @@
 #   {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN="sqlserver://${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME:${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD@${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_SERVER:${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT?database=${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE"
 {{ end }}
 {{ end -}}
-{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
+{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}
+#   {{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=4
+#   {{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=100
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}{{ range .DbTypes }}
 {{ if eq . "mysql" }}
 #   {{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME="gomeet"
 #   {{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD="toto{{ lower . }}"
@@ -109,10 +122,22 @@ fi;
 [ -z "${{ upperSnakeCase .Name }}_ADDRESS" ] && {{ upperSnakeCase .Name }}_ADDRESS=":13000"
 {{ range .SubServices -}}{{ $ss := . }}[ -z "${{ upperSnakeCase $ss.Name }}_ADDRESS" ] && {{ upperSnakeCase $ss.Name }}_ADDRESS="inprocgrpc"
 {{ end -}}
-{{ range .DbTypes -}}
+{{ range .QueueTypes }}{{ if eq . "memory" }}
+[ -z "${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT" ] && {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=4
+[ -z "${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE" ] && {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=100
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}{{ range .DbTypes -}}
 [ -z "${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_MIGRATE" ] && {{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_MIGRATE="true"
 {{ end -}}
-{{ range .SubServices -}}{{ $ss := . }}{{ range .DbTypes -}}
+{{ range .SubServices -}}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}
+[ -z "$SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT" ] && SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=4
+[ -z "$SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE" ] && SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=100
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}{{ range .DbTypes -}}
 [ -z "$SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_MIGRATE" ] && SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_MIGRATE="true"
 {{ end -}}{{ end -}}
 {{ range .DbTypes }}{{ if eq . "mysql" }}if [ -z "${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN" ]
@@ -291,6 +316,22 @@ esac
 {{ upperSnakeCase $ss.Name }}_SERVER_OPTS=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_EXTRAFLAGS
 {{ upperSnakeCase $ss.Name }}_SERVER_OPTS=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS" "${{ upperSnakeCase $ss.Name }}_SERVER_OPTS_ADDR
 {{ end }}
+
+# QUEUE OPTIONS
+{{ range .QueueTypes }}{{ if eq . "memory" }}
+{{ upperSnakeCase $.Name }}_SERVER_OPTS=${{ upperSnakeCase $.Name }}_SERVER_OPTS" --{{ lowerKebabCase . }}-queue-worker-count="${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT
+{{ upperSnakeCase $.Name }}_SERVER_OPTS=${{ upperSnakeCase $.Name }}_SERVER_OPTS" --{{ lowerKebabCase . }}-queue-max-size="${{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}
+{{ range .SubServices -}}{{ $ss := . }}{{ range $ss.QueueTypes }}{{ if eq . "memory" }}
+{{ upperSnakeCase $ss.Name }}_SERVER_OPTS=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS" --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT
+{{ upperSnakeCase $ss.Name }}_SERVER_OPTS=${{ upperSnakeCase $ss.Name }}_SERVER_OPTS" --svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$SVC_{{ upperSnakeCase $ss.ShortName }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE
+{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}# sqs support is not yet implemented
+{{ end }}{{ end }}{{ end }}
 
 ##############################
 # launch all needed services #

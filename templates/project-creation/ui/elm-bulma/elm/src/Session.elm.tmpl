@@ -1,0 +1,94 @@
+module Session exposing
+    ( Session
+    , changes
+    , cred
+    , fromViewer
+    , navKey
+    , randomSeed
+    , viewer
+    )
+
+import Api as Api exposing (Cred)
+import Api.Request as Api
+import Browser.Navigation as Nav
+import Json.Decode as Decode exposing (Decoder)
+import Json.Decode.Pipeline exposing (custom, required)
+import Json.Encode as Encode exposing (Value)
+import Random exposing (Seed)
+import Time
+import Viewer exposing (Viewer)
+
+
+
+-- TYPES
+
+
+type Session
+    = LoggedIn Nav.Key Seed Viewer
+    | Guest Nav.Key Seed
+
+
+
+-- INFO
+
+
+viewer : Session -> Maybe Viewer
+viewer session =
+    case session of
+        LoggedIn _ _ val ->
+            Just val
+
+        Guest _ _ ->
+            Nothing
+
+
+cred : Session -> Maybe Cred
+cred session =
+    case session of
+        LoggedIn _ _ val ->
+            Just (Viewer.cred val)
+
+        Guest _ _ ->
+            Nothing
+
+
+navKey : Session -> Nav.Key
+navKey session =
+    case session of
+        LoggedIn key _ _ ->
+            key
+
+        Guest key _ ->
+            key
+
+
+randomSeed : Session -> Seed
+randomSeed session =
+    case session of
+        LoggedIn _ seed _ ->
+            seed
+
+        Guest _ seed ->
+            seed
+
+
+
+-- CHANGES
+
+
+changes : (Session -> msg) -> Nav.Key -> Seed -> Sub msg
+changes toMsg key seed =
+    Api.viewerChanges (\maybeViewer -> toMsg (fromViewer key seed maybeViewer)) Viewer.decoder
+
+
+fromViewer : Nav.Key -> Seed -> Maybe Viewer -> Session
+fromViewer key seed maybeViewer =
+    -- It's stored in localStorage as a JSON String;
+    -- first decode the Value as a String, then
+    -- decode that String as JSON.
+    case maybeViewer of
+        Just viewerVal ->
+            LoggedIn key seed viewerVal
+
+        Nothing ->
+            Guest key seed

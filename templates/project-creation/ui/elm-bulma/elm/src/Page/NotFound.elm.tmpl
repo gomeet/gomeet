@@ -1,0 +1,27 @@
+module Page.NotFound exposing (view)
+
+import Bulma.Elements as Ui
+import Bulma.Modifiers as Ui
+import Bulma.Modifiers.Typography as UiTypo
+import Html exposing (Html, text)
+
+
+
+-- VIEW
+
+
+view : { title : String, content : Html msg }
+view =
+    { title = "Page Not Found"
+    , content = viewContent
+    }
+
+
+viewContent : Html msg
+viewContent =
+    Ui.content Ui.Standard
+        [ UiTypo.textCentered ]
+        [ Ui.title Ui.H1 [] [ text "404" ]
+        , Ui.subtitle Ui.H3 [] [ text "Page not found" ]
+        , Ui.content Ui.Standard [] [ text "The page you are looking for might have been removed had its name changed or is temporarily unavailable." ]
+        ]

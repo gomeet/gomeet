@@ -80,8 +80,8 @@ message ServicesStatusList {
 
 // EchoRequest represents a simple message sent to the Echo service.
 message EchoRequest {
-  string uuid    = 1 [(gomeetfaker.field).uuid.version = "V4"]; // Uuid represents the message identifier.
-  string content = 2 [(gomeetfaker.field).lorem.string = true]; // some content
+  string uuid    = 1 [(gomeetfaker.field).uuid.version = "V4", (validator.field) = {human_error: "Invalid uuid", regex: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"}]; // Uuid represents the message identifier.
+  string content = 2 [(gomeetfaker.field).lorem.string = true, (validator.field) = {length_gt: 3, length_lt: 255}]; // some content
 }
 
 // EchoResponse represents a simple message that the Echo service return.

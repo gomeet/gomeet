@@ -1,0 +1,11 @@
+SVC_PREFIX=hug-svc-
+NAME = $(SVC_PREFIX)api-gateway::scss
+
+.PHONY: build
+build:
+	@echo "$(NAME)::build"
+	yarn run scss
+	mkdir -p ../assets/css
+	cp dist/main.css ../assets/css/main.css
+	mkdir -p ../assets/webfonts
+	cp -r node_modules/@fortawesome/fontawesome-free/webfonts/* ../assets/webfonts/

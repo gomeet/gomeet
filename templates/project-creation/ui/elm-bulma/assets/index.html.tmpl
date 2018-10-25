@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .ShortName }}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/elm.js"></script>
+  </head>
+  <body>
+    <script>
+      var randomSeed = Math.floor(Math.random()*0x0FFFFFFF);
+      var storageKey = "store";
+      var flags = localStorage.getItem(storageKey);
+      if (flags !== null && flags !== "") {
+          try {
+            var session = JSON.parse(flags);
+            session.seed = randomSeed;
+            flags = JSON.stringify(session)
+          } catch(error) {
+            console.error("An error occure", error)
+          }
+      } else {
+          flags = JSON.stringify({seed: randomSeed})
+      }
+
+      var app = Elm.Main.init({flags: flags});
+      app.ports.storeCache.subscribe(function(val) {
+        if (val === null) {
+          localStorage.removeItem(storageKey);
+        } else {
+          localStorage.setItem(storageKey, JSON.stringify(val));
+        }
+
+        // Report that the new session was stored succesfully.
+        setTimeout(function() { app.ports.onStoreChange.send(val); }, 0);
+      });
+
+      // Whenever localStorage changes in another tab, report it if necessary.
+      window.addEventListener("storage", function(event) {
+        if (event.storageArea === localStorage && event.key === storageKey) {
+          app.ports.onStoreChange.send(event.newValue);
+        }
+      }, false);
+    </script>
+  </body>
+</html>
