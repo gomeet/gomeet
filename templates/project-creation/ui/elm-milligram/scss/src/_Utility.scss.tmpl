@@ -1,0 +1,102 @@
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.text-justify {
+    text-align: justify;
+    text-justify: inter-word;
+}
+.card {
+    @include box-shadow(0,  4px, 8px, 0, rgba(0,0,0,0.2), false);
+    &:hover {
+        @include box-shadow(0, 8px, 16px, 0, rgba(0,0,0,0.2), false);
+    }
+}
+
+.info {
+    color: #00529B;
+}
+.success {
+    color: #4F8A10;
+}
+.warning {
+    color: #9F6000;
+}
+.error {
+    color: #D8000C;
+}
+
+.container {
+    @mixin box() {
+        margin:10px 22px;
+        vertical-align: middle;
+        border: 1px solid;
+        width: auto;
+        @include rounded
+    }
+    &.info {
+        background-color: #BDE5F8;
+        @include box
+    }
+    &.success {
+        background-color: #DFF2BF;
+        @include box
+    }
+    &.warning {
+        background-color: #FEEFB3;
+        @include box
+    }
+    &.error {
+        background-color: #FFD2D2;
+        @include box
+    }
+}
+
+.color-primary {
+    color: $color-primary;
+}
+
+.color-secondary {
+    color: $color-secondary;
+}
+
+.color-tertiary {
+    color: $color-tertiary;
+}
+
+.color-quaternary {
+    color: $color-quaternary;
+}
+
+.color-quinary {
+    color: $color-quinary;
+}
+
+
+
+.row .column.mobile-only,
+.mobile-only {
+    display: block;
+}
+
+.row .column.screen-only,
+.screen-only {
+    display: none;
+}
+
+// Larger than mobile screen
+@media (min-width: 40.0rem) { // Safari desktop has a bug using `rem`, but Safari mobile works
+    .row .column.mobile-only,
+    .mobile-only {
+        display: none;
+    }
+    .row .column.screen-only,
+    .screen-only {
+        display: block;
+    }
+}

@@ -22,10 +22,14 @@ import (
 	tmplHelpers "github.com/gomeet/gomeet/utils/project/templates/helpers"
 )
 
-const DEFAULT_PROTO_PKG_ALIAS = "pb"
+const (
+	DEFAULT_PROTO_PKG_ALIAS = "pb"
+	DEFAULT_ELM             = "elm-bulma"
+)
 
 var (
 	allowedDbTypes    = []string{"mysql", "postgres", "postgis", "sqlite", "mssql"}
+	allowedUiTypes    = []string{"none", "simple", "elm", "elm-bulma", "elm-milligram", "elm-minimal", "elm-minimal-http"} //TODO "react", "vuejs", ....
 	allowedQueueTypes = []string{"memory", "rabbitmq", "zeromq", "sqs"}
 )
 
@@ -33,9 +37,8 @@ func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
 }
 
-func GomeetAllowedDbTypes() []string {
-	return allowedDbTypes
-}
+func GomeetAllowedDbTypes() []string { return allowedDbTypes }
+func GomeetAllowedUiTypes() []string { return allowedUiTypes }
 
 func GomeetAllowedQueueTypes() []string {
 	return allowedQueueTypes
@@ -53,6 +56,7 @@ type Project struct {
 
 	SubServices          map[string]*Project
 	dbTypes              []string
+	uiType               string
 	queueTypes           []string
 	hasPostgis           bool
 	extraServeFlags      []*serveFlag
@@ -75,7 +79,7 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{pkgNfo, nil, []string{}, "none", []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias("")
 	return p, nil
@@ -188,6 +192,29 @@ func (p *Project) SetDbTypes(s string) error {
 	return nil
 }
 
+func (p *Project) SetUiType(s string) error {
+	p.uiType = "none"
+	if s != "" {
+		uiType := strings.ToLower(strings.TrimSpace(s))
+		ok := false
+		for _, allowedUiType := range GomeetAllowedUiTypes() {
+			if uiType == allowedUiType {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			return fmt.Errorf("\"%s\" isn't allowed in ui_type - allowed ui_type : [%s]", uiType, strings.Join(GomeetAllowedUiTypes(), "|"))
+		}
+		if uiType == "elm" {
+			uiType = DEFAULT_ELM
+		}
+		p.uiType = uiType
+	}
+
+	return nil
+}
+
 func (p *Project) SetQueueTypes(s string) error {
 	if s != "" {
 		queueTypes := strings.Split(s, ",")
@@ -227,6 +254,7 @@ func (p Project) GomeetGeneratorUrl() string                    { return "https:
 func (p Project) Version() string                               { return p.version }
 func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.protoFiles }
 func (p Project) DbTypes() []string                             { return p.dbTypes }
+func (p Project) UiType() string                                { return p.uiType }
 func (p Project) QueueTypes() []string                          { return p.queueTypes }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
 
@@ -255,6 +283,16 @@ func (p Project) HasDb() bool {
 	}
 
 	return false
+}
+
+func (p Project) HasUi() bool {
+	uiT := p.UiType()
+	return (uiT != "" && uiT != "none")
+}
+
+func (p Project) HasUiElm() bool {
+	uiT := p.UiType()
+	return strings.HasPrefix(uiT, "elm")
 }
 
 func (p Project) HasMemoryQueue() bool {
@@ -623,6 +661,14 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 		f.delete("third_party/github.com/gogo")
 	}
 
+	f.delete("ui")
+	if p.HasUi() {
+		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepFile)
+		if err != nil {
+			return err
+		}
+	}
+
 	p.folder = f
 
 	return nil
@@ -664,6 +710,14 @@ func (p Project) AfterProjectCreationCmd() (r []string) {
 	r = append(r, "make tools-sync proto dep")
 	r = append(r, "git add .")
 	r = append(r, "git commit -m 'Added tools and dependencies'")
+	switch {
+	case p.HasUi() && p.HasUiElm():
+		r = append(r, "make ui-setup")
+		r = append(r, "make ui")
+		r = append(r, "git add .")
+		r = append(r, "git commit -m 'Added ui'")
+	}
+
 	return r
 }
 

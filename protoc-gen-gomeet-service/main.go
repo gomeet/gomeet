@@ -50,6 +50,7 @@ func main() {
 		projectPkg      string
 		defaultPrefixes string
 		dbTypes         string
+		uiType          string
 		queueTypes      string
 		extraServeFlags string
 	)
@@ -66,6 +67,8 @@ func main() {
 				subServices = strings.Split(parts[1], ",")
 			case "db_types":
 				dbTypes = parts[1]
+			case "ui_type":
+				uiType = parts[1]
 			case "queue_types":
 				queueTypes = parts[1]
 			case "default_prefixes":
@@ -99,6 +102,13 @@ func main() {
 		err := p.SetDbTypes(dbTypes)
 		if err != nil {
 			g.Error(err, "bad db_types parameter")
+		}
+	}
+
+	if uiType != "" {
+		err := p.SetUiType(uiType)
+		if err != nil {
+			g.Error(err, "bad ui_type parameter")
 		}
 	}
 

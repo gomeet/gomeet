@@ -1,0 +1,202 @@
+module Page.Version exposing (Model, Msg, init, subscriptions, toSession, update, view)
+
+import Api.Endpoint as Endpoint
+import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
+import Api.Request as Request
+import Assets.Icons as Icons
+import Bulma.Components as Ui
+import Bulma.Elements as Ui
+import Bulma.Layout as Ui
+import Bulma.Modifiers as Ui
+import Bulma.Modifiers.Typography as UiTypo
+import Html exposing (Html, span, text)
+import Html.Attributes exposing (attribute, class, href, style)
+import Html.Events exposing (onClick)
+import Http
+import Session exposing (Session)
+import Task exposing (Task)
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { session : Session
+
+    -- Loaded independently from server
+    , serverVersion : Status {{ upperPascalCase .ShortName }}Pb.VersionResponse
+    }
+
+
+type Status a
+    = Loading
+    | LoadingSlowly
+    | Loaded a
+    | Failed Request.Error
+
+
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( { session = session
+      , serverVersion = Loading
+      }
+    , Cmd.batch
+        [ fetchServerVersion session
+            |> Task.attempt CompletedServerVersionLoad
+        , Task.perform (\_ -> PassedSlowLoadThreshold) Request.slowThreshold
+        ]
+    )
+
+
+
+-- VIEW
+
+
+view : Model -> { title : String, content : Html Msg }
+view model =
+    { title = ""
+    , content = Ui.content Ui.Standard [ style "padding" "20px" ] [ viewContent model ]
+    }
+
+
+viewContent : Model -> Html Msg
+viewContent model =
+    let
+        msgMod =
+            Ui.messageModifiers
+
+        loadingMsg mod =
+            Ui.message mod
+                []
+                [ Ui.messageBody [] [ Icons.iconText Icons.Loading Ui.Standard "Loading..." ]
+                ]
+
+        endpointMsg =
+            Ui.content Ui.Large
+                []
+                [ text "Touch refresh button to load version from server "
+                , span [ UiTypo.textColor UiTypo.Primary ] [ text <| Endpoint.toString Endpoint.version ]
+                , text " endpoint."
+                ]
+
+        content =
+            case model.serverVersion of
+                Loading ->
+                    loadingMsg msgMod
+
+                LoadingSlowly ->
+                    loadingMsg { msgMod | color = Ui.Warning }
+
+                Failed error ->
+                    Ui.message { msgMod | color = Ui.Danger }
+                        []
+                        [ Ui.messageBody []
+                            [ text "Error loading version : "
+                            , text <| Request.errorToString error
+                            ]
+                        ]
+
+                Loaded version ->
+                    Ui.message { msgMod | color = Ui.Success }
+                        []
+                        [ Ui.messageBody [] [ text <| version.name ++ "@" ++ version.version ]
+                        ]
+    in
+    Ui.card []
+        [ Ui.cardHeader [] [ Ui.cardTitle [] [ text "Version" ] ]
+        , Ui.cardContent []
+            [ endpointMsg
+            , content
+            ]
+        , Ui.cardFooter []
+            [ Ui.cardFooterItemLink
+                [ class "tooltip"
+                , attribute "data-tooltip" <|
+                    "Call "
+                        ++ Endpoint.toString Endpoint.version
+                        ++ " endpoint."
+                , onClick ClickedRefresh
+                , href ""
+                ]
+                [ text "Refresh" ]
+            ]
+        ]
+
+
+
+-- UPDATE
+
+
+type Msg
+    = GotSession Session
+    | ClickedRefresh
+    | CompletedServerVersionLoad (Result Http.Error {{ upperPascalCase .ShortName }}Pb.VersionResponse)
+    | PassedSlowLoadThreshold
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotSession session ->
+            ( { model | session = session }, Cmd.none )
+
+        ClickedRefresh ->
+            ( { model | serverVersion = LoadingSlowly }
+            , fetchServerVersion model.session
+                |> Task.attempt CompletedServerVersionLoad
+            )
+
+        CompletedServerVersionLoad (Ok serverVersion) ->
+            ( { model | serverVersion = Loaded serverVersion }, Cmd.none )
+
+        CompletedServerVersionLoad (Err error) ->
+            ( { model | serverVersion = Failed (Request.decodeErrors error) }, Cmd.none )
+
+        PassedSlowLoadThreshold ->
+            let
+                -- If any data is still Loading, change it to LoadingSlowly
+                -- so `view` knows to render a spinner.
+                serverVersion =
+                    case model.serverVersion of
+                        Loading ->
+                            LoadingSlowly
+
+                        other ->
+                            other
+            in
+            ( { model | serverVersion = serverVersion }, Cmd.none )
+
+
+
+-- HTTP
+
+
+fetchServerVersion : Session -> Task Http.Error {{ upperPascalCase .ShortName }}Pb.VersionResponse
+fetchServerVersion session =
+    let
+        maybeCred =
+            Session.cred session
+
+        request =
+            Request.version maybeCred
+    in
+    Http.toTask request
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changes GotSession (Session.navKey model.session) (Session.randomSeed model.session)
+
+
+
+-- EXPORT
+
+
+toSession : Model -> Session
+toSession model =
+    model.session

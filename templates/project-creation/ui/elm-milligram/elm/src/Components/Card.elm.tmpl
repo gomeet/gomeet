@@ -1,0 +1,15 @@
+module Components.Card exposing (view)
+
+import Html exposing (Attribute, Html, div)
+import Html.Attributes exposing (class, style)
+
+
+defaultCardAttributes : List (Attribute msg)
+defaultCardAttributes =
+    [ class "card text-left container" ]
+
+
+view : List (Attribute msg) -> List (Html msg) -> Html msg
+view attr content =
+    div (defaultCardAttributes ++ attr)
+        content

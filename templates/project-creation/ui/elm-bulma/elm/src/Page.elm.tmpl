@@ -1,0 +1,183 @@
+module Page exposing (LayoutMsg(..), LayoutOptions, Page(..), view)
+
+import Api.Request exposing (Cred)
+import Assets.Icons as Icons
+import Assets.Images as Images
+import Browser exposing (Document)
+import Bulma.Components as Ui
+import Bulma.Elements as Ui
+import Bulma.Layout as Ui
+import Bulma.Modifiers as Ui
+import Html exposing (Html, a, main_, span, text)
+import Html.Attributes exposing (class, href)
+import Html.Attributes.Aria exposing (ariaExpanded, ariaLabel, role)
+import Html.Events exposing (onClick)
+import Route exposing (Route)
+import Session exposing (Session)
+import Viewer exposing (Viewer)
+
+
+{-| Determines which navbar link (if any) will be rendered as active.
+
+Note that we don't enumerate every page here, because the navbar doesn't
+have links for every page. Anything that's not part of the navbar falls
+under Other.
+
+-}
+type Page
+    = Other
+    | Home
+    | Version
+    | ServicesStatus
+    | Echo
+    | Login
+
+
+{-| layout options is the model of layout to determines some configuration of the layout
+-}
+type alias LayoutOptions =
+    { navbarOpened : Bool -- True if navbar must be openened
+    }
+
+
+{-| these messages are emit by the layout
+-}
+type LayoutMsg
+    = NoOp
+    | NavbarBurgerToggle -- toggle the navbar
+
+
+{-| Take a page's Html and frames it with a header and footer.
+
+The caller provides the current user, so we can display in either
+"signed in" (rendering username) or "signed out" mode.
+
+isLoading is for determining whether we should show a loading spinner
+in the header. (This comes up during slow page transitions.)
+
+-}
+view :
+    { layoutMsg : LayoutMsg -> msg, contentMsg : contentMsg -> msg }
+    -> LayoutOptions
+    -> Maybe Viewer
+    -> Page
+    -> { title : String, content : Html contentMsg }
+    -> Document msg
+view { layoutMsg, contentMsg } config maybeViewer page { title, content } =
+    { title = title ++ " - {{ upperPascalCase .ShortName }}"
+    , body =
+        [ viewHeader config maybeViewer page
+            |> Html.map layoutMsg
+        , viewContent content
+            |> Html.map contentMsg
+        , viewFooter
+            |> Html.map layoutMsg
+        ]
+    }
+
+
+viewContent : Html msg -> Html msg
+viewContent content =
+    main_ [ class "main-container" ] [ content ]
+
+
+viewFooter : Html msg
+viewFooter =
+    Ui.footer []
+        [ Ui.container []
+            [ Ui.content Ui.Standard
+                []
+                [ a [ Route.href Route.Home ] [ text "{{ upperPascalCase .ShortName }} ©{{ currentYear }}" ] ]
+            ]
+        ]
+
+
+viewHeader : LayoutOptions -> Maybe Viewer -> Page -> Html LayoutMsg
+viewHeader config maybeViewer page =
+    Ui.navbar
+        Ui.navbarModifiers
+        []
+        [ Ui.navbarBrand []
+            (Ui.navbarBurger config.navbarOpened
+                [ role "button"
+                , ariaLabel "menu"
+                , ariaExpanded (stringFromBool config.navbarOpened)
+                , href "" -- IMPORTANT to Navigation
+                , onClick NavbarBurgerToggle
+                ]
+                [ span [] []
+                , span [] []
+                , span [] []
+                ]
+            )
+            [ Ui.navbarItem False
+                []
+                [ Images.img Images.Logo ]
+            ]
+        , navbarMenu config maybeViewer page
+        ]
+
+
+stringFromBool : Bool -> String
+stringFromBool val =
+    case val of
+        True ->
+            "true"
+
+        False ->
+            "false"
+
+
+navbarMenu : LayoutOptions -> Maybe Viewer -> Page -> Ui.NavbarSection msg
+navbarMenu config maybeViewer page =
+    let
+        navbarEnd =
+            case maybeViewer of
+                Just viewer ->
+                    Ui.navbarEnd []
+                        [ navbarLink page Route.Logout [ text "logout" ] ]
+
+                Nothing ->
+                    Ui.navbarEnd []
+                        [ navbarLink page Route.Login [ text "login" ] ]
+    in
+    Ui.navbarMenu config.navbarOpened
+        []
+        [ Ui.navbarStart []
+            [ navbarLink page Route.Home [ Icons.iconText Icons.Home Ui.Standard "Home" ]
+            , navbarLink page Route.Version [ Icons.iconText Icons.CodeBranch Ui.Standard "Version" ]
+            , navbarLink page Route.ServicesStatus [ Icons.iconText Icons.InfoCircle Ui.Standard "Services Status" ]
+            , navbarLink page Route.Echo [ Icons.iconText Icons.Comment Ui.Standard "Echo" ]
+            ]
+
+        --, navbarEnd
+        ]
+
+
+navbarLink : Page -> Route -> List (Html msg) -> Html msg
+navbarLink page route linkContent =
+    Ui.navbarItemLink (isActive page route)
+        [ Route.href route ]
+        linkContent
+
+
+isActive : Page -> Route -> Bool
+isActive page route =
+    case ( page, route ) of
+        ( Home, Route.Home ) ->
+            True
+
+        ( Version, Route.Version ) ->
+            True
+
+        ( ServicesStatus, Route.ServicesStatus ) ->
+            True
+
+        ( Echo, Route.Echo ) ->
+            True
+
+        ( Login, Route.Login ) ->
+            True
+
+        _ ->
+            False

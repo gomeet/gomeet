@@ -1,0 +1,17 @@
+SVC_PREFIX=hug-svc-
+NAME = $(SVC_PREFIX)bo-gateway::ui
+
+DEBUG?=0
+ifeq ($(DEBUG),0)
+ELM_TAG=--optimize
+else
+ELM_TAG=
+endif
+
+.PHONY: build
+build:
+	@echo "$(NAME)::build"
+	cd ../.. && $(MAKE) tools-sync-elmc
+	../../_tools/bin/elm make src/Main.elm $(ELM_TAG) --output ../assets/elm.js
+	../../_tools/bin/elm make src/Main.elm --debug --output ../assets/elm-debug.js
+

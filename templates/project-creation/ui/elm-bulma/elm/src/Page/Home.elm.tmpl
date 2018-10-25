@@ -1,0 +1,154 @@
+module Page.Home exposing (Model, Msg, init, subscriptions, toSession, update, view)
+
+import Api.Endpoint as Endpoint exposing (Endpoint)
+import Bulma.Columns as Ui
+import Bulma.Elements as Ui
+import Bulma.Layout as Ui
+import Bulma.Modifiers as Ui
+import Bulma.Modifiers.Typography as UiTypo
+import Html exposing (Html, a, span, text)
+import Html.Attributes exposing (class, style)
+import Route exposing (Route)
+import Session exposing (Session)
+
+
+type alias Model =
+    { session : Session
+    }
+
+
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( { session = session
+      }
+    , Cmd.none
+    )
+
+
+
+-- VIEW
+
+
+view : Model -> { title : String, content : Html Msg }
+view model =
+    { title = ""
+    , content =
+        Ui.content Ui.Standard
+            []
+            [ viewHero model
+            , Ui.container
+                [ style "padding" "20px" ]
+                [ viewColumns model ]
+            ]
+    }
+
+
+columnsModifiers : Ui.ColumnsModifiers
+columnsModifiers =
+    Ui.columnsModifiers
+
+
+columnModifiers : Ui.ColumnModifiers
+columnModifiers =
+    Ui.columnModifiers
+
+
+heroModifiers : Ui.HeroModifiers
+heroModifiers =
+    Ui.heroModifiers
+
+
+viewHero : Model -> Html Msg
+viewHero model =
+    Ui.hero { heroModifiers | color = Ui.Primary, size = Ui.Small }
+        []
+        [ Ui.heroBody []
+            [ Ui.container []
+                [ Ui.title Ui.H1 [] [ text "Hero Title" ]
+                , Ui.title Ui.H2 [] [ text "Hero Subtitle" ]
+                ]
+            ]
+        ]
+
+
+viewColumns : Model -> Html Msg
+viewColumns model =
+    Ui.columns { columnsModifiers | centered = True }
+        []
+        [ viewColumn Route.Version "Version" Endpoint.version
+        , viewColumn Route.ServicesStatus "Services Status" Endpoint.servicesStatus
+        , viewColumn Route.Echo "Echo" Endpoint.echo
+        ]
+
+
+viewColumn : Route -> String -> Endpoint -> Html Msg
+viewColumn route title endpoint =
+    Ui.column columnModifiers
+        [ Ui.display Ui.InlineFlex
+        , style "position" "relative"
+        , style "left" "0px"
+        , style "right" "0px"
+        , style "width" "100%"
+        ]
+        [ viewBox route title endpoint ]
+
+
+spanPrimary : String -> Html Msg
+spanPrimary t =
+    span [ UiTypo.textColor UiTypo.Primary ] [ text t ]
+
+
+viewBox : Route -> String -> Endpoint -> Html Msg
+viewBox route title endpoint =
+    Ui.box [ Ui.clearfix, style "width" "100%" ]
+        [ Ui.title Ui.H3 [] [ text title ]
+        , Ui.content Ui.Standard
+            [ UiTypo.textCentered ]
+            [ text "Display "
+            , spanPrimary title
+            , text " page and call "
+            , spanPrimary <| Endpoint.toString endpoint
+            , text " endpoint."
+            ]
+        , a
+            [ class "button is-primary"
+            , style "position" "absolute"
+            , style "bottom" "15px"
+            , style "right" "25px"
+            , Route.href route
+            ]
+            [ text "Go" ]
+        ]
+
+
+
+-- UPDATE
+
+
+type Msg
+    = GotSession Session
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GotSession session ->
+            ( { model | session = session }, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changes GotSession (Session.navKey model.session) (Session.randomSeed model.session)
+
+
+
+-- EXPORT
+
+
+toSession : Model -> Session
+toSession model =
+    model.session

@@ -1,0 +1,63 @@
+module Api.Validate.Extra exposing
+    ( ifGreaterThan
+    , ifLessThan
+    , ifNotUuid
+    , isGreaterThan
+    , isLessThan
+    , isUuid
+    , lengthValidator
+    )
+
+import Uuid.Barebones as Uuid
+import Validate exposing (Validator, fromErrors, ifFalse)
+
+
+
+-- Extra validator
+
+
+isLessThan : String -> Int -> Bool
+isLessThan str min =
+    min < String.length str
+
+
+isGreaterThan : String -> Int -> Bool
+isGreaterThan str max =
+    max > String.length str
+
+
+isUuid : String -> Bool
+isUuid uuid =
+    Uuid.isValidUuid uuid
+
+
+lengthValidator : (String -> Int -> Bool) -> (subject -> String) -> Int -> (String -> Int -> error) -> Validator error subject
+lengthValidator fnValidation subjectToString val errorFromString =
+    let
+        getErrors subject =
+            let
+                str =
+                    subjectToString subject
+            in
+            if fnValidation str val then
+                []
+
+            else
+                [ errorFromString str val ]
+    in
+    fromErrors getErrors
+
+
+ifLessThan : (subject -> String) -> Int -> (String -> Int -> error) -> Validator error subject
+ifLessThan =
+    lengthValidator isLessThan
+
+
+ifGreaterThan : (subject -> String) -> Int -> (String -> Int -> error) -> Validator error subject
+ifGreaterThan =
+    lengthValidator isGreaterThan
+
+
+ifNotUuid : (subject -> String) -> error -> Validator error subject
+ifNotUuid subjectToString error =
+    ifFalse (\subject -> isUuid (subjectToString subject)) error

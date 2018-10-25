@@ -4,32 +4,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"net/http"{{ if .HasUi }}
+	"path"{{ end }}
 	"strings"
 
-	jwtmiddleware "github.com/auth0/go-jwt-middleware"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"{{ if .HasUi }}
+	assetfs "github.com/elazarl/go-bindata-assetfs"{{ end }}
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"{{ if .HasUi }}
+	ui "{{ .GoPkg }}/ui"{{ end }}
 )
 
 type {{ lowerPascalCase .ShortName }}HTTPController struct{
 	version string `json:"version"`
-	jwtMiddleware *jwtmiddleware.JWTMiddleware `json:"-"`
+	jwtMiddleware *jwtmiddleware.JWTMiddleware `json:"-"`{{ if .HasUi }}
+	uiFileServer  http.Handler                 `json:"-"`
+	uiFs          *assetfs.AssetFS             `json:"-"`{{ end }}
 }
 
 func (s {{ lowerPascalCase .ShortName }}HTTPController) RegisterRoutes(mux *mux.Router) {
 	// prometheus instrument handler
 	instrf := prometheus.InstrumentHandlerFunc
-
+{{ if .HasUi }}	// initalize embed ui assetfs
+	s.initUiFS()
+{{ end }}
 	// HTTP/1.1 routes
 	// status handler
 	mux.HandleFunc("/status", instrf("Http.Status", s.Status))
 	mux.HandleFunc("/version", instrf("Http.Version", s.Version))
+	mux.HandleFunc("/404", instrf("Http.NotFoundPage", s.NotFound))
+{{ if .HasUi }}
+	// serve static file in assetfs
+	mux.PathPrefix("/").Handler(instrf("Http.Root", s.Root))
+{{ else }}
 	mux.HandleFunc("/", instrf("Http.Root", s.Root))
-
+{{ end }}
 	// to declare an authenticated handler do something like this
 	// if s.jwtMiddleware == nil {
 	//   mux.
@@ -43,12 +55,59 @@ func (s {{ lowerPascalCase .ShortName }}HTTPController) RegisterRoutes(mux *mux.
 	//       negroni.Wrap(instrf("<METRICS_KEY>", s.<HTTP_HANDLER>)),
 	//     ))
 	// }
+}
+{{ if .HasUi }}func (s *{{ lowerPascalCase .ShortName }}HTTPController) initUiFS() {
+	s.uiFs = &assetfs.AssetFS{
+		Asset:     ui.Asset,
+		AssetDir:  ui.AssetDir,
+		AssetInfo: ui.AssetInfo,
+		Prefix:    "assets",
+	}
+	s.uiFileServer = http.FileServer(s.uiFs)
+}{{ end }}
 
+func (s {{ lowerPascalCase .ShortName }}HTTPController) NotFound(w http.ResponseWriter, r *http.Request) {
+	log.Infof("{{ lowerPascalCase .ShortName }}HTTPController.NotFound: %s", r.URL.Path)
+{{ if .HasUi }}
+	contents, err := s.uiFs.Asset(path.Join(s.uiFs.Prefix, "404.html"))
+	if err != nil {
+		http.Error(w, "Page not found", http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(contents)
+	return
+{{ else }}
+	http.Error(w, "Page not found", http.StatusNotFound)
+	return
+{{ end }}
 }
 
 func (s {{ lowerPascalCase .ShortName }}HTTPController) Root(w http.ResponseWriter, r *http.Request) {
 	log.Info("{{ lowerPascalCase .ShortName }}HTTPController.Root")
+{{ if .HasUi }}
+	if strings.TrimPrefix(r.URL.Path, "/") == "" {
+		contents, err := s.uiFs.Asset(path.Join(s.uiFs.Prefix, "index.html"))
+		if err != nil {
+			log.Errorf("page not found error %s", err.Error())
+			s.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html")
+		w.Write(contents)
+		return
+	}
+	_, err := s.uiFs.AssetInfo(path.Join(s.uiFs.Prefix, r.URL.Path))
+	if err != nil {
+		log.Errorf("page not found error %s", err.Error())
+		s.NotFound(w, r)
+		return
+	}
+	s.uiFileServer.ServeHTTP(w, r)
+{{ else }}
 	fmt.Fprintf(w, "%s-%s OK", name, s.version)
+{{ end }}
 }
 
 func (s {{ lowerPascalCase .ShortName }}HTTPController) Status(w http.ResponseWriter, r *http.Request) {
