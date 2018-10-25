@@ -11,11 +11,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.0.20 - 2018-10-25
 
-- Nothing
+- Add web UI the type of UI `ui_type` can be :
+  - `elm` (alias for `elm-bulma`)
+  - `elm-bulma`
+  - `elm-milligram`
+  - `elm-minimal` - no `css`, no `http`
+  - `elm-minimal-http` - `elm-minimal` with `http` support
+  - `simple` - a blank page
 
 ## 0.0.18 - 2018-07-31
 
-- Nothing
+- Improvements - BUG FIX
 
 ## 0.0.17 - 2018-07-20
 
