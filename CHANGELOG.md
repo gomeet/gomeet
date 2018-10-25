@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.20 - 2018-10-25
+
+- Nothing
+
 ## 0.0.18 - 2018-07-31
 
 - Nothing
