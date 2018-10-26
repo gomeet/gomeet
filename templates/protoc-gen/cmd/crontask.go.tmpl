@@ -48,6 +48,9 @@ func init() {
 	// HTTP/1.1 address flag (to serve HTTP on a separate address)
 	// cronTaskCmd.PersistentFlags().StringVar(&httpServerAddress, "http-address", "", "HTTP server address")
 
+	// cors flag
+	// cronTaskCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
+
 	// CA certificate
 	cronTaskCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
 
@@ -57,11 +60,11 @@ func init() {
 	// gRPC client private key
 	cronTaskCmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key (required for gRPC TLS support)")
 
-	// JSON Web Token
-	cronTaskCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token (external server only)")
-
 	// JWT secret signing key
 	cronTaskCmd.PersistentFlags().StringVar(&jwtSecret, "jwt-secret", "", "JSON Web Token secret signing key (embedded server only)")
+
+	// JSON Web Token
+	cronTaskCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token (external server only)")
 
 	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
 	cronTaskCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
@@ -81,8 +84,7 @@ func init() {
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
 	{{ end }}{{ end }}
 
-	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
-	cronTaskCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
+	{{ range .DbTypes }}
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	cronTaskCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
@@ -106,8 +108,7 @@ func init() {
 	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
 	{{ end }}{{ end }}
-	{{ range .DbTypes }}// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
-	cronTaskCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
+	{{ range .DbTypes }}
 	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	cronTaskCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database

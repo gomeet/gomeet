@@ -35,6 +35,12 @@ var (
 func init() {
 	rootCmd.AddCommand(funcTestCmd)
 
+	// embedded server flag
+	funcTestCmd.PersistentFlags().BoolVarP(&useEmbeddedServer, "embed-server", "e", false, "Embed the server to test")
+
+	// random port server flag
+	funcTestCmd.PersistentFlags().BoolVar(&useRandomPort, "random-port", false, "Use a random port for the embedded server")
+
 	// force debug mode
 	funcTestCmd.PersistentFlags().BoolVarP(&debugMode, "debug", "d", false, "Force debug mode")
 
@@ -47,6 +53,9 @@ func init() {
 	// HTTP/1.1 address flag (to serve HTTP on a separate address)
 	funcTestCmd.PersistentFlags().StringVar(&httpServerAddress, "http-address", "", "HTTP server address")
 
+	// cors flag
+	funcTestCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
+
 	// CA certificate
 	funcTestCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
 
@@ -56,11 +65,11 @@ func init() {
 	// gRPC client private key
 	funcTestCmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key (required for gRPC TLS support)")
 
-	// JSON Web Token
-	funcTestCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token (external server only)")
-
 	// JWT secret signing key
 	funcTestCmd.PersistentFlags().StringVar(&jwtSecret, "jwt-secret", "", "JSON Web Token secret signing key (embedded server only)")
+
+	// JSON Web Token
+	funcTestCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token (external server only)")
 
 	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
 	funcTestCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
@@ -70,15 +79,6 @@ func init() {
 
 	// request timeout
 	funcTestCmd.PersistentFlags().IntVar(&timeoutSeconds, "timeout", 5, "Request timeout in seconds")
-
-	// embedded server flag
-	funcTestCmd.PersistentFlags().BoolVarP(&useEmbeddedServer, "embed-server", "e", false, "Embed the server to test")
-
-	// random port server flag
-	funcTestCmd.PersistentFlags().BoolVar(&useRandomPort, "random-port", false, "Use a random port for the embedded server")
-
-	// cors flag
-	funcTestCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
 
 	{{ range .QueueTypes }}// Main queue system
 	{{ if eq . "memory" }}
