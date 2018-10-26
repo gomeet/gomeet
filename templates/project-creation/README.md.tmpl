@@ -9,7 +9,11 @@ $ gomeet new {{ .GoPkg }} \
   --default-prefixes='{{ .PkgNfo.DefaultPrefixes }}' \
   --extra-serve-flags='{{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ $e.Name }}@{{ $e.Type }}|{{ $e.Description }}|{{ $e.DefaultValue }}{{ end }}' \
   --proto-name='{{ .GoProtoPkgAlias }}'{{ if not .IsGogoGen }} \
-  --no-gogo{{ end }}{{ if .SubServices }} \
+  --no-gogo{{ end }} \
+  --db-types='{{ range $i, $e := .DbTypes }}{{ if $i }},{{ end }}{{ if eq $e "postgres" }}{{ if $.HasPostgis }}postgis{{ else }}{{ $e }}{{ end }}{{ else }}{{ $e }}{{ end }}{{ end }}' \
+  --ui-type='{{ if .HasUi }}{{ .UiType }}{{ end }}' \
+  --queue-types='{{ range $i, $e := .QueueTypes }}{{ if $i }},{{ end }}{{ $e }}{{ end }}' \
+  --cron-tasks='{{ range $i, $e := .CronTasks }}{{ if $i }},{{ end }}{{ lowerSnakeCase $e }}{{ end }}'{{ if .SubServices }} \
   --sub-services='{{ .SubServicesDef }}'{{ end }}
 ```
 
@@ -47,7 +51,7 @@ $ gomeet new {{ .GoPkg }} \
 - [x] Add docker environement (docker file, docker-compose)
 - [x] Add prometheus to docker environement (docker-compose)
 - [ ] Add Kubernetes
-- [ ] Add baremetal infra through a supervisor config generation
+- [ ] Add baremetal infra through a supervisor config generation
 - [x] Add a data store
 - [x] Add unit tests
 - [x] Add functional testing
@@ -55,5 +59,5 @@ $ gomeet new {{ .GoPkg }} \
 - [ ] Add some clients examples (multilang: PHP, RUBY, Node.js, Python ...)
 - [x] Add git workflow ([git flow](https://danielkummer.github.io/git-flow-cheatsheet/))
 - [x] Add a web ui
-- [ ] Add cron tasks support
+- [x] Add cron tasks support
 - [ ] Add desktop UI (GTK, Qt, Electron/nodeJS, ... ?)

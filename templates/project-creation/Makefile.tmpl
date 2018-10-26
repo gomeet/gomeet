@@ -24,6 +24,7 @@ EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ 
 
 DB_TYPES={{ range $i, $e := .DbTypes }}{{ if $i }},{{ end }}{{ if eq $e "postgres" }}{{ if $.HasPostgis }}postgis{{ else }}{{ $e }}{{ end }}{{ else }}{{ $e }}{{ end }}{{ end }}
 QUEUE_TYPES={{ range $i, $e := .QueueTypes }}{{ if $i }},{{ end }}{{ $e }}{{ end }}
+CRON_TASKS={{ range $i, $e := .CronTasks }}{{ if $i }},{{ end }}{{ lowerSnakeCase $e }}{{ end }}
 UI_TYPE={{ if .HasUi }}{{ .UiType }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][queue_types@<memory,rabbitmq,.... comma separed>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
@@ -279,13 +280,13 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 "${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
+				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
 				--grpchan_out="${GOPATH}/src" \
 				--govalidators_out="gogoimport=false:${GOPATH}/src" \
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
 				--gomeetfaker_out="gogoimport=false:${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
+				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
 			$$f; \
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \
@@ -696,6 +697,7 @@ gomeet-regenerate-project: tools
 		--db-types='${DB_TYPES}' \
 		--ui-type='${UI_TYPE}' \
 		--queue-types='${QUEUE_TYPES}' \
+		--cron-tasks='${CRON_TASKS}' \
 		--extra-serve-flags='${EXTRA_SERVE_FLAGS}' \
 		--force $(NO_GOGO_FLAG)
 

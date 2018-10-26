@@ -40,6 +40,7 @@ var (
 	dbTypes         string
 	uiType          string
 	queueTypes      string
+	cronTasks       string
 	extraServeFlags string
 	out             = colorable.NewColorableStdout()
 )
@@ -54,6 +55,7 @@ func init() {
 	newCmd.PersistentFlags().StringVar(&uiType, "ui-type", "", fmt.Sprintf("UI type [%s] default (none)", strings.Join(project.GomeetAllowedUiTypes(), "|")))
 	newCmd.PersistentFlags().StringVar(&queueTypes, "queue-types", "", fmt.Sprintf("Queue types [%s] (comma separated)", strings.Join(project.GomeetAllowedQueueTypes(), ",")))
 	newCmd.PersistentFlags().StringVar(&extraServeFlags, "extra-serve-flags", "", "extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)")
+	newCmd.PersistentFlags().StringVar(&cronTasks, "cron-tasks", "", "Cron tasks (comma separated)")
 
 	rootCmd.AddCommand(newCmd)
 }
@@ -107,6 +109,13 @@ func new(cmd *cobra.Command, args []string) {
 
 	if queueTypes != "" {
 		err := p.SetQueueTypes(queueTypes)
+		if err != nil {
+			er(err)
+		}
+	}
+
+	if cronTasks != "" {
+		err := p.SetCronTasks(cronTasks)
 		if err != nil {
 			er(err)
 		}

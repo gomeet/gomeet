@@ -97,15 +97,6 @@ func init() {
 	// cors flag
 	serveCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
 
-	// JWT secret signing key
-	serveCmd.PersistentFlags().StringVarP(&jwtSecret, "jwt-secret", "j", "", "JSON Web Token secret signing key (required for JWT support)")
-
-	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
-	serveCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
-
-	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
-	serveCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
-
 	// CA certificate
 	serveCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
 
@@ -114,6 +105,21 @@ func init() {
 
 	// gRPC server private key
 	serveCmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
+
+	// JWT secret signing key
+	serveCmd.PersistentFlags().StringVarP(&jwtSecret, "jwt-secret", "j", "", "JSON Web Token secret signing key (required for JWT support)")
+
+	// JSON Web Token
+	// serveCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token (external server only)")
+
+	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
+
+	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
+	serveCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
+
+	// request timeout
+	// serveCmd.PersistentFlags().IntVar(&timeoutSeconds, "timeout", 5, "Request timeout in seconds")
 
 	// EXTRA : flags
 	{{ range .QueueTypes }}// Main queue system
