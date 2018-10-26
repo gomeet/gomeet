@@ -870,8 +870,9 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
 	cmd.addFile("crontask.go", "protoc-gen/cmd/crontask.go.tmpl", nil, false)
+	crontaskFolder := cmd.addFolder("crontask")
+	crontaskFolder.addFile("clients.go", "protoc-gen/cmd/crontask/clients.go.tmpl", nil, false)
 	if len(p.CronTasks()) > 0 {
-		crontaskFolder := cmd.addFolder("crontask")
 		for _, crontask := range p.CronTasks() {
 			// we fake a gRPC method to passe it to the template
 			grpcM := &grpcMethod{Method: &descriptor.MethodDescriptorProto{Name: &crontask}}
