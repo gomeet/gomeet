@@ -6,6 +6,7 @@ import (
 	{{ if not .CronTasks }}"errors"{{ end }}
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 	log "github.com/sirupsen/logrus"
@@ -15,11 +16,9 @@ import (
 )
 
 var (
-	taskName string
-
 	// cronTaskCmd represents the functest command
 	cronTaskCmd = &cobra.Command{
-		Use:   "crontask",
+		Use:   "crontask TASK_NAME({{ range $i, $e := .CronTasks }}{{ if $i }}|{{ end }}{{ lowerSnakeCase $e }}{{ end }})",
 		Short: "Runs tasks triggered by a time-based job scheduler like cron",
 		PreRun: bindFlagsToConfig,
 		Run: runCronTask,
@@ -27,9 +26,6 @@ var (
 )
 
 func init() {
-	// task name
-	cronTaskCmd.PersistentFlags().StringVarP(&taskName, "task", "t", "", "Name of the task to run [{{ range $i, $e := .CronTasks }}{{ if $i }}|{{ end }}{{ lowerSnakeCase $e }}{{ end }}]")
-
 	initDebugFlag(cronTaskCmd)
 	initJWTSecretFlag(cronTaskCmd)
 	initJWTTokenFlag(cronTaskCmd)
@@ -51,6 +47,18 @@ func init() {
 func runCronTask(cmd *cobra.Command, args []string) {
 	// TODO: GOMEET use config.Get
 	var taskError error
+
+  if len(args) < 1 {
+		fmt.Printf("A task name must be provided in argument\n")
+		os.Exit(1)
+	}
+
+	taskName := strings.ToLower(args[0])
+
+	if taskName == "" {
+		fmt.Printf("A task name must be provided in argument\n")
+		os.Exit(1)
+	}
 
 	// define log level
 	if debugMode {
@@ -120,12 +128,6 @@ func runCronTask(cmd *cobra.Command, args []string) {
 		{{ range .ExtraServeFlags }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,
 		{{ end }}{{ end }}{{ end }}
 	}
-
-	if taskName == "" {
-		fmt.Printf("A task name must be provided with the -t/--task flag\n")
-		os.Exit(1)
-	}
-
 
 	switch taskName {
 {{ range .CronTasks }}	case "{{ lowerSnakeCase . }}":
