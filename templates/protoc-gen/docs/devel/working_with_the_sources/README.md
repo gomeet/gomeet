@@ -56,7 +56,7 @@ sudo curl \
      -o /usr/local/bin/docker-compose
 # 2. Apply executable permissions to the binary
 sudo chmod +x /usr/local/bin/docker-compose
-{{ if .HasUi }}{{ if .UiType eq "elm" }}
+{{ if .HasUi }}{{ if .HasUiElm }}
 # 3. Install ui tools chain
 # install nodejs
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
@@ -103,7 +103,7 @@ echo -e "export GOPATH=\$(go env GOPATH)\nexport PATH=\${PATH}:\${GOPATH}/bin" >
 echo "" >> ~/.bashrc
 source ~/.bashrc
 
-{{ if .HasUi }}{{ if .UiType eq "elm" }}
+{{ if .HasUi }}{{ if .HasUiElm }}
 # for ui
 # install nodejs
 brew install node

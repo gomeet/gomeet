@@ -15,7 +15,6 @@ import (
 
 // consoleCmd represents the console command
 var (
-	consoleAddress string
 	consoleCmd     = &cobra.Command{
 		Use:   "console",
     Short: "Interactive console on {{ .Name }} service",
@@ -26,15 +25,6 @@ var (
 )
 
 func init() {
-	rootCmd.AddCommand(consoleCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// Port flag
-	consoleCmd.PersistentFlags().StringVar(&consoleAddress, "address", "localhost:13000", "Address to server")
-
 	// CA certificate
 	consoleCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
 
@@ -44,21 +34,12 @@ func init() {
 	// gRPC client private key
 	consoleCmd.PersistentFlags().StringVar(&clientPrivateKey, "key", "", "RSA private key of the gRPC client (required for gRPC TLS support)")
 
-	// gRPC timeout
-	consoleCmd.PersistentFlags().IntVar(&timeoutSeconds, "timeout", 5, "gRPC timeout in seconds")
+	initServerAddressFlag(consoleCmd)
+	initTimeoutFlag(consoleCmd)
+	initJWTTokenFlag(consoleCmd)
+	initGrpcFlags(consoleCmd)
 
-	// JSON Web Token
-	consoleCmd.PersistentFlags().StringVar(&jwtToken, "jwt", "", "JSON Web Token")
-
-	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
-	consoleCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the console can receive")
-
-	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
-	consoleCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the console can send")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// consoleCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(consoleCmd)
 }
 
 func console(cmd *cobra.Command, args []string) {
@@ -71,7 +52,7 @@ func console(cmd *cobra.Command, args []string) {
 	// Initialize remote cli
 	c, err := rcli.NewRemoteCli(
 		svc.Name, svc.Version,
-		rcli.ConsoleCall, consoleAddress, timeoutSeconds,
+		rcli.ConsoleCall, serverAddress, timeoutSeconds,
 		caCertificate, clientCertificate, clientPrivateKey, jwtToken,
 		maxRecvMsgSize, maxSendMsgSize,
 	)
@@ -93,7 +74,7 @@ func console(cmd *cobra.Command, args []string) {
 			"Name":    rVersion.Name,
 			"Version": rVersion.Version,
 		}).Info("remote version")
-		prompt = fmt.Sprintf("%s-%s@%s", rVersion.Name, rVersion.Version, consoleAddress)
+		prompt = fmt.Sprintf("%s-%s@%s", rVersion.Name, rVersion.Version, serverAddress)
 	}
 
 	var pfxCompl []readline.PrefixCompleterInterface
