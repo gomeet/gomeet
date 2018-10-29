@@ -864,6 +864,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 
 	f := newFolder(p.Name(), p.Path())
 	cmd := f.addFolder("cmd")
+	cmd.addFile("helpers_flags.go", "protoc-gen/cmd/helpers_flags.go.tmpl", nil, false)
+	cmd.addFile("helpers_config.go", "protoc-gen/cmd/helpers_config.go.tmpl", nil, false)
 	cmd.addFile("cli.go", "protoc-gen/cmd/cli.go.tmpl", nil, false)
 	cmd.addFile("root.go", "protoc-gen/cmd/root.go.tmpl", nil, false)
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
