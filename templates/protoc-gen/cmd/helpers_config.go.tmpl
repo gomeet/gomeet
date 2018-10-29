@@ -63,43 +63,43 @@ func bindFlagsToConfig(cmd *cobra.Command, args []string) {
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("max-recv-msg-size"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_max_recv_msg_size", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_max_recv_msg_size", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("max-send-msg-size"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_max_send_msg_size", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_max_send_msg_size", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("ca"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_ca", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_ca", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("cert"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_cert", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_cert", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("key"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_key", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_key", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("jwt-secret"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .ProjectGroupName }}_jwt_secret", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.ProjectGroupName }}_jwt_secret", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("address"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_address", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_address", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("grpc-address"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_grpc_address", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_grpc_address", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("http-address"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_http_address", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_http_address", flag)
 	}
 
 	if flag := cmd.PersistentFlags().Lookup("cors"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_cors", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_cors", flag)
 	}
 
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
@@ -121,10 +121,10 @@ func bindFlagsToConfig(cmd *cobra.Command, args []string) {
 	{{ range .QueueTypes }}
 	{{ if eq . "memory" }}
 	if flag := cmd.PersistentFlags().Lookup("{{ lower . }}-queue-worker-count"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_{{ lower . }}_queue_worker_count", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_{{ lower . }}_queue_worker_count", flag)
 	}
 	if flag := cmd.PersistentFlags().Lookup("{{ lower . }}-queue-max-size"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_{{ lower . }}_queue_max_size", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_{{ lower . }}_queue_max_size", flag)
 	}
 	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
@@ -145,7 +145,7 @@ func bindFlagsToConfig(cmd *cobra.Command, args []string) {
 
 	{{ range .DbTypes }}
 	if flag := cmd.PersistentFlags().Lookup("{{ lower . }}-dsn"); flag != nil {
-		config.BindPFlag("{{ lowerSnakeCase .Name }}_{{ lower . }}_dsn", flag)
+		config.BindPFlag("{{ lowerSnakeCase $.Name }}_{{ lower . }}_dsn", flag)
 	}
 	{{ end }}
 	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
