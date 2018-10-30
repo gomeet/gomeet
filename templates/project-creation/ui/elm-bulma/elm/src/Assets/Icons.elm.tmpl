@@ -7,6 +7,7 @@ module Assets.Icons exposing
 
 import Bulma.Elements as Ui
 import Bulma.Modifiers as Ui exposing (HorizontalAlignment, Size)
+import Bulma.Modifiers.Typography as UiTypo
 import Html exposing (Html, div, i, span, text)
 import Html.Attributes exposing (class)
 
@@ -48,8 +49,8 @@ iconText ico siz align t =
                     [ myTxt, myIco ]
 
                 Ui.Centered ->
-                    [ div [] [ myTxt ]
-                    , div [] [ myIco ]
+                    [ div [ UiTypo.textCentered ] [ myTxt ]
+                    , div [ UiTypo.textCentered ] [ myIco ]
                     ]
     in
     span
