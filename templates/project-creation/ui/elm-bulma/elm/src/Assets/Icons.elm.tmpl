@@ -6,13 +6,17 @@ module Assets.Icons exposing
     )
 
 import Bulma.Elements as Ui
-import Bulma.Modifiers as Ui exposing (Size)
-import Html exposing (Html, i, span, text)
+import Bulma.Modifiers as Ui exposing (HorizontalAlignment, Size)
+import Html exposing (Html, div, i, span, text)
 import Html.Attributes exposing (class)
 
 
 type alias Size =
     Ui.Size
+
+
+type alias HorizontalAlignment =
+    Ui.HorizontalAlignment
 
 
 type Icon
@@ -21,16 +25,36 @@ type Icon
     | Home
     | InfoCircle
     | Loading
+    | Login
+    | Logout
     | Warning
 
 
-iconText : Icon -> Size -> String -> Html msg
-iconText ico siz t =
+iconText : Icon -> Size -> HorizontalAlignment -> String -> Html msg
+iconText ico siz align t =
+    let
+        myIco =
+            icon ico siz
+
+        myTxt =
+            span [] [ text t ]
+
+        content =
+            case align of
+                Ui.Left ->
+                    [ myIco, myTxt ]
+
+                Ui.Right ->
+                    [ myTxt, myIco ]
+
+                Ui.Centered ->
+                    [ div [] [ myTxt ]
+                    , div [] [ myIco ]
+                    ]
+    in
     span
         []
-        [ icon ico siz
-        , span [] [ text t ]
-        ]
+        content
 
 
 icon : Icon -> Size -> Html msg
@@ -57,6 +81,12 @@ iconBody ico =
 
                 Loading ->
                     "fa fa-spinner fa-pulse fa-fw"
+
+                Login ->
+                    "fas fa-sign-in-alt"
+
+                Logout ->
+                    "fas fa-sign-out-alt"
 
                 Warning ->
                     "fas fa-exclamation-triangle"
