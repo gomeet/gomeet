@@ -639,7 +639,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 	return nil
 }
 
-func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err error) {
+func (p *Project) setProjectCreationTree(keepFile, keepProtoModelUi bool) (err error) {
 	f := newFolder(p.Name(), p.Path())
 	f.addTree(".", "project-creation", nil, keepFile)
 	pbFolder := f.getFolder("pb")
@@ -661,7 +661,7 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 		if err != nil {
 			return err
 		}
-		myFile.KeepIfExists = keepProtoModel
+		myFile.KeepIfExists = keepProtoModelUi
 	}
 
 	// reset "pb" folder if proto alias isn't "pb"
@@ -693,7 +693,7 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 
 	f.delete("ui")
 	if p.HasUi() {
-		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepFile)
+		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepProtoModelUi)
 		if err != nil {
 			return err
 		}
@@ -704,8 +704,8 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 	return nil
 }
 
-func (p *Project) ProjectCreation(keepFile, keepProtoModel bool) error {
-	if err := p.setProjectCreationTree(keepFile, keepProtoModel); err != nil {
+func (p *Project) ProjectCreation(keepFile, keepProtoModelUi bool) error {
+	if err := p.setProjectCreationTree(keepFile, keepProtoModelUi); err != nil {
 		return err
 	}
 	if _, err := os.Stat(p.Path()); os.IsNotExist(err) {

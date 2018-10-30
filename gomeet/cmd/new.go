@@ -134,7 +134,7 @@ func new(cmd *cobra.Command, args []string) {
 
 	keepProtoModel := true
 	if force {
-		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf, models, tools, package, auth_and_acl_funcs and cli helpers files ?")
+		keepProtoModel = !askIsOK("Are you sure you want to overwrite the protobuf, models, tools, package, ui files, auth_and_acl_funcs and cli helpers files ?")
 	}
 
 	p.UseGogoGen(!noGogo)
