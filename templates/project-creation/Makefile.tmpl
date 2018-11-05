@@ -254,6 +254,7 @@ proto: tools proto-gen-doc{{ if .HasUi }}{{ if .HasUiElm }} proto-gen-elm{{ end 
 		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
 			protoc -I. \
 				-I$(shell pwd)/third_party \
+				-I$(shell pwd)/vendor \
 				{{ if .IsGogoGen }}--gogo_out=plugins=grpc,\
 Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,\
 Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
@@ -301,6 +302,7 @@ proto-gen-doc:
 			for t in "docbook,$(NAME).docbook" "html,$(NAME).html" "markdown,$(NAME).md"; do \
 				protoc -I. \
 					-I$(shell pwd)/third_party \
+					-I$(shell pwd)/vendor \
 					--plugin=$(shell pwd)/_tools/bin/protoc-gen-doc \
 					--doc_out=./docs/grpc-services/ \
 					--doc_opt="$$t:google/*,github.com/*" \
@@ -319,8 +321,9 @@ proto-gen-elm:
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
 		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
 			protoc -I. \
-				-I$(shell pwd)/third_party \
 				-I$(shell pwd)/pb \
+				-I$(shell pwd)/third_party \
+				-I$(shell pwd)/vendor \
 				--plugin=$(shell pwd)/_tools/bin/protoc-gen-elm \
 				--elm_out=elm_prefix=Api,debug=false,json_name_type=proto:ui/elm/src/Api/ \
 			$$f; \
