@@ -12,7 +12,7 @@ import (
 	gomeetContext "{{ .GomeetPkg }}/utils/context"
 	"{{ .GomeetPkg }}/utils/log"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
 	// SUB-SERVICES DEFINITION : import-pb
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Pb "{{ .ProjectGroupGoPkg }}/{{ .Prefix }}{{ "{{SubServiceNameKebabCase}}" }}/pb"
 	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Pb "{{ .GoPkg }}/pb"

@@ -6,8 +6,9 @@ NAME = $(SVC_PREFIX){{ .ShortName }}
 GO_PACKAGE_BASE = {{ .ProjectGroupGoPkg }}
 GOMEET_GO_PACKAGE_NAME = github.com/gomeet/gomeet
 GO_PACKAGE_NAME = $(GO_PACKAGE_BASE)/$(NAME)
-GO_PROTO_PACKAGE_ALIAS = {{ .GoProtoPkgAlias }}
-GO_PROTO_PACKAGE = $(GO_PACKAGE_NAME)/$(GO_PROTO_PACKAGE_ALIAS)
+GO_PROTO_PACKAGE_ALIAS={{ .GoProtoPkgAlias }}
+GO_PROTO_PACKAGE_DIR=pb
+GO_PROTO_PACKAGE = $(GO_PACKAGE_NAME)/$(GO_PROTO_PACKAGE_DIR)
 GO_CGO_ENABLED?={{ .GoCGOEnabled }}
 VERSION = $(shell cat VERSION)
 
@@ -251,7 +252,7 @@ ui-setup:
 proto: tools proto-gen-doc{{ if .HasUi }}{{ if .HasUiElm }} proto-gen-elm{{ end }}{{ end }}
 	@echo "$(NAME): proto task"
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			protoc -I. \
 				-I$(shell pwd)/third_party \
 				-I$(shell pwd)/vendor \
@@ -292,13 +293,13 @@ Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \
 	done
-	cd $(GO_PROTO_PACKAGE_ALIAS) && go generate .
+	cd $(GO_PROTO_PACKAGE_DIR) && go generate .
 
 .PHONY: proto-gen-doc
 proto-gen-doc:
 	@echo "$(NAME): proto task"
 	PATH=$(shell pwd)/_tools/bin:${GOPATH}/src/{{ .GomeetPkg }}/_build:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			for t in "docbook,$(NAME).docbook" "html,$(NAME).html" "markdown,$(NAME).md"; do \
 				protoc -I. \
 					-I$(shell pwd)/third_party \
@@ -319,7 +320,7 @@ proto-gen-elm:
 	@echo "$(NAME)::proto-gen-elm"
 	mkdir -p ui/elm/src/Api
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			protoc -I. \
 				-I$(shell pwd)/pb \
 				-I$(shell pwd)/third_party \
@@ -334,7 +335,7 @@ proto-gen-elm:
 .PHONY: proto-clean
 proto-clean:
 	@echo "$(NAME): proto-clean task"
-	-rm $(GO_PROTO_PACKAGE_ALIAS)/*.pb.* $(GO_PROTO_PACKAGE_ALIAS)/*.swagger.json
+	-rm $(GO_PROTO_PACKAGE_DIR)/*.pb.* $(GO_PROTO_PACKAGE_DIR)/*.swagger.json
 
 .PHONY: package-arm32
 package-arm32: proto
@@ -407,7 +408,7 @@ package-proto:
 	@echo "$(NAME): package-proto task"
 	mkdir -p $(PACKAGE_DIR)
 	cp -r third_party $(PACKAGE_DIR)/proto
-	cp $(GO_PROTO_PACKAGE_ALIAS)/*.proto $(PACKAGE_DIR)/proto/
+	cp $(GO_PROTO_PACKAGE_DIR)/*.proto $(PACKAGE_DIR)/proto/
 	cp VERSION $(PACKAGE_DIR)/proto/
 	cd $(PACKAGE_DIR) && tar -C ./proto/ -czvf $(PACKAGE_PROTO_NAME) . && rm -rf ./proto/
 	$(call package_shasum)
@@ -649,14 +650,14 @@ test-func: build
 test-unit:
 	@echo "$(NAME): test-unit task"
 	@if ls models/*_test.go 1> /dev/null 2>&1; then cd models && go test{{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}; fi
-	@if ls $(GO_PROTO_PACKAGE_ALIAS)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_ALIAS) && go test; fi
+	@if ls $(GO_PROTO_PACKAGE_DIR)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_DIR) && go test; fi
 	@cd service && go test $(DEBUG_TEST_FLAG) -jwt-secret=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET) -max-recv-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE) -max-send-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE){{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test-race
 test-race:
 	@echo "$(NAME): test-race task"
 	@if ls models/*_test.go 1> /dev/null 2>&1; then cd models && go test -race{{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}; fi
-	@if ls $(GO_PROTO_PACKAGE_ALIAS)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_ALIAS) && go test -race; fi
+	@if ls $(GO_PROTO_PACKAGE_DIR)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_DIR) && go test -race; fi
 	@cd service && go test $(DEBUG_TEST_FLAG) -race -jwt-secret=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET) -max-recv-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE) -max-send-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE){{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test
@@ -695,7 +696,7 @@ gomeet-regenerate-project: tools
 	@echo "$(NAME): gomeet-regenerate-project task"
 	_tools/bin/gomeet new ${GO_PACKAGE_NAME} \
 		--default-prefixes='${DEFAULT_PREFIXES}' \
-		--proto-name='${GO_PROTO_PACKAGE_ALIAS}' \
+		--proto-alias='${GO_PROTO_PACKAGE_ALIAS}' \
 		--sub-services='${SUB_SERVICES}' \
 		--db-types='${DB_TYPES}' \
 		--ui-type='${UI_TYPE}' \

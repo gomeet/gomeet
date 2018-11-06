@@ -1083,7 +1083,11 @@ func messagesNeededImports(recursive bool, name string) map[string]string {
 					continue
 				}
 				if _, ok := ret[goPkg.Path]; !ok {
-					ret[goPkg.Path] = goPkg.Name
+					if goPkg.Alias != "" {
+						ret[goPkg.Path] = goPkg.Alias
+					} else {
+						ret[goPkg.Path] = goPkg.Name
+					}
 				}
 			}
 		}
@@ -1091,7 +1095,11 @@ func messagesNeededImports(recursive bool, name string) map[string]string {
 		goPkg := msg.File.GoPkg
 		if goPkg.Path != "" {
 			if _, ok := ret[goPkg.Path]; !ok {
-				ret[goPkg.Path] = goPkg.Name
+				if goPkg.Alias != "" {
+					ret[goPkg.Path] = goPkg.Alias
+				} else {
+					ret[goPkg.Path] = goPkg.Name
+				}
 			}
 		}
 	}
@@ -1630,7 +1638,11 @@ func messageFake(name string) string {
 	if err != nil {
 		return ""
 	}
+	alias := msg.File.GoPkg.Name
+	if myAlias := msg.File.GoPkg.Alias; myAlias != "" {
+		alias = myAlias
+	}
 
-	ret := fmt.Sprintf("%s.New%sGomeetFaker()", msg.File.GoPkg.Name, msg.GetName())
+	ret := fmt.Sprintf("%s.New%sGomeetFaker()", alias, msg.GetName())
 	return ret
 }

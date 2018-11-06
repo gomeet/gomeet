@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "{{ .GoPkg }}/{{ .GoProtoPkgAlias }};{{ .GoProtoPkgAlias }}";
+option go_package = "{{ .GoPkg }}/pb;{{ .GoProtoPkgAlias }}";
 option java_package = "com.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.v1";
 option objc_class_prefix = "GMPB";
 

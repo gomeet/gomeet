@@ -23,7 +23,7 @@ import (
 	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
 	{{ end }}{{ end }}
 	{{- end }}
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/pb"
 	"{{ .GoPkg }}/client"
 )
 

@@ -34,7 +34,7 @@ var newCmd = &cobra.Command{
 var (
 	subService      string
 	defaultPrefixes string
-	protoName       string
+	protoAlias      string
 	force           bool
 	noGogo          bool
 	dbTypes         string
@@ -48,7 +48,7 @@ var (
 func init() {
 	newCmd.PersistentFlags().StringVar(&subService, "sub-services", "", "Sub services dependencies (comma separated)")
 	newCmd.PersistentFlags().StringVar(&defaultPrefixes, "default-prefixes", "", fmt.Sprintf("List of prefixes [%s] (comma separated) - Overloaded with $GOMEET_DEFAULT_PREFIXES", project.GomeetDefaultPrefixes()))
-	newCmd.PersistentFlags().StringVar(&protoName, "proto-name", "", "Protobuf pakage name (inside project)")
+	newCmd.PersistentFlags().StringVar(&protoAlias, "proto-alias", "", fmt.Sprintf("Protobuf pakage alias [%s]", project.DEFAULT_PROTO_PKG_ALIAS))
 	newCmd.PersistentFlags().BoolVar(&force, "force", false, "Replace files if exists")
 	newCmd.PersistentFlags().BoolVar(&noGogo, "no-gogo", false, "if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file")
 	newCmd.PersistentFlags().StringVar(&dbTypes, "db-types", "", fmt.Sprintf("DB types [%s] (comma separated)", strings.Join(project.GomeetAllowedDbTypes(), ",")))
@@ -128,8 +128,8 @@ func new(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	if protoName != "" {
-		p.SetDefaultProtoPkgAlias(protoName)
+	if protoAlias != "" {
+		p.SetDefaultProtoPkgAlias(protoAlias)
 	}
 
 	keepProtoModel := true
