@@ -47,12 +47,12 @@ var (
 
 func init() {
 	newCmd.PersistentFlags().StringVar(&subService, "sub-services", "", "Sub services dependencies (comma separated)")
-	newCmd.PersistentFlags().StringVar(&defaultPrefixes, "default-prefixes", "", fmt.Sprintf("List of prefixes [%s] (comma separated) - Overloaded with $GOMEET_DEFAULT_PREFIXES", project.GomeetDefaultPrefixes()))
-	newCmd.PersistentFlags().StringVar(&protoAlias, "proto-alias", "", fmt.Sprintf("Protobuf pakage alias [%s]", project.DEFAULT_PROTO_PKG_ALIAS))
+	newCmd.PersistentFlags().StringVar(&defaultPrefixes, "default-prefixes", project.GomeetDefaultPrefixes(), "List of prefixes (comma separated)")
+	newCmd.PersistentFlags().StringVar(&protoAlias, "proto-alias", project.DEFAULT_PROTO_PKG_ALIAS, "Protobuf pakage alias")
 	newCmd.PersistentFlags().BoolVar(&force, "force", false, "Replace files if exists")
 	newCmd.PersistentFlags().BoolVar(&noGogo, "no-gogo", false, "if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file")
 	newCmd.PersistentFlags().StringVar(&dbTypes, "db-types", "", fmt.Sprintf("DB types [%s] (comma separated)", strings.Join(project.GomeetAllowedDbTypes(), ",")))
-	newCmd.PersistentFlags().StringVar(&uiType, "ui-type", "", fmt.Sprintf("UI type [%s] default (none)", strings.Join(project.GomeetAllowedUiTypes(), "|")))
+	newCmd.PersistentFlags().StringVar(&uiType, "ui-type", "none", fmt.Sprintf("UI type [%s]", strings.Join(project.GomeetAllowedUiTypes(), "|")))
 	newCmd.PersistentFlags().StringVar(&queueTypes, "queue-types", "", fmt.Sprintf("Queue types [%s] (comma separated)", strings.Join(project.GomeetAllowedQueueTypes(), ",")))
 	newCmd.PersistentFlags().StringVar(&extraServeFlags, "extra-serve-flags", "", "extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)")
 	newCmd.PersistentFlags().StringVar(&cronTasks, "cron-tasks", "", "Cron tasks (comma separated)")

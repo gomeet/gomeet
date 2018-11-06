@@ -12,7 +12,7 @@ import (
 func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
 	ctx := context.Background()
 
-	req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	req := &{{ messageFake .GrpcMethod.Method.GetInputType }}
 	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
 	// req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
 	res, err := cli.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx, req)

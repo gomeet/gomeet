@@ -22,7 +22,9 @@ func testGet{{ upperPascalCase .GrpcMethod.Method.Name }}Request(
 	// return an array of {{ messageGoType .GrpcMethod.Method.GetInputType }} struct pointers,
 	// each of them will be passed as an argument to the grpc {{ upperPascalCase .GrpcMethod.Method.Name }} method
 
-	reqs = append(reqs, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
+	//reqs = append(reqs, &{{ messageGoType .GrpcMethod.Method.GetInputType }}{})
+	reqs = append(reqs, {{ messageFake .GrpcMethod.Method.GetInputType }})
+
 	return reqs, extras, err
 }
 
