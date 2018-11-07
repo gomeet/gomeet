@@ -10,7 +10,7 @@ import (
 
 	gomeetService "github.com/gomeet/gomeet/utils/service"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType }}
 )
 
 func TestServicesStatus(t *testing.T) {

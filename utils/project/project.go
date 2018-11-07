@@ -98,7 +98,7 @@ func New(inputPath string) (*Project, error) {
 		version:              "0.0.1+dev",
 	}
 	p.SetDefaultPrefixes("")
-	p.SetDefaultProtoPkgAlias("")
+	p.SetDefaultProtoPkgAlias(DEFAULT_PROTO_PKG_ALIAS)
 	return p, nil
 }
 
@@ -664,19 +664,6 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModelUi bool) (err e
 		myFile.KeepIfExists = keepProtoModelUi
 	}
 
-	// reset "pb" folder if proto alias isn't "pb"
-	protoAlias, err := p.GoProtoPkgAlias()
-	if err != nil {
-		return err
-	}
-	if protoAlias != "pb" {
-		pbFolder, err = f.addTree(protoAlias, "project-creation/pb", nil, keepFile)
-		if err != nil {
-			return err
-		}
-		f.delete("pb")
-	}
-
 	// rename generic proto.proto to <short project name>.proto
 	err = pbFolder.renameFile(
 		"proto.proto",
@@ -841,6 +828,20 @@ func (p Project) DefaultProtoPkgAlias() string {
 	return *p.defaultProtoPkgAlias
 }
 
+func (p Project) GoProtoPkgName() (string, error) {
+	if len(p.ProtoFiles()) > 0 {
+		for _, file := range p.ProtoFiles() {
+			desc, err := p.protoRegistry.LookupFile(file.GetName())
+			if err != nil {
+				return "", fmt.Errorf("registry: failed to lookup file %q -- %s", file.GetName(), err)
+			}
+			return desc.GoPkg.Name, nil
+		}
+	}
+
+	return p.DefaultProtoPkgAlias(), nil
+}
+
 func (p Project) GoProtoPkgAlias() (string, error) {
 	if len(p.ProtoFiles()) > 0 {
 		for _, file := range p.ProtoFiles() {
@@ -848,8 +849,13 @@ func (p Project) GoProtoPkgAlias() (string, error) {
 			if err != nil {
 				return "", fmt.Errorf("registry: failed to lookup file %q -- %s", file.GetName(), err)
 			}
-
-			return desc.GoPkg.Name, nil
+			var alias string
+			if desc.GoPkg.Alias != "" {
+				alias = desc.GoPkg.Alias
+			} else {
+				alias = desc.GoPkg.Name
+			}
+			return alias, nil
 		}
 	}
 
@@ -902,11 +908,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	svc.addFile("init_queues.go", "protoc-gen/service/init_queues.go.tmpl", nil, false)
 	f.addTree("infra", "protoc-gen/infra", nil, false)
 	f.addTree("hack", "protoc-gen/hack", nil, false)
-	protoPkg, err := p.GoProtoPkgAlias()
-	if err != nil {
-		return err
-	}
-	f.addTree(protoPkg, "protoc-gen/pb", nil, false)
+	// added pb directory
+	f.addTree("pb", "protoc-gen/pb", nil, false)
 	f.addFile("docker-compose.yml", "protoc-gen/docker-compose.yml.tmpl", nil, false)
 	f.addFile(".travis.yml", "protoc-gen/.travis.yml.tmpl", nil, false)
 
