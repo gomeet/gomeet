@@ -69,7 +69,7 @@ docker run -d \
   -d \
   --restart always \
   -it $DOCKER_IMAGE \
-  console --address=$DOCKER_SVC_CONTAINER:13000
+  console --address=$DOCKER_SVC_CONTAINER:{{ .DefaultPort }}
 echo " -> is created"
 
 

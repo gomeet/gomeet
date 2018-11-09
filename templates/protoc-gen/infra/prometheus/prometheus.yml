@@ -34,19 +34,19 @@ scrape_configs:
         - "prometheus:9090"
         - "cadvisor:8080"
         - "node-exporter:9100"
-        - "svc-{{ .ShortName }}:13000"
+        - "svc-{{ .ShortName }}:{{ .DefaultPort }}"
 
   - job_name: 'svc-{{ .ShortName }}'
     scrape_interval: 5s
     static_configs:
       - targets:
-        - "svc-{{ .ShortName }}:13000"
+        - "svc-{{ .ShortName }}:{{ .DefaultPort }}"
 
   # SUB-SERVICES DEFINITION : prometheus-declaration
 {{ range .SubServices }}  - job_name: 'svc-{{ .ShortName }}'
     scrape_interval: 5s
     static_configs:
       - targets:
-        - "svc-{{ .ShortName }}:13000"
+        - "svc-{{ .ShortName }}:{{ .DefaultPort }}"
 
 {{ end }}  # END SUB-SERVICES DEFINITION : prometheus-declaration

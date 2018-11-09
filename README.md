@@ -52,6 +52,7 @@ Usage:
 Flags:
       --cron-tasks string          Cron tasks (comma separated)
       --db-types string            DB types [mysql,postgres,postgis,sqlite,mssql] (comma separated)
+      --default-port string        Default port (default "50051")
       --default-prefixes string    List of prefixes (comma separated) (default "svc-,gomeet-svc-")
       --extra-serve-flags string   extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)
       --force                      Replace files if exists

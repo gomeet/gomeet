@@ -1,6 +1,7 @@
 DEBUG_TEST?=0
 USE_GOGO?={{ if .IsGogoGen }}1{{ else }}0{{ end }}
 DEFAULT_PREFIXES={{ .DefaultPrefixes }}
+DEFAULT_PORT={{ .DefaultPort }}
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}
 GO_PACKAGE_BASE = {{ .ProjectGroupGoPkg }}
@@ -30,7 +31,7 @@ UI_TYPE={{ if .HasUi }}{{ .UiType }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][queue_types@<memory,rabbitmq,.... comma separed>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
 # ex: github.com/my-project/prj-svc-aaa[version@0.0.1+dev][db_types@mysql][my-extra-flag@string|My extra flag description|my default value][my-extra-flag2@int|My extra flag2 description|5],github.com/my-project/prj-svc-bbb[sub_services@github.com/my-project/prj-svc-aaa|github.com/my-project/prj-svc-ccc][db_types@mysql]
-SUB_SERVICES={{ .SubServicesDef }}
+SUB_SERVICES='{{ .SubServicesDefMultiline }}'
 
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
 {{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?={{ .Version }}
@@ -282,7 +283,7 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 "${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
+				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_port=${DEFAULT_PORT};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
 				--grpchan_out="${GOPATH}/src" \
 				--govalidators_out="gogoimport=false:${GOPATH}/src" \
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
@@ -691,6 +692,7 @@ gomeet-regenerate-project: tools
 	@echo "$(NAME): gomeet-regenerate-project task"
 	_tools/bin/gomeet new ${GO_PACKAGE_NAME} \
 		--default-prefixes='${DEFAULT_PREFIXES}' \
+		--default-port='${DEFAULT_PORT}' \
 		--proto-alias='${GO_PROTO_PACKAGE_ALIAS}' \
 		--sub-services='${SUB_SERVICES}' \
 		--db-types='${DB_TYPES}' \

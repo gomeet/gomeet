@@ -99,7 +99,7 @@ services:
   svc-{{ .ShortName }}:
     build: ./
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
-    command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
+    command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:{{ .DefaultPort }}"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
 {{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
@@ -114,7 +114,7 @@ services:
     #  restart_policy:
     #    condition: on-failure
     ports:
-      - 8383:13000
+      - 8383:{{ .DefaultPort }}
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
       - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/db/{{ end }}{{ end }}{{ end }}{{ if .SubServices }}
     depends_on:
@@ -126,7 +126,7 @@ services:
 {{ range .SubServices }}{{ $ss := . }}
   svc-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
-    command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:13000"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
+    command: serve --jwt-secret=${JWT_SECRET} --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE}{{ range .SubServices }} --svc-{{ .ShortName }}-address="svc-{{ .ShortName }}:{{ .DefaultPort }}"{{ end }}{{ range .DbTypes }} --{{ lowerKebabCase . }}-migrate --{{ lowerKebabCase . }}-dsn="
 {{- if eq . "mysql" -}}${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME{{ "}"}}:${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}}@tcp(db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}:3306)/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "postgres" }}host=db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }} port=5432 user=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_USERNAME{{ "}"}} password=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD{{ "}"}} dbname=${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE{{ "}"}}
 {{- else if eq . "sqlite" }}/db/${{ "{" }}{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE{{ "}"}}
@@ -154,7 +154,7 @@ services:
   ############
   console-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG}
-    command: console --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE} --address=svc-{{ .ShortName }}:13000
+    command: console --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE} --address=svc-{{ .ShortName }}:{{ .DefaultPort }}
     depends_on:
       - svc-{{ .ShortName }}
     networks:
@@ -162,7 +162,7 @@ services:
 {{ range .SubServices }}
   console-{{ .ShortName }}:
     image: {{ .ProjectGroupName }}/{{ .Name }}:${TAG_SVC_{{ upperSnakeCase .ShortName }}}
-    command: console --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE} --address=svc-{{ .ShortName }}:13000
+    command: console --max-recv-msg-size=${MAX_RECV_MSG_SIZE} --max-send-msg-size=${MAX_SEND_MSG_SIZE} --address=svc-{{ .ShortName }}:{{ .DefaultPort }}
     depends_on:
       - svc-{{ .ShortName }}
     networks:
@@ -176,7 +176,7 @@ services:
     image: gomeet/gomeet-go-swagger
     depends_on:
       - svc-{{ .ShortName }}
-    command: [ "serve", "http://svc-{{ .ShortName }}:13000/api/v1/swagger.json" ]
+    command: [ "serve", "http://svc-{{ .ShortName }}:{{ .DefaultPort }}/api/v1/swagger.json" ]
     environment:
       - PORT=80
     ports:

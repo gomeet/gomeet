@@ -94,7 +94,7 @@ func initServerExtraFlags(cmd *cobra.Command) {
 
 func initServerAddressFlag(cmd *cobra.Command) {
 	// address flag (to serve all protocols on a single port)
-	cmd.PersistentFlags().StringVarP(&serverAddress, "address", "a", ":13000", "Multiplexed gRPC/HTTP server address")
+  cmd.PersistentFlags().StringVarP(&serverAddress, "address", "a", ":{{ .DefaultPort }}", "Multiplexed gRPC/HTTP server address")
 }
 
 func initServerNetworkFlags(cmd *cobra.Command) {
