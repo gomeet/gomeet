@@ -1286,7 +1286,7 @@ func subSvcPkgString(subSvc []*helpers.PkgNfo) string {
 	return strings.Join(ret, ",")
 }
 
-func curlCmdHelpString(defaultPort string, name string, protoFiles []*descriptor.FileDescriptorProto) string {
+func curlCmdHelpString(defaultPort int, name string, protoFiles []*descriptor.FileDescriptorProto) string {
 	var ret []string
 
 	for _, file := range protoFiles {
@@ -1314,7 +1314,7 @@ func curlCmdHelpString(defaultPort string, name string, protoFiles []*descriptor
 				ret = append(
 					ret,
 					fmt.Sprintf(
-						"curl -X %s http://localhost:%s%s%s",
+						"curl -X %s http://localhost:%d%s%s",
 						rightPad2Len(httpV, " ", 6), // 6 - DELETE len + 1
 						defaultPort,
 						httpPath(method),

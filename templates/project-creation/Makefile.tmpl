@@ -31,7 +31,7 @@ UI_TYPE={{ if .HasUi }}{{ .UiType }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][queue_types@<memory,rabbitmq,.... comma separed>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
 # ex: github.com/my-project/prj-svc-aaa[version@0.0.1+dev][db_types@mysql][my-extra-flag@string|My extra flag description|my default value][my-extra-flag2@int|My extra flag2 description|5],github.com/my-project/prj-svc-bbb[sub_services@github.com/my-project/prj-svc-aaa|github.com/my-project/prj-svc-ccc][db_types@mysql]
-SUB_SERVICES='{{ .SubServicesDefMultiline }}'
+SUB_SERVICES={{ .SubServicesDefMultiline }}
 
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
 {{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?={{ .Version }}
