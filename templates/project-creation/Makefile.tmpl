@@ -463,50 +463,45 @@ docker:
 	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" >> .env
 	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" >> .env
 {{ range .SubServices }}	echo "TAG_SVC_{{ upperSnakeCase .ShortName }}=$(DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }})" >> .env
-{{ end -}}
-	{{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}{{ range $.QueueTypes -}}{{ if eq . "memory" }}
-	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
+{{ end }}{{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}{{ range $.QueueTypes -}}{{ if eq . "memory" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)' >> .env
 	{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
 	{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
 	{{ else if eq . "sqs" }}# sqs support is not yet implemented
-	{{ end }}{{ end }}{{ range $.DbTypes }}{{ if eq . "mysql" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	{{ end }}{{ end }}{{ range $.DbTypes }}{{ if eq . "mysql" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "postgres" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "postgres" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "sqlite" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
-	{{ else if eq . "mssql" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "sqlite" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+{{ else if eq . "mssql" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{- end }}{{- end }}
-	{{ range $.SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
+{{ end }}{{ end }}{{ range $.SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)' >> .env
-	{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}# sqs support is not yet implemented
-	{{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "rabbitmq" }}	# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}	# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}	# sqs support is not yet implemented
+{{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "postgres" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "postgres" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "sqlite" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
-	{{ else if eq . "mssql" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "sqlite" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+{{ else if eq . "mssql" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ end }}{{ end }}{{ end }}
-{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
+{{ end }}{{ end }}{{ end }}{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
 {{ end }}{{ range $.SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})' >> .env
-{{ end }}{{ end -}}
-{{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
+{{ end }}{{ end }}{{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
 
 .PHONY: docker-push
 docker-push: docker
