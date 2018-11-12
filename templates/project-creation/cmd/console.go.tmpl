@@ -25,15 +25,7 @@ var (
 )
 
 func init() {
-	// CA certificate
-	consoleCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
-
-	// gRPC client certificate
-	consoleCmd.PersistentFlags().StringVar(&clientCertificate, "cert", "", "X.509 certificate of the gRPC client (required for gRPC TLS support)")
-
-	// gRPC client private key
-	consoleCmd.PersistentFlags().StringVar(&clientPrivateKey, "key", "", "RSA private key of the gRPC client (required for gRPC TLS support)")
-
+	initClientTlsFlags(consoleCmd)
 	initServerAddressFlag(consoleCmd)
 	initTimeoutFlag(consoleCmd)
 	initJWTTokenFlag(consoleCmd)
@@ -55,6 +47,7 @@ func console(cmd *cobra.Command, args []string) {
 		rcli.ConsoleCall, serverAddress, timeoutSeconds,
 		caCertificate, clientCertificate, clientPrivateKey, jwtToken,
 		maxRecvMsgSize, maxSendMsgSize,
+		withTls,
 	)
 
 	if err != nil {

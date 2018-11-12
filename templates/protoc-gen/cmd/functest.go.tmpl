@@ -41,6 +41,9 @@ func init() {
 	initTimeoutFlag(funcTestCmd)
 	initServerAddressFlag(funcTestCmd)
 
+	//initClientTlsFlags(funcTestCmd)
+	initWithTlsFlag(funcTestCmd)
+
 	initGrpcFlags(funcTestCmd)
 	initServerExtraFlags(funcTestCmd)
 	initServerNetworkFlags(funcTestCmd)
@@ -166,6 +169,7 @@ func runFunctionalTests(cmd *cobra.Command, args []string) {
 		JsonWebToken:       jwtToken,
 		MaxRecvMsgSize:     maxRecvMsgSize,
 		MaxSendMsgSize:     maxSendMsgSize,
+		WithTls:            withTls,
 		TokenLifetimeHours: tokenLifetimeHours,
 		SubjectID:          subjectID,
 		IsEmbeddedServer:   useEmbeddedServer,

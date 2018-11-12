@@ -12,10 +12,8 @@ import (
 )
 
 var (
-	clientCertificate string
-	clientPrivateKey  string
-	svc               = service.NewService()
-	svcName           = fmt.Sprintf("%s-%s", svc.Name, svc.Version)
+	svc     = service.NewService()
+	svcName = fmt.Sprintf("%s-%s", svc.Name, svc.Version)
 
 	// rootCmd This represents the base command when called without any subcommands
 	rootCmd = &cobra.Command{

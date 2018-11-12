@@ -32,6 +32,9 @@ func init() {
 	initTimeoutFlag(cronTaskCmd)
 	// initServerAddressFlag(cronTaskCmd)
 
+	//initClientTlsFlags(cronTaskCmd)
+	initWithTlsFlag(cronTaskCmd)
+
 	initGrpcFlags(cronTaskCmd)
 	initServerExtraFlags(cronTaskCmd)
 	// initServerNetworkFlags(cronTaskCmd)
@@ -99,6 +102,7 @@ func runCronTask(cmd *cobra.Command, args []string) {
 		JsonWebToken:       jwtToken,
 		MaxRecvMsgSize:     maxRecvMsgSize,
 		MaxSendMsgSize:     maxSendMsgSize,
+		WithTls:            withTls,
 		TokenLifetimeHours: tokenLifetimeHours,
 		SubjectID:          subjectID,
 		IsEmbeddedServer:   useEmbeddedServer,
