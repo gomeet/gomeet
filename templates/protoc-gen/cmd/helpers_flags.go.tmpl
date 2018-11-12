@@ -18,6 +18,9 @@ var (
 	caCertificate      string
 	serverCertificate  string
 	serverPrivateKey   string
+	clientCertificate  string
+	clientPrivateKey   string
+	withTls            bool
 	timeoutSeconds     int
 
 	// Network addresses
@@ -81,6 +84,25 @@ func initServerTlsFlags(cmd *cobra.Command) {
 
 	// gRPC server private key
 	cmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
+}
+
+func initClientTlsFlags(cmd *cobra.Command) {
+	// CA certificate
+	cmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
+
+	// gRPC server certificate
+	cmd.PersistentFlags().StringVar(&clientCertificate, "cert", "", "X.509 certificate of the gRPC server (required for gRPC TLS support)")
+
+	// gRPC server private key
+	cmd.PersistentFlags().StringVar(&clientPrivateKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
+
+	// Add with tls flag
+	initWithTlsFlag(cmd)
+}
+
+func initWithTlsFlag(cmd *cobra.Command) {
+	// Add with tls flag
+	cmd.PersistentFlags().BoolVar(&withTls, "tls", false, "Use TLS with InsecureSkipVerify: true")
 }
 
 func initServerExtraFlags(cmd *cobra.Command) {
