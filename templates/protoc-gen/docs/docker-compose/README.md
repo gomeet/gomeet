@@ -43,7 +43,7 @@ docker attach {{ lowerNospaceCase .Name }}_console-{{ .ShortName }}_X
 ```bash
 docker run \
     --net={{ lowerNospaceCase .Name }}_grpc \
-    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) cli echo 42 --address=svc:13000
+    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) cli echo 42 --address=svc:{{ .DefaultPort }}
 ```
 
 ### Curl with docker use gomeet/gomeet-curl
@@ -54,16 +54,16 @@ docker run \
 # use HTTP/1.1 api
 docker run \
     --net={{ lowerNospaceCase .Name }}_http \
-    -it gomeet/gomeet-curl -X POST http://svc:13000/api/v1/echo -d '{"id": "{id}"}'
+    -it gomeet/gomeet-curl -X POST http://svc:{{ .DefaultPort }}/api/v1/echo -d '{"id": "{id}"}'
 
 # status and metrics
 docker run \
     --net={{ lowerNospaceCase .Name }}_http \
-    -it gomeet/gomeet-curl http://svc-{{ .ShortName }}:13000/status
+    -it gomeet/gomeet-curl http://svc-{{ .ShortName }}:{{ .DefaultPort }}/status
 
 docker run \
     --net={{ lowerNospaceCase .Name }}_http \
-    -it gomeet/gomeet-curl http://svc-{{ .ShortName }}:13000/metrics
+    -it gomeet/gomeet-curl http://svc-{{ .ShortName }}:{{ .DefaultPort }}/metrics
 ```
 
 ## Grafana configuration

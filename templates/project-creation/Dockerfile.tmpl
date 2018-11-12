@@ -20,6 +20,6 @@ FROM scratch
 LABEL maintainer="Hugues Dubois <hugdubois@gmail.com>"
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=builder /go/src/{{ .GoPkg }}/_build/{{ .Name }} /{{ .Name }}
-EXPOSE 13000
+EXPOSE {{ .DefaultPort }}
 ENTRYPOINT ["/{{ .Name }}"]
 CMD ["serve"]

@@ -6,7 +6,7 @@
 #{{ upperSnakeCase .ProjectGroupName }}_JWT_SECRET=""
 #{{ upperSnakeCase .ProjectGroupName }}_MAX_RECV_MSG_SIZE=10
 #{{ upperSnakeCase .ProjectGroupName }}_MAX_SEND_MSG_SIZE=10
-#{{ upperSnakeCase .Name }}_ADDRESS=":13000"
+#{{ upperSnakeCase .Name }}_ADDRESS=":{{ .DefaultPort }}"
 {{ range .SubServices -}}{{ $ss := . }}#{{ upperSnakeCase $ss.Name }}_ADDRESS="inprocgrpc"
 {{ end -}}
 {{ range .QueueTypes }}{{ if eq . "memory" -}}

@@ -49,6 +49,7 @@ func main() {
 		subServices     []string
 		projectPkg      string
 		defaultPrefixes string
+		defaultPort     string
 		dbTypes         string
 		uiType          string
 		queueTypes      string
@@ -74,6 +75,8 @@ func main() {
 				queueTypes = parts[1]
 			case "cron_tasks":
 				cronTasks = parts[1]
+			case "default_port":
+				defaultPort = parts[1]
 			case "default_prefixes":
 				defaultPrefixes = parts[1]
 			case "project_pkg":
@@ -99,6 +102,7 @@ func main() {
 		g.Error(err, "project initialization fail")
 	}
 	p.SetDefaultPrefixes(defaultPrefixes)
+	p.SetDefaultPort(defaultPort)
 	p.SetSubServices(subServices)
 
 	if dbTypes != "" {

@@ -42,12 +42,14 @@ var (
 	queueTypes      string
 	cronTasks       string
 	extraServeFlags string
+	defaultPort     string
 	out             = colorable.NewColorableStdout()
 )
 
 func init() {
 	newCmd.PersistentFlags().StringVar(&subService, "sub-services", "", "Sub services dependencies (comma separated)")
 	newCmd.PersistentFlags().StringVar(&defaultPrefixes, "default-prefixes", project.GomeetDefaultPrefixes(), "List of prefixes (comma separated)")
+	newCmd.PersistentFlags().StringVar(&defaultPort, "default-port", project.DefaultRawPort(), "Default port")
 	newCmd.PersistentFlags().StringVar(&protoAlias, "proto-alias", project.DEFAULT_PROTO_PKG_ALIAS, "Protobuf pakage alias")
 	newCmd.PersistentFlags().BoolVar(&force, "force", false, "Replace files if exists")
 	newCmd.PersistentFlags().BoolVar(&noGogo, "no-gogo", false, "if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file")
@@ -88,6 +90,13 @@ func new(cmd *cobra.Command, args []string) {
 
 	if defaultPrefixes != "" {
 		err := p.SetDefaultPrefixes(defaultPrefixes)
+		if err != nil {
+			er(err)
+		}
+	}
+
+	if defaultPort != "" {
+		_, err := p.SetDefaultPort(defaultPort)
 		if err != nil {
 			er(err)
 		}

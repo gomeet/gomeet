@@ -31,11 +31,11 @@ Then you can hit it with the client:
   $ {{ .Name }} cli --address localhost:42000 version
 
 Or over HTTP/1.1 with curl:
-{{ curlCmdHelpString .Name .ProtoFiles }}
-  $ curl -X GET    http://localhost:13000/
-  $ curl -X GET    http://localhost:13000/version
-  $ curl -X GET    http://localhost:13000/metrics
-  $ curl -X GET    http://localhost:13000/status
+{{ curlCmdHelpString .DefaultPort .Name .ProtoFiles }}
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/version
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/metrics
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/status
   $ curl -X GET    http://localhost:42000/version
 
 Or via an interactive console :

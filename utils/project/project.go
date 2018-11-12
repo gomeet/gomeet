@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,6 +26,7 @@ import (
 const (
 	DEFAULT_PROTO_PKG_ALIAS = "pb"
 	DEFAULT_ELM             = "elm-bulma"
+	DEFAULT_PORT            = 50051
 )
 
 var (
@@ -35,6 +37,10 @@ var (
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
+}
+
+func DefaultRawPort() string {
+	return fmt.Sprintf("%d", DEFAULT_PORT)
 }
 
 func GomeetAllowedDbTypes() []string { return allowedDbTypes }
@@ -67,6 +73,7 @@ type Project struct {
 	defaultProtoPkgAlias *string
 	isGogoGen            bool
 	version              string
+	defaultPort          int
 }
 
 func New(inputPath string) (*Project, error) {
@@ -99,6 +106,7 @@ func New(inputPath string) (*Project, error) {
 	}
 	p.SetDefaultPrefixes("")
 	p.SetDefaultProtoPkgAlias(DEFAULT_PROTO_PKG_ALIAS)
+	p.SetDefaultPort("")
 	return p, nil
 }
 
@@ -287,6 +295,7 @@ func (p Project) UiType() string                                { return p.uiTyp
 func (p Project) QueueTypes() []string                          { return p.queueTypes }
 func (p Project) CronTasks() []string                           { return p.cronTasks }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
+func (p Project) DefaultPort() int                              { return p.defaultPort }
 
 func (p Project) GoCGOEnabled() int {
 	ret := 0
@@ -497,6 +506,13 @@ func (p *Project) SubServicesMonolithHelp() string {
 }
 
 func (p *Project) SubServicesDef() string {
+	return p.subServicesDef(false)
+}
+func (p *Project) SubServicesDefMultiline() string {
+	return p.subServicesDef(true)
+}
+
+func (p *Project) subServicesDef(multiline bool) string {
 	servicesKeys := []string{}
 	for k := range p.SubServices {
 		servicesKeys = append(servicesKeys, k)
@@ -510,6 +526,11 @@ func (p *Project) SubServicesDef() string {
 			"%s[version@%s]",
 			ss.GoPkg(),
 			ss.Version(),
+		)
+		ssString = fmt.Sprintf(
+			"%s[default_port@%d]",
+			ssString,
+			ss.DefaultPort(),
 		)
 		if len(ss.DbTypes()) > 0 {
 			ssString = fmt.Sprintf(
@@ -550,7 +571,12 @@ func (p *Project) SubServicesDef() string {
 		}
 		ssStrings = append(ssStrings, ssString)
 	}
-	return strings.Join(ssStrings, ",")
+	sep := ","
+	if multiline {
+		sep = `,\
+`
+	}
+	return strings.Join(ssStrings, sep)
 }
 
 func (p *Project) SetSubServices(subServices []string) error {
@@ -558,6 +584,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 		neededSubServices := []string{}
 		dependenciesTree := map[string][]string{}
 		p.SubServices = make(map[string]*Project)
+		iPort := p.DefaultPort()
 		for _, subSvcPkg := range subServices {
 			part := strings.Split(subSvcPkg, "[")
 			if len(part) < 1 {
@@ -577,6 +604,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 
 			var (
 				ssVersion     string
+				ssDefaultPort string
 				ssDbTypes     []string
 				ssQueueTypes  []string
 				ssFlags       []string
@@ -590,6 +618,8 @@ func (p *Project) SetSubServices(subServices []string) error {
 					ssQueueTypes = strings.Split(strings.TrimPrefix(ssFlag, "queue_types@"), "|")
 				case strings.HasPrefix(ssFlag, "version@"):
 					ssVersion = strings.TrimPrefix(ssFlag, "version@")
+				case strings.HasPrefix(ssFlag, "default_port@"):
+					ssDefaultPort = strings.TrimPrefix(ssFlag, "default_port@")
 				case strings.HasPrefix(ssFlag, "sub_services@"):
 					ssSubServices = strings.Split(strings.TrimPrefix(ssFlag, "sub_services@"), "|")
 					dependenciesTree[subSvc.GoPkg()] = ssSubServices
@@ -599,6 +629,12 @@ func (p *Project) SetSubServices(subServices []string) error {
 			}
 			if ssVersion != "" {
 				subSvc.SetVersion(ssVersion)
+			}
+			if ssDefaultPort != "" {
+				iPort, err = subSvc.SetDefaultPort(ssDefaultPort)
+				if err != nil {
+					return err
+				}
 			}
 			if len(ssFlags) > 0 {
 				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
@@ -622,6 +658,8 @@ func (p *Project) SetSubServices(subServices []string) error {
 					return err
 				}
 				subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+				iPortB := iPort + 10
+				iPort, err = subSvc.SetDefaultPort(fmt.Sprintf("%d", iPortB))
 				p.SubServices[subSvc.GoPkg()] = subSvc
 			}
 		}
@@ -822,6 +860,33 @@ func (p *Project) setProtoRegistry(req *plugin.CodeGeneratorRequest) error {
 	}
 
 	return nil
+}
+
+func (p *Project) SetDefaultPort(rawPort string) (int, error) {
+	rawPort = strings.Trim(rawPort, " ")
+	if len(rawPort) == 0 {
+		rawPort = DefaultRawPort()
+	}
+
+	port, err := strconv.ParseUint(rawPort, 10, 16)
+	if err != nil {
+		return 0, fmt.Errorf("Invalid default-port number : %s", err)
+	}
+
+	iPort := int(port)
+	p.defaultPort = iPort
+
+	if len(p.SubServices) > 0 {
+		for _, ss := range p.SubServices {
+			iPortB := iPort + 10
+			iPort, err = ss.SetDefaultPort(fmt.Sprintf("%d", iPortB))
+			if err != nil {
+				return iPortB, err
+			}
+		}
+	}
+
+	return iPort, nil
 }
 
 func (p Project) DefaultProtoPkgAlias() string {
