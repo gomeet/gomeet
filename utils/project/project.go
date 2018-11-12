@@ -324,6 +324,25 @@ func (p Project) HasDb() bool {
 	return false
 }
 
+func (p Project) HasMySqlDb() bool {
+	dbTypes := p.DbTypes()
+	if len(dbTypes) > 0 {
+		for _, dbType := range dbTypes {
+			if dbType == "mysql" {
+				return true
+			}
+		}
+	}
+
+	for _, ss := range p.SubServices {
+		if ss.HasMySqlDb() {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (p Project) HasUi() bool {
 	uiT := p.UiType()
 	return (uiT != "" && uiT != "none")

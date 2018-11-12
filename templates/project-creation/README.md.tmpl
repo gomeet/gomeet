@@ -61,4 +61,5 @@ $ gomeet new {{ .GoPkg }} \
 - [x] Add git workflow ([git flow](https://danielkummer.github.io/git-flow-cheatsheet/))
 - [x] Add a web ui
 - [x] Add cron tasks support
-- [ ] Add desktop UI (GTK, Qt, Electron/nodeJS, ... ?)
+- [ ] Add desktop UI (GTK, Qt, Electron/nodeJS, ... ?){{ if .HasMySqlDb }}
+- [ ] Set MySQL timezone on db connection{{ end }}
