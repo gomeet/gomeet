@@ -106,6 +106,22 @@ go test
 {{ .Name }} loadtest --address <multiplexed server address> -n <number of sessions> -s <concurrency level>
 ```
 
+## TLS authentication (via a public certificat)
+
+- Run the server behind a well configured proxy with the credentials (cf. [nginx-example.conf](../../infra/nginx/nginx-example.conf))
+
+- Run the clients with their TLS flag:
+
+```shell
+{{ .Name }} cli <grpc_service> <params...> \
+    --address localhost:3000 \
+    --tls
+
+{{ .Name }} console \
+    --address localhost:3000 \
+    --tls
+```
+
 ## Mutual TLS authentication
 
 - Create a Certificate Authority:
