@@ -445,7 +445,7 @@ func projectCreationChangelogMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 1191, mode: os.FileMode(420), modTime: time.Unix(1541767624, 0)}
+	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 1191, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -465,7 +465,7 @@ func projectCreationDockerfileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 806, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 806, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -525,7 +525,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 45311, mode: os.FileMode(420), modTime: time.Unix(1541771487, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 45311, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -545,7 +545,7 @@ func projectCreationReadmeMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2529, mode: os.FileMode(420), modTime: time.Unix(1541767495, 0)}
+	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2529, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1045,7 +1045,7 @@ func projectCreationHackContainersUpSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2528, mode: os.FileMode(493), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2528, mode: os.FileMode(493), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1305,7 +1305,7 @@ func projectCreationHackRunEnvSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7493, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7493, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5925,7 +5925,7 @@ func protocGenCmdHelpers_flagsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 12529, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 12529, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6125,7 +6125,7 @@ func protocGenCmdRootGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1603, mode: os.FileMode(420), modTime: time.Unix(1541768010, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1603, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6165,7 +6165,7 @@ func protocGenDockerComposeYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11795, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 11795, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6245,7 +6245,7 @@ func protocGenDocsDockerReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2871, mode: os.FileMode(420), modTime: time.Unix(1541768026, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2871, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6285,7 +6285,7 @@ func protocGenDocsDockerComposeReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1495, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1495, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6325,7 +6325,7 @@ func protocGenDocsUsageReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4148, mode: os.FileMode(420), modTime: time.Unix(1541768046, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4148, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6345,7 +6345,7 @@ func protocGenHackRunConsoleShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3609, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3609, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6365,7 +6365,7 @@ func protocGenHackRunShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30047, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30047, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6385,7 +6385,7 @@ func protocGenInfraPrometheusPrometheusYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1728, mode: os.FileMode(420), modTime: time.Unix(1541764714, 0)}
+	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1728, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
