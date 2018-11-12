@@ -47,6 +47,7 @@ func NewRemoteCli(
 	ctxCall ContextCall, addr string, timeout int,
 	caCertificate, clientCertificate, clientPrivateKey, jwt string,
 	maxRecvMsgSize, maxSendMsgSize int,
+	withTls bool,
 ) (RemoteCli, error) {
 	cli, err := client.NewGomeetClient(
 		addr,
@@ -56,6 +57,7 @@ func NewRemoteCli(
 		clientPrivateKey,
 		maxRecvMsgSize,
 		maxSendMsgSize,
+		withTls,
 	)
 
 	if err != nil {
