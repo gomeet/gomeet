@@ -61,6 +61,7 @@
 // templates/project-creation/models/models.go.tmpl
 // templates/project-creation/pb/proto.proto.tmpl
 // templates/project-creation/service/auth_and_acl_funcs.go.tmpl
+// templates/project-creation/service/helpers.go.tmpl
 // templates/project-creation/service/http.go.tmpl
 // templates/project-creation/third_party/LICENSE-APACHE2
 // templates/project-creation/third_party/LICENSE-PROTOBUF
@@ -1607,6 +1608,26 @@ func projectCreationServiceAuth_and_acl_funcsGoTmpl() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "project-creation/service/auth_and_acl_funcs.go.tmpl", size: 2176, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _projectCreationServiceHelpersGoTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2c\x8c\xc1\x8e\x82\x30\x14\x45\xd7\xf4\x2b\x6e\x58\xc1\x66\x9a\x4c\x66\x35\x09\x6b\x35\x71\xe1\x2f\x34\xf5\x49\x9f\x60\xdb\xf4\x3d\xd4\x84\xf0\xef\x06\x61\x7b\xef\x39\x27\x3b\x3f\xb8\x9e\x20\x54\x9e\xec\xc9\x18\x9f\xa2\x28\x1a\x53\x59\x8b\xfb\x4b\x31\xf2\x8d\x94\x1f\x04\x7a\xe7\x42\x22\x74\x05\x47\x84\x34\x15\x31\x95\xa6\x81\xe2\x79\x27\x8e\xeb\x86\x0e\xbf\x7f\x5f\x99\x45\x26\x2a\x68\x34\x10\x72\xe1\xe8\x39\xbb\x11\x1a\x9c\x6e\x97\xac\xf9\x76\x6f\x9c\x36\xb8\x43\x1d\x54\xb3\xfc\x5b\x3b\xcf\xf8\x39\xa4\xcb\xd0\x63\x59\x6a\xd3\x9a\x4f\x00\x00\x00\xff\xff\x12\x72\x8e\xd5\xa9\x00\x00\x00")
+
+func projectCreationServiceHelpersGoTmplBytes() ([]byte, error) {
+	return bindataRead(
+		_projectCreationServiceHelpersGoTmpl,
+		"project-creation/service/helpers.go.tmpl",
+	)
+}
+
+func projectCreationServiceHelpersGoTmpl() (*asset, error) {
+	bytes, err := projectCreationServiceHelpersGoTmplBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "project-creation/service/helpers.go.tmpl", size: 169, mode: os.FileMode(420), modTime: time.Unix(1542032161, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6866,7 +6887,7 @@ func protocGenServiceService_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 15989, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 15989, mode: os.FileMode(420), modTime: time.Unix(1542032189, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6984,6 +7005,7 @@ var _bindata = map[string]func() (*asset, error){
 	"project-creation/models/models.go.tmpl": projectCreationModelsModelsGoTmpl,
 	"project-creation/pb/proto.proto.tmpl": projectCreationPbProtoProtoTmpl,
 	"project-creation/service/auth_and_acl_funcs.go.tmpl": projectCreationServiceAuth_and_acl_funcsGoTmpl,
+	"project-creation/service/helpers.go.tmpl": projectCreationServiceHelpersGoTmpl,
 	"project-creation/service/http.go.tmpl": projectCreationServiceHttpGoTmpl,
 	"project-creation/third_party/LICENSE-APACHE2": projectCreationThird_partyLicenseApache2,
 	"project-creation/third_party/LICENSE-PROTOBUF": projectCreationThird_partyLicenseProtobuf,
@@ -7386,6 +7408,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		}},
 		"service": &bintree{nil, map[string]*bintree{
 			"auth_and_acl_funcs.go.tmpl": &bintree{projectCreationServiceAuth_and_acl_funcsGoTmpl, map[string]*bintree{}},
+			"helpers.go.tmpl": &bintree{projectCreationServiceHelpersGoTmpl, map[string]*bintree{}},
 			"http.go.tmpl": &bintree{projectCreationServiceHttpGoTmpl, map[string]*bintree{}},
 		}},
 		"third_party": &bintree{nil, map[string]*bintree{
