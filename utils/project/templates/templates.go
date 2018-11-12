@@ -586,7 +586,7 @@ func projectCreationCmdConsoleGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 2980, mode: os.FileMode(420), modTime: time.Unix(1542019070, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 2980, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -606,7 +606,7 @@ func projectCreationCmdFunctestClientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2172, mode: os.FileMode(420), modTime: time.Unix(1542020926, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2172, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5386,7 +5386,7 @@ func protocGenClientGomeet_clientGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 5234, mode: os.FileMode(420), modTime: time.Unix(1542019258, 0)}
+	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 5234, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5406,7 +5406,7 @@ func protocGenCmdCliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 1418, mode: os.FileMode(420), modTime: time.Unix(1542019054, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 1418, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5466,7 +5466,7 @@ func protocGenCmdCrontaskGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/crontask.go.tmpl", size: 4974, mode: os.FileMode(420), modTime: time.Unix(1542019618, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/crontask.go.tmpl", size: 4974, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5866,7 +5866,7 @@ func protocGenCmdFunctestTypesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2567, mode: os.FileMode(420), modTime: time.Unix(1542019409, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2567, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5886,7 +5886,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 9417, mode: os.FileMode(420), modTime: time.Unix(1542019662, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 9417, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5926,7 +5926,7 @@ func protocGenCmdHelpers_flagsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 13354, mode: os.FileMode(420), modTime: time.Unix(1542018961, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 13354, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6106,7 +6106,7 @@ func protocGenCmdRemotecliRemotecliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3897, mode: os.FileMode(420), modTime: time.Unix(1542020867, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3897, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6126,7 +6126,7 @@ func protocGenCmdRootGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1531, mode: os.FileMode(420), modTime: time.Unix(1542018995, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1531, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6386,7 +6386,7 @@ func protocGenInfraNginxNginxExampleConfTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/infra/nginx/nginx-example.conf.tmpl", size: 1692, mode: os.FileMode(420), modTime: time.Unix(1542028123, 0)}
+	info := bindataFileInfo{name: "protoc-gen/infra/nginx/nginx-example.conf.tmpl", size: 1692, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
