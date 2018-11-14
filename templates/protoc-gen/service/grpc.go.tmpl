@@ -46,8 +46,9 @@ type {{ lowerPascalCase .ShortName }}Server struct {
 
 	// SUB-SERVICES DEFINITION : var-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string
-	{{ end }}// END SUB-SERVICES DEFINITION : var-address
+{{ range .SubServices }}	svc{{ upperPascalCase .ShortName }}Address string
+	svc{{ upperPascalCase .ShortName }}Tls bool
+{{ end }}	// END SUB-SERVICES DEFINITION : var-address
 
 	// SUB-SERVICES DEFINITION : var-client
 	// svc{{ "{{SubServiceNamePascalCase}}" }}GrpcClient svc{{ "{{SubServiceNamePascalCase}}" }}Pb.{{ "{{SubServiceNamePascalCase}}" }}Client

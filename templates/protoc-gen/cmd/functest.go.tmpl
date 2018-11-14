@@ -102,7 +102,7 @@ func runFunctionalTests(cmd *cobra.Command, args []string) {
 					{{ else if eq . "sqs" }}// sqs support is not yet implemented
 					{{ end }}{{ end }}
 					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 					{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
@@ -122,7 +122,7 @@ func runFunctionalTests(cmd *cobra.Command, args []string) {
 					{{ else if eq . "sqs" }}// sqs support is not yet implemented
 					{{ end }}{{ end }}
 					{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+					{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 					{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 					{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 					{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
@@ -184,13 +184,14 @@ func runFunctionalTests(cmd *cobra.Command, args []string) {
 		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 		{{ else if eq . "sqs" }}// sqs support is not yet implemented
-		{{ end }}{{ end }}
-		{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,
-		{{ end }}
-		{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
-		{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
-		{{ end }}
-		{{ range .QueueTypes }}{{ if eq . "memory" }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount,
+		{{ end }}{{ end }}{{ range .ExtraServeFlags }}
+		{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,
+		{{ end }}{{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}
+		Svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
+		Svc{{ upperPascalCase .ShortName }}Tls: svc{{ upperPascalCase .ShortName }}Tls,{{ range .DbTypes }}
+		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
+		{{ end }}{{ range .QueueTypes }}{{ if eq . "memory" }}
+		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount,
 		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented

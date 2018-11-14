@@ -27,18 +27,15 @@ var (
 	serverAddress      string
 	grpcServerAddress  string
 	httpServerAddress  string
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string
-	{{ end }}
-
+{{ range .SubServices }}	svc{{ upperPascalCase .ShortName }}Address string
+	svc{{ upperPascalCase .ShortName }}Tls bool
+{{ end }}
 	// Main server extra flags
 	{{ range .ExtraServeFlags }}
 	{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
-	{{ end }}// SubService extra flags
-	{{ range .SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}
+	{{ end }}// SubService extra flags{{ range .SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}
 	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
-	{{ end }}{{ end }}
-
-	//Main server databases{{ range .DbTypes }}
+{{ end }}{{ end }}	//Main server databases{{ range .DbTypes }}
 	{{ lowerPascalCase . }}Migrate bool
 	{{ lowerPascalCase . }}Flush bool
 	{{ lowerPascalCase . }}DataSourceName string
@@ -133,6 +130,8 @@ func initServerNetworkFlags(cmd *cobra.Command) {
 func initServerSubServicesNetworkFlags(cmd *cobra.Command) {
 	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
+	// {{ upperPascalCase .ShortName }} service tls
+	cmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase .ShortName }}Tls, "svc-{{ lowerKebabCase .ShortName }}-tls", false, "{{ upperPascalCase .ShortName }} uses TLS with InsecureSkipVerify: true")
 	{{ end }}
 }
 
