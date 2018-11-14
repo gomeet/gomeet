@@ -118,7 +118,7 @@ func serve(cmd *cobra.Command, args []string) {
 			{{ else if eq . "sqs" }}// sqs support is not yet implemented
 			{{ end }}{{ end }}
 			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
@@ -137,7 +137,7 @@ func serve(cmd *cobra.Command, args []string) {
 			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 			{{ else if eq . "sqs" }}// sqs support is not yet implemented
 			{{ end }}{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .QueueTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, {{ end -}}
 			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}

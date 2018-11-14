@@ -702,23 +702,25 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModelUi bool) (err e
 	pbFolder := f.getFolder("pb")
 
 	// keep some files if needed
-	keepFiles := map[string]*folder{
-		"tools.json":            f,
-		"Gopkg.toml":            f,
-		"CHANGELOG.md":          f,
-		"VERSION":               f,
-		"proto.proto":           pbFolder,
-		"run-env.sh":            f.getFolder("hack"),
-		"models.go":             f.getFolder("models"),
-		"auth_and_acl_funcs.go": f.getFolder("service"),
-		"helpers.go":            f.getFolder("cmd").getFolder("remotecli"),
+	keepFiles := map[string][]*folder{
+		"tools.json":            []*folder{f},
+		"Gopkg.toml":            []*folder{f},
+		"CHANGELOG.md":          []*folder{f},
+		"VERSION":               []*folder{f},
+		"proto.proto":           []*folder{pbFolder},
+		"run-env.sh":            []*folder{f.getFolder("hack")},
+		"models.go":             []*folder{f.getFolder("models")},
+		"auth_and_acl_funcs.go": []*folder{f.getFolder("service")},
+		"helpers.go":            []*folder{f.getFolder("cmd").getFolder("remotecli"), f.getFolder("service")},
 	}
-	for myFileName, myFolder := range keepFiles {
-		myFile, err := myFolder.getFile(myFileName)
-		if err != nil {
-			return err
+	for myFileName, myFolders := range keepFiles {
+		for _, myFolder := range myFolders {
+			myFile, err := myFolder.getFile(myFileName)
+			if err != nil {
+				return err
+			}
+			myFile.KeepIfExists = keepProtoModelUi
 		}
-		myFile.KeepIfExists = keepProtoModelUi
 	}
 
 	// rename generic proto.proto to <short project name>.proto
