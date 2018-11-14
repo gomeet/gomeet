@@ -175,25 +175,29 @@ func runFunctionalTests(cmd *cobra.Command, args []string) {
 		IsEmbeddedServer:   useEmbeddedServer,
 		IsRandomPort:       useRandomPort,
 
-		//extra parameters
-		{{ range .DbTypes }}{{ upperPascalCase . }}DataSourceName: {{ lowerPascalCase . }}DataSourceName,
-		{{ end }}
-		{{ range .QueueTypes }}{{ if eq . "memory" }}{{ upperPascalCase . }}QueueWorkerCount:  {{ lowerPascalCase . }}QueueWorkerCount,
+		//extra parameters{{ range .DbTypes }}
+		{{ upperPascalCase . }}DataSourceName: {{ lowerPascalCase . }}DataSourceName,{{ end }}
+{{ range .QueueTypes }}{{ if eq . "memory" }}
+		{{ upperPascalCase . }}QueueWorkerCount:  {{ lowerPascalCase . }}QueueWorkerCount,
 		{{ upperPascalCase . }}QueueMaxSize:  {{ lowerPascalCase . }}QueueMaxSize,
 		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-		{{ else if eq . "sqs" }}// sqs support is not yet implemented{{ end }}{{ end }}{{ range .ExtraServeFlags }}
-		{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,{{ end }}{{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented{{ end }}{{ end }}
+{{ range .ExtraServeFlags }}
+		{{ upperPascalCase .Name }}ExtraFlag: {{ lowerPascalCase .Name }}ExtraFlag,{{ end }}
+{{ if .SubServices }}{{ range .SubServices }}{{ $ss := . }}
 		Svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
 		Svc{{ upperPascalCase .ShortName }}Tls: svc{{ upperPascalCase .ShortName }}Tls,{{ range .DbTypes }}
-		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,
-		{{ end }}{{ range .QueueTypes }}{{ if eq . "memory" }}
+		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName,{{ end }}
+{{ range .QueueTypes }}{{ if eq . "memory" }}
 		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount,
 		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize:  svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 		{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 		{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-		{{ else if eq . "sqs" }}// sqs support is not yet implemented{{ end }}{{ end }}{{ range .ExtraServeFlags }}
-		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,{{ end }}{{ end }}{{ end }}
+		{{ else if eq . "sqs" }}// sqs support is not yet implemented{{ end }}{{ end }}
+{{ range .ExtraServeFlags }}
+		Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag: svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag,{{ end }}
+{{ end }}{{ end }}
 	}
 
 	failures := runFunctionalTestSession(testConfig)
