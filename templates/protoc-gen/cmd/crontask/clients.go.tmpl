@@ -43,7 +43,7 @@ func {{ lowerPascalCase .ShortName }}Client(config functest.FunctionalTestConfig
 			{{ else if eq . "sqs" }}// sqs support is not yet implemented
 			{{ end }}{{ end -}}
 			{{ range .ExtraServeFlags }}config.Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
+			{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, false,{{ end }}
 		)
 
 		subServiceshandlers.ForEach(inProcessChannel.RegisterService)
@@ -55,7 +55,7 @@ func {{ lowerPascalCase .ShortName }}Client(config functest.FunctionalTestConfig
 			config.Svc{{ upperPascalCase .ShortName }}Address,
 			grpcTimeout,
 			config.CaCertificate, config.ClientCertificate, config.ClientPrivateKey,
-			config.MaxRecvMsgSize, config.MaxSendMsgSize,
+			config.MaxRecvMsgSize, config.MaxSendMsgSize, config.WithTls,
 		)
 	}
 
