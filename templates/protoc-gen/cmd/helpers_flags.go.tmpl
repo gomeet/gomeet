@@ -103,13 +103,11 @@ func initWithTlsFlag(cmd *cobra.Command) {
 }
 
 func initServerExtraFlags(cmd *cobra.Command) {
-	{{ range .ExtraServeFlags }}
-	// {{ lowerPascalCase .Name }} flag is pass to gRPC server
+{{ range .ExtraServeFlags }}	// {{ lowerPascalCase .Name }} flag is pass to gRPC server
 	cmd.PersistentFlags().{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
 	{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}
 	cmd.PersistentFlags().{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
-	{{ end }}{{ end }}
-}
+{{ end }}{{ end }}}
 
 func initServerAddressFlag(cmd *cobra.Command) {
 	// address flag (to serve all protocols on a single port)
@@ -128,12 +126,11 @@ func initServerNetworkFlags(cmd *cobra.Command) {
 }
 
 func initServerSubServicesNetworkFlags(cmd *cobra.Command) {
-	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
+{{ range .SubServices }}	// {{ upperPascalCase .ShortName }} service address
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
 	// {{ upperPascalCase .ShortName }} service tls
 	cmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase .ShortName }}Tls, "svc-{{ lowerKebabCase .ShortName }}-tls", false, "{{ upperPascalCase .ShortName }} uses TLS with InsecureSkipVerify: true")
-	{{ end }}
-}
+{{ end }}}
 
 func initJWTSecretFlag(cmd *cobra.Command) {
 	// JWT secret signing key
@@ -156,27 +153,24 @@ func initDebugFlag(cmd *cobra.Command) {
 }
 
 func initServerQueueFlags(cmd *cobra.Command) {
-	{{ range .QueueTypes }}// Main queue system
+{{ range .QueueTypes }}	// Main queue system
 	{{ if eq . "memory" }}
 	cmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
 	cmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
 	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}
-
-	{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}// {{ upperPascalCase $ss.ShortName }} queue system
-	{{ if eq . "memory" }}
+	{{ end }}{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}
+	// {{ upperPascalCase $ss.ShortName }} queue system{{ if eq . "memory" }}
 	cmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-worker-count", runtime.NumCPU(), "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} number of spawned workers (default is num cpu)")
 	cmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-max-size", 100, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} max size of buffered asynchronous job queue (default 100)")
 	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
 	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}{{ end }}
-}
+{{ end }}{{ end }}{{ end }}}
 
 func initDbDNSFlags(cmd *cobra.Command) {
-	{{ range .DbTypes }}{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+{{ range .DbTypes }}{{ if eq . "mysql" }}	// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	cmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	cmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
@@ -184,8 +178,7 @@ func initDbDNSFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	cmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
-	{{ end }}{{ end }}
-	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
+	{{ end }}{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}{{ if eq . "mysql" }}	// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
 	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
@@ -193,27 +186,20 @@ func initDbDNSFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
 	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
 	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
-	{{ end }}{{ end }}{{ end }}
-}
+{{ end }}{{ end }}{{ end }}}
 
 func initDbMigrateFlags(cmd *cobra.Command) {
-	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration
+{{ range .DbTypes }}	// {{ upperPascalCase . }} data migration
 	cmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
-	{{ end }}
-
-	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
+{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
 	// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration
 	cmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
-	{{ end }}{{ end }}
-}
+{{ end }}{{ end }}}
 
 func initDbFlushFlags(cmd *cobra.Command) {
-	{{ range .DbTypes }}// {{ upperPascalCase . }} data flush flag
+{{ range .DbTypes }}	// {{ upperPascalCase . }} data flush flag
 	cmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Flush, "{{ lower . }}-flush-data", false, "Flush {{ upperPascalCase . }} data")
-	{{ end }}
-
-	{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
+{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .DbTypes }}
 	// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data flush flag
 	migrateCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Flush, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-flush-data", false, "Flush svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data")
-	{{ end }}{{ end }}
-}
+{{ end }}{{ end }}}
