@@ -36,8 +36,9 @@ type FunctionalTestConfig struct {
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
 	{{ end }}{{ end }}
 	{{ range .ExtraServeFlags -}}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
-	{{ end }}
-	{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}Svc{{ upperPascalCase .ShortName }}Address string
+	{{ end }}{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}
+	Svc{{ upperPascalCase .ShortName }}Address string
+	Svc{{ upperPascalCase .ShortName }}Tls bool
 	{{ range .DbTypes }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
 	{{ end }}
 	{{ range .QueueTypes }}{{ if eq . "memory" }}Svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount int
