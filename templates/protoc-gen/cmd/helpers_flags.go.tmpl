@@ -35,7 +35,8 @@ var (
 	{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
 	{{ end }}// SubService extra flags{{ range .SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}
 	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
-{{ end }}{{ end }}	//Main server databases{{ range .DbTypes }}
+{{ end }}{{ end }}
+	// Main server databases{{ range .DbTypes }}
 	{{ lowerPascalCase . }}Migrate bool
 	{{ lowerPascalCase . }}Flush bool
 	{{ lowerPascalCase . }}DataSourceName string
