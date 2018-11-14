@@ -128,9 +128,9 @@ func initServerNetworkFlags(cmd *cobra.Command) {
 
 func initServerSubServicesNetworkFlags(cmd *cobra.Command) {
 {{ range .SubServices }}	// {{ upperPascalCase .ShortName }} service address
-	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
+	cmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "svc-{{ lowerKebabCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
 	// {{ upperPascalCase .ShortName }} service tls
-	cmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase .ShortName }}Tls, "svc-{{ lowerKebabCase .ShortName }}-tls", false, "{{ upperPascalCase .ShortName }} uses TLS with InsecureSkipVerify: true")
+	cmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase .ShortName }}Tls, "svc-{{ lowerKebabCase .ShortName }}-tls", false, "svc-{{ lowerKebabCase .ShortName }} service must use TLS with InsecureSkipVerify: true")
 {{ end }}}
 
 func initJWTSecretFlag(cmd *cobra.Command) {
