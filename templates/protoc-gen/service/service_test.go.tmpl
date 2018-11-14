@@ -271,7 +271,7 @@ func TestMain(m *testing.M) {
 		{{ else if eq . "sqs" }}// sqs support is not yet implemented
 		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
+		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, false,{{ end }}
 	)
 	{{ end }}{{ end }}
 	//Real server
@@ -286,7 +286,7 @@ func TestMain(m *testing.M) {
 		{{ else if eq . "sqs" }}// sqs support is not yet implemented
 		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end }}
-		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, {{ end }}
+		{{ range .SubServices }}gomeetService.INPROCESS_ADDRESS, false,{{ end }}
 	)
 
 	subServiceshandlers.ForEach(inProcessChannel.RegisterService)
