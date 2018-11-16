@@ -51,6 +51,8 @@ func (*gormLogger) Print(v ...interface{}) {
 	// ping the database server
 	err := s.{{ lowerPascalCase . }}Handle.DB().Ping()
 	if err != nil {
+		// free the database connection handle
+		s.{{ lowerPascalCase . }}Handle = nil
 		return err
 	}{{ end }}
 	return nil
@@ -83,6 +85,8 @@ func (*gormLogger) Print(v ...interface{}) {
 			// ping the database server
 			err := s.{{ lowerPascalCase . }}Handle.DB().Ping()
 			if err != nil {
+				// free the database connection handle
+				s.{{ lowerPascalCase . }}Handle = nil
 				return err
 			}
 			return nil
