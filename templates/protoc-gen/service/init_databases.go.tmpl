@@ -27,68 +27,116 @@ func (*gormLogger) Print(v ...interface{}) {
 
 // initDatabaseHandle initializes the databases handles of the server.
 {{ if eq (len .DbTypes) 1 }}func (s *{{ lowerPascalCase .ShortName }}Server) initDatabaseHandle() error {
-	{{ range .DbTypes }}// establish the connection if it's not ready
-	if s.{{ lowerPascalCase . }}Handle == nil {
-		{{ if eq . "mysql" }}if strings.Contains(s.{{ lowerPascalCase . }}DataSourceName, "?") {
-			return fmt.Errorf("database connection error: data source name cannot contain options")
-		}
-		dsn := fmt.Sprintf("%s?charset=utf8&parseTime=True", s.{{ lowerPascalCase . }}DataSourceName)
-		{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
-		{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
-		{{ end }}
-		{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
-		if err != nil {
+	{{ range .DbTypes }}// fix DSN
+	{{ if eq . "mysql" }}if strings.Contains(s.{{ lowerPascalCase . }}DataSourceName, "?") {
+		return fmt.Errorf("database connection error: data source name cannot contain options")
+	}
+	dsn := fmt.Sprintf("%s?charset=utf8&parseTime=True", s.{{ lowerPascalCase . }}DataSourceName)
+	{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
+	{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
+	{{ end }}
+
+	// check if connection is active
+	if s.{{ lowerPascalCase . }}Handle != nil {
+		// ping the database server
+		if err := s.{{ lowerPascalCase . }}Handle.DB().Ping(); err == nil {
+			return nil
+		} else {
 			log.WithFields(log.Fields{
-				"DSN": s.{{ lowerPascalCase . }}DataSourceName,
-			}).Infof("database connection error: %v", err)
-			return err
+				"DSN": dsn,
+			}).Warnf("database ping error: %v", err)
+			// free the database connection handle
+			if err := s.closeDatabaseHandle(); err != nil {
+				log.WithFields(log.Fields{
+					"DSN": dsn,
+				}).Warnf("database close handle error: %v", err)
+				s.{{ lowerPascalCase . }}Handle = nil
+			}
 		}
-		{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
-		{{ lowerPascalCase . }}Handle.LogMode(true)
-		s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 	}
 
-	// ping the database server
-	err := s.{{ lowerPascalCase . }}Handle.DB().Ping()
+	// establish the connection because it's not ready
+	{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 	if err != nil {
+		log.WithFields(log.Fields{
+			"DSN": dsn,
+		}).Warnf("database connection error: %v", err)
+		return err
+	}
+	{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
+	{{ lowerPascalCase . }}Handle.LogMode(true)
+	s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
+
+	// ping the database server
+	if err := s.{{ lowerPascalCase . }}Handle.DB().Ping(); err != nil {
+		log.WithFields(log.Fields{
+			"DSN": dsn,
+		}).Warnf("database ping error: %v", err)
 		// free the database connection handle
 		s.{{ lowerPascalCase . }}Handle = nil
 		return err
 	}{{ end }}
+
 	return nil
 }
 {{ else }}func (s *{{ lowerPascalCase .ShortName }}Server) initDatabaseHandle(dbType string) error {
 	if len(dbType) > 0 {
 		switch strings.ToLower(dbType) {
 		{{ range .DbTypes }}case "{{ lower . }}":
-			// establish the connection if it's not ready
-			if s.{{ lowerPascalCase . }}Handle == nil {
-				{{ if eq . "mysql" }}if strings.Contains(s.{{ lowerPascalCase . }}DataSourceName, "?") {
-					return fmt.Errorf("database connection error: data source name cannot contain options")
-				}
-				dsn := fmt.Sprintf("%s?charset=utf8&parseTime=True", s.{{ lowerPascalCase . }}DataSourceName)
-				{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
-				{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
-				{{ end }}
-				{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lowerPascalCase . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
-				if err != nil {
+			// fix DSN
+			{{ if eq . "mysql" }}if strings.Contains(s.{{ lowerPascalCase . }}DataSourceName, "?") {
+				return fmt.Errorf("database connection error: data source name cannot contain options")
+			}
+			dsn := fmt.Sprintf("%s?charset=utf8&parseTime=True", s.{{ lowerPascalCase . }}DataSourceName)
+			{{/* else if eq . "postgres" }} {{ else if eq . "sqlite" }} {{ else if eq . "mssql" */}}
+			{{ else }}dsn := s.{{ lowerPascalCase . }}DataSourceName
+			{{ end }}
+
+			// check if connection is active
+			if s.{{ lowerPascalCase . }}Handle != nil {
+				// ping the database server
+				if err := s.{{ lowerPascalCase . }}Handle.DB().Ping(); err == nil {
+					return nil
+				} else {
 					log.WithFields(log.Fields{
-						"DSN": s.{{ lowerPascalCase . }}DataSourceName,
-					}).Infof("database connection error: %v", err)
-					return err
+						"dbType": dbType,
+						"DSN":    dsn,
+					}).Warnf("database ping error: %v", err)
+					// free the database connection handle
+					if err := s.closeDatabaseHandle(dbType); err != nil {
+						log.WithFields(log.Fields{
+							"dbType": dbType,
+							"DSN":    dsn,
+						}).Warnf("database close handle error: %v", err)
+						s.{{ lowerPascalCase . }}Handle = nil
+					}
 				}
-			{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
-			{{ lowerPascalCase . }}Handle.LogMode(true)
-				s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
 			}
 
-			// ping the database server
-			err := s.{{ lowerPascalCase . }}Handle.DB().Ping()
+			// establish the connection because it's not ready
+			{{ lowerPascalCase . }}Handle, err := gorm.Open("{{ lowerPascalCase . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 			if err != nil {
+				log.WithFields(log.Fields{
+					"dbType": dbType,
+					"DSN":    dsn,
+				}).Warnf("database connection error: %v", err)
+				return err
+			}
+			{{ lowerPascalCase . }}Handle.SetLogger(&gormLogger{})
+			{{ lowerPascalCase . }}Handle.LogMode(true)
+			s.{{ lowerPascalCase . }}Handle = {{ lowerPascalCase . }}Handle
+
+			// ping the database server
+			if err := s.{{ lowerPascalCase . }}Handle.DB().Ping(); err != nil {
+				log.WithFields(log.Fields{
+					"dbType": dbType,
+					"DSN":    dsn,
+				}).Warnf("database ping error: %v", err)
 				// free the database connection handle
 				s.{{ lowerPascalCase . }}Handle = nil
 				return err
 			}
+
 			return nil
 
 		{{ end }}default:
