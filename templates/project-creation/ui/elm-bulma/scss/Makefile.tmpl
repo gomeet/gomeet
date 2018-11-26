@@ -4,7 +4,7 @@ NAME = $(SVC_PREFIX){{ .ShortName }}::scss
 .PHONY: clean
 clean:
 	@echo "$(NAME)::clean"
-	rm -rf node_modules
+	rm -rf ./node_modules
 
 .PHONY: build
 build:
