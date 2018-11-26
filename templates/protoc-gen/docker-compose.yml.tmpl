@@ -120,7 +120,8 @@ services:
     depends_on:
 {{ range .SubServices }}      - svc-{{ .ShortName }}
 {{ end }}{{ end }}    networks:
-      - monitoring-back
+{{ if .HasDb }}      - db
+{{ end }}      - monitoring-back
       - grpc
       - http
 {{ range .SubServices }}{{ $ss := . }}
