@@ -5,7 +5,8 @@ COPY . .
 RUN apk add --no-cache --update git make protobuf protobuf-dev ca-certificates curl nodejs yarn && \
      rm -rf /var/cache/apk/*
 RUN rm -f /go/src/{{ .GoPkg }}/_build/{{ .Name }}
-RUN make tools-clean tools-sync tools
+RUN make tools-clean tools-sync tools{{ if .HasUi }}
+RUN make ui-clean ui-setup{{ end }}
 RUN make
 
 # cf. https://hub.docker.com/r/gomeet/gomeet-builder/
