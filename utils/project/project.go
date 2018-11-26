@@ -707,11 +707,13 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModelUi bool) (err e
 		"Gopkg.toml":            []*folder{f},
 		"CHANGELOG.md":          []*folder{f},
 		"VERSION":               []*folder{f},
+		".directory":            []*folder{f},
 		"proto.proto":           []*folder{pbFolder},
 		"run-env.sh":            []*folder{f.getFolder("hack")},
 		"models.go":             []*folder{f.getFolder("models")},
 		"auth_and_acl_funcs.go": []*folder{f.getFolder("service")},
 		"helpers.go":            []*folder{f.getFolder("cmd").getFolder("remotecli"), f.getFolder("service")},
+		"icnon.png":             []*folder{f.getFolder(".metadata")},
 	}
 	for myFileName, myFolders := range keepFiles {
 		for _, myFolder := range myFolders {
