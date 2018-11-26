@@ -240,6 +240,8 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make package-clean` - Clean up the builded packages
 - `make package-proto` - Building the `_build/packaged/proto.tgz` file with dirstribluables protobuf files
 {{ if .HasUi }}- `make ui` - Generation of a virtual file system that is compiled with the binary from files inside `ui/assets`
+- `make ui-setup` - Initialize the ui tools chain
+- `make ui-clean` - Clean up the ui artifacts
 {{ end }}- `make proto` - Generating files from proto
 - `make proto-clean` - Clean up generated files from the proto file
 - `make release` - Making a release (see below)

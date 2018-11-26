@@ -233,7 +233,7 @@ build: proto{{ if .HasUi }} ui{{ end }}
 	main.go
 
 .PHONY: clean
-clean: tools-clean package-clean proto-clean
+clean: tools-clean package-clean proto-clean{{ if .HasUi }} ui-clean{{ end }}
 	@echo "$(NAME): clean task"
 {{ if .HasUi }}
 .PHONY: ui
@@ -247,6 +247,13 @@ ui: tools
 ui-setup:
 	@echo "$(NAME): ui-setup task"{{ if .HasUiElm }}
 	-[ -d "ui/scss" ] && cd ui/scss && yarn install
+{{ end }}
+
+.PHONY: ui-clean
+ui-clean:
+	@echo "$(NAME): ui-clean task"{{ if .HasUiElm }}
+	-[ -d "ui/scss" ] && cd ui/scss && make clean
+	-[ -d "ui/elm" ] && cd ui/elm && make clean
 {{ end }}
 {{ end }}
 .PHONY: proto

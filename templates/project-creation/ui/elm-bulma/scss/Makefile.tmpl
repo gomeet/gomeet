@@ -1,5 +1,10 @@
-SVC_PREFIX=hug-svc-
-NAME = $(SVC_PREFIX)api-gateway::scss
+SVC_PREFIX={{ .Prefix }}
+NAME = $(SVC_PREFIX){{ .ShortName }}::scss
+
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf node_modules
 
 .PHONY: build
 build:

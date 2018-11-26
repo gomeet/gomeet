@@ -1,6 +1,11 @@
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}::ui
 
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf ./elm-stuff
+
 .PHONY: build
 build:
 	@echo "$(NAME)::build"
