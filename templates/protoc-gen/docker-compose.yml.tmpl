@@ -116,9 +116,10 @@ services:
     ports:
       - 8383:{{ .DefaultPort }}
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
-      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/db/{{ end }}{{ end }}{{ end }}{{ if .SubServices }}
+      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/db/{{ end }}{{ end }}{{ end }}
     depends_on:
-{{ range .SubServices }}      - svc-{{ .ShortName }}
+{{ if .DbTypes }}{{ range .DbTypes }}      - db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}
+{{ end }}{{ end }}{{ if .SubServices }}{{ range .SubServices }}      - svc-{{ .ShortName }}
 {{ end }}{{ end }}    networks:
 {{ if .HasDb }}      - db
 {{ end }}      - monitoring-back

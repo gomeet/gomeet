@@ -519,28 +519,31 @@ docker-push: docker
 .PHONY: start
 start: docker
 	docker-compose up -d
-	@echo "\n\
-	Grafana:\n\
-		http://localhost:3000/\n\
-		For admin password see GF_SECURITY_ADMIN_PASSWORD in $(shell pwd)/infra/config.monitoring file\n\
-	Prometheus:\n\
-		http://localhost:9090/\n\
-	Alert manager:\n\
-		http://localhost:9093/\n\
-	Swagger docs:\n\
-		http://localhost:8000/docs\n\
-	Godoc:\n\
-		http://localhost:8001/pkg/{{ .ProjectGroupGoPkg }}/$(NAME)\n\
-	Documentation: \n\
-		$(shell pwd)/docs/docker/README.md \n\
-		$(shell pwd)/docs/docker-compose/README.md\n\
-		$(shell pwd)/docs/grafana/README.md\n\
-		"
+	@echo ""
+	@echo "svc-{{ .ShortName }}:"
+	@echo "	http://0.0.0.0:8383/"
+	@echo "Grafana:"
+	@echo "	http://localhost:3000/"
+	@echo "	For admin password see GF_SECURITY_ADMIN_PASSWORD in $(shell pwd)/infra/config.monitoring file"
+	@echo "Prometheus:"
+	@echo "	http://localhost:9090/"
+	@echo "Alert manager:"
+	@echo "	http://localhost:9093/"
+	@echo "Swagger docs:"
+	@echo "	http://localhost:8000/docs"
+	@echo "Godoc:"
+	@echo "	http://localhost:8001/pkg/{{ .ProjectGroupGoPkg }}/$(NAME)"
+	@echo "Documentation:"
+	@echo "	$(shell pwd)/docs/docker/README.md"
+	@echo "	$(shell pwd)/docs/docker-compose/README.md"
+	@echo "	$(shell pwd)/docs/grafana/README.md"
+	@echo ""
 
 .PHONY: stop
 stop:
 	docker-compose down
-	@echo "\nTo remove volume use :\n        docker volume prune -f"
+	@echo "To remove volume use :
+	@echo "   docker volume prune -f"
 
 .PHONY: install
 install:
