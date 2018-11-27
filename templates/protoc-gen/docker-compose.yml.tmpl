@@ -121,7 +121,7 @@ services:
 {{ if .DbTypes }}{{ range .DbTypes }}      - db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}
 {{ end }}{{ end }}{{ if .SubServices }}{{ range .SubServices }}      - svc-{{ .ShortName }}
 {{ end }}{{ end }}    networks:
-{{ if .HasDb }}      - db
+{{ if .DbTypes }}      - db
 {{ end }}      - monitoring-back
       - grpc
       - http
@@ -143,11 +143,13 @@ services:
     #   restart_policy:
     #     condition: on-failure
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
-      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/db/{{ end }}{{ end }}{{ end }}{{ if .SubServices }}
+      - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/db/{{ end }}{{ end }}{{ end }}
     depends_on:
-{{ range .SubServices }}      - svc-{{ .ShortName }}
+{{ if .DbTypes }}{{ range .DbTypes }}      - db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}
+{{ end }}{{ end }}{{ if .SubServices }}{{ range .SubServices }}      - svc-{{ .ShortName }}
 {{ end }}{{ end }}    networks:
-      - monitoring-back
+{{ if .DbTypes }}      - db
+{{ end }}      - monitoring-back
       - grpc
       - http
 {{ end }}
