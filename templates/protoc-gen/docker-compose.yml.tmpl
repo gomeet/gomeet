@@ -117,10 +117,10 @@ services:
       - 8383:{{ .DefaultPort }}
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
       - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $.Name }}_data:/db/{{ end }}{{ end }}{{ end }}
-    depends_on:
+{{ if or .DbTypes .SubServices }}    depends_on:
 {{ if .DbTypes }}{{ range .DbTypes }}      - db-{{ lowerKebabCase . }}-{{ lowerKebabCase $.Name }}
 {{ end }}{{ end }}{{ if .SubServices }}{{ range .SubServices }}      - svc-{{ .ShortName }}
-{{ end }}{{ end }}    networks:
+{{ end }}{{ end }}{{ end }}    networks:
 {{ if .DbTypes }}      - db
 {{ end }}      - monitoring-back
       - grpc
@@ -144,10 +144,10 @@ services:
     #     condition: on-failure
 {{ if .DbTypes }}{{ range .DbTypes }}{{ if eq . "sqlite" }}    volume:
       - db_{{ lowerSnakeCase . }}_{{ lowerSnakeCase $ss.Name }}_data:/db/{{ end }}{{ end }}{{ end }}
-    depends_on:
+{{ if or .DbTypes .SubServices }}    depends_on:
 {{ if .DbTypes }}{{ range .DbTypes }}      - db-{{ lowerKebabCase . }}-{{ lowerKebabCase $ss.Name }}
 {{ end }}{{ end }}{{ if .SubServices }}{{ range .SubServices }}      - svc-{{ .ShortName }}
-{{ end }}{{ end }}    networks:
+{{ end }}{{ end }}{{ end }}    networks:
 {{ if .DbTypes }}      - db
 {{ end }}      - monitoring-back
       - grpc
