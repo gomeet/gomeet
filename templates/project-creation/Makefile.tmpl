@@ -34,7 +34,7 @@ UI_TYPE={{ if .HasUi }}{{ .UiType }}{{ end }}
 SUB_SERVICES={{ .SubServicesDefMultiline }}
 
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
-{{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?={{ .Version }}
+{{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?=$(shell cat vendor/{{ .GoPkg }}/VERSION | tr +- __)
 {{ end -}}
 DOCKER_IMAGE_NAME = {{ .ProjectGroupName }}/$(NAME)
 DOCKER_REGISTRY?=docker.io
@@ -542,7 +542,7 @@ start: docker
 .PHONY: stop
 stop:
 	docker-compose down
-	@echo "To remove volume use :
+	@echo "To remove volume use :"
 	@echo "   docker volume prune -f"
 
 .PHONY: install
