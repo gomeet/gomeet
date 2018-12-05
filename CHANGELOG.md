@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing
 
+## 0.0.21 - 2018-12-05
+
+- Some bugs fix
+
 ## 0.0.20 - 2018-10-25
 
 - Add web UI the type of UI `ui_type` can be :
