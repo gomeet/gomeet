@@ -33,13 +33,17 @@
   name = "github.com/fatih/color"
   version = "1.5.0"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "github.com/golang/glog"
 
 [[constraint]]
   branch = "master"
   name = "github.com/golang/protobuf"
+
+[[constraint]]
+  name = "github.com/gogo/protobuf"
+  version = "v1.0.0"
 
 [[constraint]]
   name = "github.com/google/uuid"
@@ -85,7 +89,7 @@
   name = "google.golang.org/grpc"
   version = "1.9.1"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "github.com/mwitkow/go-proto-validators"
 
