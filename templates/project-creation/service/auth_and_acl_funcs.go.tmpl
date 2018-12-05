@@ -19,7 +19,8 @@ func (s *{{ lowerPascalCase .ShortName }}Server) AuthFuncOverride(ctx context.Co
 	if err != nil {
 		if s.jwtSecret == "" ||
 			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Version" ||
-			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" {
+			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" ||
+			fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Echo" {
 			return ctx, nil
 		}
 
@@ -38,7 +39,8 @@ func (s *{{ lowerPascalCase .ShortName }}Server) AclFuncOverride(ctx context.Con
 	// return an error `errors.New("Error message")` to prevent the user from accessing this request
 	if s.jwtSecret == "" ||
 		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Version" ||
-		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" {
+		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/ServicesStatus" ||
+		fullMethodName == "/grpc.{{ .ProjectGroupName }}.{{ lowerNospaceCase .ShortName }}.{{ upperPascalCase .ShortName }}/Echo" {
 		return nil
 	}
 

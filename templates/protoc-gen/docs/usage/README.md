@@ -32,7 +32,7 @@
 ```shell
 $ {{ .Name }} console --address=localhost:3000
 INFO[0000] {{ .Name }} console  Exit=exit HistoryFile="/tmp/{{ .Name }}-62852.tmp" Interrupt="^C"
-└─┤{{ .Name }}-0.1.8+dev@localhost:13000├─$ help
+└─┤{{ .Name }}-0.1.8+dev@localhost:{{ .DefaultPort }}├─$ help
 INFO[0002] HELP :
 {{ remoteCliHelp .Name .ProtoFiles }}
 	┌─ service_address
@@ -54,19 +54,19 @@ INFO[0002] HELP :
 	└─ exit the console
 
 
-└─┤{{ .Name }}-0.1.8+dev@localhost:13000├─$ unknow
+└─┤{{ .Name }}-0.1.8+dev@localhost:{{ .DefaultPort }}├─$ unknow
 WARN[0003] Bad arguments : "unknow" unknow
-└─┤{{ .Name }}-0.1.8+dev@localhost:13000├─$ exit
+└─┤{{ .Name }}-0.1.8+dev@localhost:{{ .DefaultPort }}├─$ exit
 ```
 
 - HTTP/1.1 usage (with curl):
 
   ```shell
-{{ curlCmdHelpString .Name .ProtoFiles }}
-  $ curl -X GET    http://localhost:13000/
-  $ curl -X GET    http://localhost:13000/version
-  $ curl -X GET    http://localhost:13000/metrics
-  $ curl -X GET    http://localhost:13000/status
+{{ curlCmdHelpString .DefaultPort .Name .ProtoFiles }}
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/version
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/metrics
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/status
   $ curl -X GET    http://localhost:42000/version
   ```
 
@@ -104,6 +104,22 @@ go test
 
 ```shell
 {{ .Name }} loadtest --address <multiplexed server address> -n <number of sessions> -s <concurrency level>
+```
+
+## TLS authentication (via a public certificat)
+
+- Run the server behind a well configured proxy with the credentials (cf. [nginx-example.conf](../../infra/nginx/nginx-example.conf))
+
+- Run the clients with their TLS flag:
+
+```shell
+{{ .Name }} cli <grpc_service> <params...> \
+    --address localhost:3000 \
+    --tls
+
+{{ .Name }} console \
+    --address localhost:3000 \
+    --tls
 ```
 
 ## Mutual TLS authentication
@@ -174,7 +190,7 @@ JWT validation can be tested on the HTTP/1.1 endpoints by providing the bearer t
 
 ```shell
 TOKEN=`{{ .Name }} token --secret-key foobar`
-curl -H "Authorization: Bearer $TOKEN" -X <HTTP_VERB> http://localhost:13000/api/v1/<grpc_service> -d '<HTTP_REQUEST_BODY json format>'
+curl -H "Authorization: Bearer $TOKEN" -X <HTTP_VERB> http://localhost:{{ .DefaultPort }}/api/v1/<grpc_service> -d '<HTTP_REQUEST_BODY json format>'
 ```
 
 

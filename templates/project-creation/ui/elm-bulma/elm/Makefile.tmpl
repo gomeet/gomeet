@@ -1,5 +1,5 @@
-SVC_PREFIX=hug-svc-
-NAME = $(SVC_PREFIX)bo-gateway::ui
+SVC_PREFIX={{ .Prefix }}
+NAME = $(SVC_PREFIX){{ .ShortName }}::ui
 
 DEBUG?=0
 ifeq ($(DEBUG),0)
@@ -7,6 +7,11 @@ ELM_TAG=--optimize
 else
 ELM_TAG=
 endif
+
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf ./elm-stuff
 
 .PHONY: build
 build:

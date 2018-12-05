@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,6 +26,7 @@ import (
 const (
 	DEFAULT_PROTO_PKG_ALIAS = "pb"
 	DEFAULT_ELM             = "elm-bulma"
+	DEFAULT_PORT            = 50051
 )
 
 var (
@@ -35,6 +37,10 @@ var (
 
 func GomeetDefaultPrefixes() string {
 	return helpers.GomeetDefaultPrefixes
+}
+
+func DefaultRawPort() string {
+	return fmt.Sprintf("%d", DEFAULT_PORT)
 }
 
 func GomeetAllowedDbTypes() []string { return allowedDbTypes }
@@ -58,6 +64,7 @@ type Project struct {
 	dbTypes              []string
 	uiType               string
 	queueTypes           []string
+	cronTasks            []string
 	hasPostgis           bool
 	extraServeFlags      []*serveFlag
 	folder               *folder
@@ -66,6 +73,7 @@ type Project struct {
 	defaultProtoPkgAlias *string
 	isGogoGen            bool
 	version              string
+	defaultPort          int
 }
 
 func New(inputPath string) (*Project, error) {
@@ -79,9 +87,26 @@ func New(inputPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{pkgNfo, nil, []string{}, "none", []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	//p := &Project{pkgNfo, nil, []string{}, "none", []string{}, []string{}, false, nil, nil, nil, nil, nil, false, "0.0.1+dev"}
+	p := &Project{
+		PkgNfo:               pkgNfo,
+		SubServices:          nil,
+		dbTypes:              []string{},
+		uiType:               "none",
+		queueTypes:           []string{},
+		cronTasks:            []string{},
+		hasPostgis:           false,
+		extraServeFlags:      nil,
+		folder:               nil,
+		protoRegistry:        nil,
+		protoFiles:           nil,
+		defaultProtoPkgAlias: nil,
+		isGogoGen:            false,
+		version:              "0.0.1+dev",
+	}
 	p.SetDefaultPrefixes("")
-	p.SetDefaultProtoPkgAlias("")
+	p.SetDefaultProtoPkgAlias(DEFAULT_PROTO_PKG_ALIAS)
+	p.SetDefaultPort("")
 	return p, nil
 }
 
@@ -237,6 +262,18 @@ func (p *Project) SetQueueTypes(s string) error {
 	return nil
 }
 
+func (p *Project) SetCronTasks(s string) error {
+	if s != "" {
+		cronTasks := strings.Split(s, ",")
+		for _, cronTask := range cronTasks {
+			cronTask = tmplHelpers.LowerSnakeCase(strings.TrimSpace(cronTask))
+			p.cronTasks = append(p.cronTasks, cronTask)
+		}
+	}
+
+	return nil
+}
+
 func (p *Project) SetDefaultProtoPkgAlias(s string) error {
 	if s == "" {
 		s = DEFAULT_PROTO_PKG_ALIAS
@@ -256,7 +293,9 @@ func (p Project) ProtoFiles() []*descriptor.FileDescriptorProto { return p.proto
 func (p Project) DbTypes() []string                             { return p.dbTypes }
 func (p Project) UiType() string                                { return p.uiType }
 func (p Project) QueueTypes() []string                          { return p.queueTypes }
+func (p Project) CronTasks() []string                           { return p.cronTasks }
 func (p Project) ExtraServeFlags() []*serveFlag                 { return p.extraServeFlags }
+func (p Project) DefaultPort() int                              { return p.defaultPort }
 
 func (p Project) GoCGOEnabled() int {
 	ret := 0
@@ -278,6 +317,25 @@ func (p Project) HasDb() bool {
 	}
 	for _, ss := range p.SubServices {
 		if ss.HasDb() {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p Project) HasMySqlDb() bool {
+	dbTypes := p.DbTypes()
+	if len(dbTypes) > 0 {
+		for _, dbType := range dbTypes {
+			if dbType == "mysql" {
+				return true
+			}
+		}
+	}
+
+	for _, ss := range p.SubServices {
+		if ss.HasMySqlDb() {
 			return true
 		}
 	}
@@ -467,6 +525,13 @@ func (p *Project) SubServicesMonolithHelp() string {
 }
 
 func (p *Project) SubServicesDef() string {
+	return p.subServicesDef(false)
+}
+func (p *Project) SubServicesDefMultiline() string {
+	return p.subServicesDef(true)
+}
+
+func (p *Project) subServicesDef(multiline bool) string {
 	servicesKeys := []string{}
 	for k := range p.SubServices {
 		servicesKeys = append(servicesKeys, k)
@@ -480,6 +545,11 @@ func (p *Project) SubServicesDef() string {
 			"%s[version@%s]",
 			ss.GoPkg(),
 			ss.Version(),
+		)
+		ssString = fmt.Sprintf(
+			"%s[default_port@%d]",
+			ssString,
+			ss.DefaultPort(),
 		)
 		if len(ss.DbTypes()) > 0 {
 			ssString = fmt.Sprintf(
@@ -520,7 +590,12 @@ func (p *Project) SubServicesDef() string {
 		}
 		ssStrings = append(ssStrings, ssString)
 	}
-	return strings.Join(ssStrings, ",")
+	sep := ","
+	if multiline {
+		sep = `,\
+`
+	}
+	return strings.Join(ssStrings, sep)
 }
 
 func (p *Project) SetSubServices(subServices []string) error {
@@ -528,6 +603,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 		neededSubServices := []string{}
 		dependenciesTree := map[string][]string{}
 		p.SubServices = make(map[string]*Project)
+		iPort := p.DefaultPort()
 		for _, subSvcPkg := range subServices {
 			part := strings.Split(subSvcPkg, "[")
 			if len(part) < 1 {
@@ -547,6 +623,7 @@ func (p *Project) SetSubServices(subServices []string) error {
 
 			var (
 				ssVersion     string
+				ssDefaultPort string
 				ssDbTypes     []string
 				ssQueueTypes  []string
 				ssFlags       []string
@@ -560,6 +637,8 @@ func (p *Project) SetSubServices(subServices []string) error {
 					ssQueueTypes = strings.Split(strings.TrimPrefix(ssFlag, "queue_types@"), "|")
 				case strings.HasPrefix(ssFlag, "version@"):
 					ssVersion = strings.TrimPrefix(ssFlag, "version@")
+				case strings.HasPrefix(ssFlag, "default_port@"):
+					ssDefaultPort = strings.TrimPrefix(ssFlag, "default_port@")
 				case strings.HasPrefix(ssFlag, "sub_services@"):
 					ssSubServices = strings.Split(strings.TrimPrefix(ssFlag, "sub_services@"), "|")
 					dependenciesTree[subSvc.GoPkg()] = ssSubServices
@@ -569,6 +648,12 @@ func (p *Project) SetSubServices(subServices []string) error {
 			}
 			if ssVersion != "" {
 				subSvc.SetVersion(ssVersion)
+			}
+			if ssDefaultPort != "" {
+				iPort, err = subSvc.SetDefaultPort(ssDefaultPort)
+				if err != nil {
+					return err
+				}
 			}
 			if len(ssFlags) > 0 {
 				subSvc.SetExtraServeFlags(strings.Join(ssFlags, ","))
@@ -592,6 +677,8 @@ func (p *Project) SetSubServices(subServices []string) error {
 					return err
 				}
 				subSvc.SetDefaultPrefixes(p.DefaultPrefixes())
+				iPortB := iPort + 10
+				iPort, err = subSvc.SetDefaultPort(fmt.Sprintf("%d", iPortB))
 				p.SubServices[subSvc.GoPkg()] = subSvc
 			}
 		}
@@ -609,42 +696,33 @@ func (p *Project) SetSubServices(subServices []string) error {
 	return nil
 }
 
-func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err error) {
+func (p *Project) setProjectCreationTree(keepFile, keepProtoModelUi bool) (err error) {
 	f := newFolder(p.Name(), p.Path())
 	f.addTree(".", "project-creation", nil, keepFile)
 	pbFolder := f.getFolder("pb")
 
 	// keep some files if needed
-	keepFiles := map[string]*folder{
-		"tools.json":            f,
-		"Gopkg.toml":            f,
-		"CHANGELOG.md":          f,
-		"VERSION":               f,
-		"proto.proto":           pbFolder,
-		"run-env.sh":            f.getFolder("hack"),
-		"models.go":             f.getFolder("models"),
-		"auth_and_acl_funcs.go": f.getFolder("service"),
-		"helpers.go":            f.getFolder("cmd").getFolder("remotecli"),
+	keepFiles := map[string][]*folder{
+		"tools.json":            []*folder{f},
+		"Gopkg.toml":            []*folder{f},
+		"CHANGELOG.md":          []*folder{f},
+		"VERSION":               []*folder{f},
+		".directory":            []*folder{f},
+		"proto.proto":           []*folder{pbFolder},
+		"run-env.sh":            []*folder{f.getFolder("hack")},
+		"models.go":             []*folder{f.getFolder("models")},
+		"auth_and_acl_funcs.go": []*folder{f.getFolder("service")},
+		"helpers.go":            []*folder{f.getFolder("cmd").getFolder("remotecli"), f.getFolder("service")},
+		"icon.png":              []*folder{f.getFolder(".metadata")},
 	}
-	for myFileName, myFolder := range keepFiles {
-		myFile, err := myFolder.getFile(myFileName)
-		if err != nil {
-			return err
+	for myFileName, myFolders := range keepFiles {
+		for _, myFolder := range myFolders {
+			myFile, err := myFolder.getFile(myFileName)
+			if err != nil {
+				return err
+			}
+			myFile.KeepIfExists = keepProtoModelUi
 		}
-		myFile.KeepIfExists = keepProtoModel
-	}
-
-	// reset "pb" folder if proto alias isn't "pb"
-	protoAlias, err := p.GoProtoPkgAlias()
-	if err != nil {
-		return err
-	}
-	if protoAlias != "pb" {
-		pbFolder, err = f.addTree(protoAlias, "project-creation/pb", nil, keepFile)
-		if err != nil {
-			return err
-		}
-		f.delete("pb")
 	}
 
 	// rename generic proto.proto to <short project name>.proto
@@ -663,7 +741,7 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 
 	f.delete("ui")
 	if p.HasUi() {
-		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepFile)
+		_, err := f.addTree("ui", fmt.Sprintf("project-creation/ui/%s", p.UiType()), nil, keepProtoModelUi)
 		if err != nil {
 			return err
 		}
@@ -674,8 +752,8 @@ func (p *Project) setProjectCreationTree(keepFile, keepProtoModel bool) (err err
 	return nil
 }
 
-func (p *Project) ProjectCreation(keepFile, keepProtoModel bool) error {
-	if err := p.setProjectCreationTree(keepFile, keepProtoModel); err != nil {
+func (p *Project) ProjectCreation(keepFile, keepProtoModelUi bool) error {
+	if err := p.setProjectCreationTree(keepFile, keepProtoModelUi); err != nil {
 		return err
 	}
 	if _, err := os.Stat(p.Path()); os.IsNotExist(err) {
@@ -807,8 +885,49 @@ func (p *Project) setProtoRegistry(req *plugin.CodeGeneratorRequest) error {
 	return nil
 }
 
+func (p *Project) SetDefaultPort(rawPort string) (int, error) {
+	rawPort = strings.Trim(rawPort, " ")
+	if len(rawPort) == 0 {
+		rawPort = DefaultRawPort()
+	}
+
+	port, err := strconv.ParseUint(rawPort, 10, 16)
+	if err != nil {
+		return 0, fmt.Errorf("Invalid default-port number : %s", err)
+	}
+
+	iPort := int(port)
+	p.defaultPort = iPort
+
+	if len(p.SubServices) > 0 {
+		for _, ss := range p.SubServices {
+			iPortB := iPort + 10
+			iPort, err = ss.SetDefaultPort(fmt.Sprintf("%d", iPortB))
+			if err != nil {
+				return iPortB, err
+			}
+		}
+	}
+
+	return iPort, nil
+}
+
 func (p Project) DefaultProtoPkgAlias() string {
 	return *p.defaultProtoPkgAlias
+}
+
+func (p Project) GoProtoPkgName() (string, error) {
+	if len(p.ProtoFiles()) > 0 {
+		for _, file := range p.ProtoFiles() {
+			desc, err := p.protoRegistry.LookupFile(file.GetName())
+			if err != nil {
+				return "", fmt.Errorf("registry: failed to lookup file %q -- %s", file.GetName(), err)
+			}
+			return desc.GoPkg.Name, nil
+		}
+	}
+
+	return p.DefaultProtoPkgAlias(), nil
 }
 
 func (p Project) GoProtoPkgAlias() (string, error) {
@@ -818,8 +937,13 @@ func (p Project) GoProtoPkgAlias() (string, error) {
 			if err != nil {
 				return "", fmt.Errorf("registry: failed to lookup file %q -- %s", file.GetName(), err)
 			}
-
-			return desc.GoPkg.Name, nil
+			var alias string
+			if desc.GoPkg.Alias != "" {
+				alias = desc.GoPkg.Alias
+			} else {
+				alias = desc.GoPkg.Name
+			}
+			return alias, nil
 		}
 	}
 
@@ -834,11 +958,24 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 
 	f := newFolder(p.Name(), p.Path())
 	cmd := f.addFolder("cmd")
+	cmd.addFile("helpers_flags.go", "protoc-gen/cmd/helpers_flags.go.tmpl", nil, false)
+	cmd.addFile("helpers_config.go", "protoc-gen/cmd/helpers_config.go.tmpl", nil, false)
 	cmd.addFile("cli.go", "protoc-gen/cmd/cli.go.tmpl", nil, false)
 	cmd.addFile("root.go", "protoc-gen/cmd/root.go.tmpl", nil, false)
 	cmd.addFile("serve.go", "protoc-gen/cmd/serve.go.tmpl", nil, false)
 	cmd.addFile("functest.go", "protoc-gen/cmd/functest.go.tmpl", nil, false)
 	cmd.addFile("migrate.go", "protoc-gen/cmd/migrate.go.tmpl", nil, false)
+	cmd.addFile("crontask.go", "protoc-gen/cmd/crontask.go.tmpl", nil, false)
+	crontaskFolder := cmd.addFolder("crontask")
+	crontaskFolder.addFile("clients.go", "protoc-gen/cmd/crontask/clients.go.tmpl", nil, false)
+	if len(p.CronTasks()) > 0 {
+		for _, crontask := range p.CronTasks() {
+			// we fake a gRPC method to passe it to the template
+			grpcM := &grpcMethod{Method: &descriptor.MethodDescriptorProto{Name: &crontask}}
+			// we keep the file if exists
+			crontaskFolder.addFile(fmt.Sprintf("%s.go", crontask), "protoc-gen/cmd/crontask/crontask.go.tmpl", grpcM, true)
+		}
+	}
 	functest := cmd.addFolder("functest")
 	functest.addFile("http_metrics.go", "protoc-gen/cmd/functest/http_metrics.go.tmpl", nil, false)
 	functest.addFile("types.go", "protoc-gen/cmd/functest/types.go.tmpl", nil, false)
@@ -859,11 +996,8 @@ func (p *Project) GenFromProto(req *plugin.CodeGeneratorRequest) error {
 	svc.addFile("init_queues.go", "protoc-gen/service/init_queues.go.tmpl", nil, false)
 	f.addTree("infra", "protoc-gen/infra", nil, false)
 	f.addTree("hack", "protoc-gen/hack", nil, false)
-	protoPkg, err := p.GoProtoPkgAlias()
-	if err != nil {
-		return err
-	}
-	f.addTree(protoPkg, "protoc-gen/pb", nil, false)
+	// added pb directory
+	f.addTree("pb", "protoc-gen/pb", nil, false)
 	f.addFile("docker-compose.yml", "protoc-gen/docker-compose.yml.tmpl", nil, false)
 	f.addFile(".travis.yml", "protoc-gen/.travis.yml.tmpl", nil, false)
 

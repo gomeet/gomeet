@@ -1,13 +1,15 @@
 DEBUG_TEST?=0
 USE_GOGO?={{ if .IsGogoGen }}1{{ else }}0{{ end }}
 DEFAULT_PREFIXES={{ .DefaultPrefixes }}
+DEFAULT_PORT={{ .DefaultPort }}
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}
 GO_PACKAGE_BASE = {{ .ProjectGroupGoPkg }}
 GOMEET_GO_PACKAGE_NAME = github.com/gomeet/gomeet
 GO_PACKAGE_NAME = $(GO_PACKAGE_BASE)/$(NAME)
-GO_PROTO_PACKAGE_ALIAS = {{ .GoProtoPkgAlias }}
-GO_PROTO_PACKAGE = $(GO_PACKAGE_NAME)/$(GO_PROTO_PACKAGE_ALIAS)
+GO_PROTO_PACKAGE_ALIAS={{ .GoProtoPkgAlias }}
+GO_PROTO_PACKAGE_DIR=pb
+GO_PROTO_PACKAGE = $(GO_PACKAGE_NAME)/$(GO_PROTO_PACKAGE_DIR)
 GO_CGO_ENABLED?={{ .GoCGOEnabled }}
 VERSION = $(shell cat VERSION)
 
@@ -24,14 +26,15 @@ EXTRA_SERVE_FLAGS={{ range $i, $e := .ExtraServeFlags }}{{ if $i }},{{ end }}{{ 
 
 DB_TYPES={{ range $i, $e := .DbTypes }}{{ if $i }},{{ end }}{{ if eq $e "postgres" }}{{ if $.HasPostgis }}postgis{{ else }}{{ $e }}{{ end }}{{ else }}{{ $e }}{{ end }}{{ end }}
 QUEUE_TYPES={{ range $i, $e := .QueueTypes }}{{ if $i }},{{ end }}{{ $e }}{{ end }}
+CRON_TASKS={{ range $i, $e := .CronTasks }}{{ if $i }},{{ end }}{{ lowerSnakeCase $e }}{{ end }}
 UI_TYPE={{ if .HasUi }}{{ .UiType }}{{ end }}
 
 # <sub-services-go-package>[version@<default: 0.0.1+dev>][queue_types@<memory,rabbitmq,.... comma separed>][db_types@<mysql,sqlite,.... comma separed>][<flag-name-kebab-case>@<type [string|int]>|<description ...>|<default value ...>]...
 # ex: github.com/my-project/prj-svc-aaa[version@0.0.1+dev][db_types@mysql][my-extra-flag@string|My extra flag description|my default value][my-extra-flag2@int|My extra flag2 description|5],github.com/my-project/prj-svc-bbb[sub_services@github.com/my-project/prj-svc-aaa|github.com/my-project/prj-svc-ccc][db_types@mysql]
-SUB_SERVICES={{ .SubServicesDef }}
+SUB_SERVICES={{ .SubServicesDefMultiline }}
 
 DOCKER_TAG = $(shell cat VERSION | tr +- __)
-{{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?={{ .Version }}
+{{ range .SubServices }}DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }}?=$(shell cat vendor/{{ .GoPkg }}/VERSION | tr +- __)
 {{ end -}}
 DOCKER_IMAGE_NAME = {{ .ProjectGroupName }}/$(NAME)
 DOCKER_REGISTRY?=docker.io
@@ -230,7 +233,7 @@ build: proto{{ if .HasUi }} ui{{ end }}
 	main.go
 
 .PHONY: clean
-clean: tools-clean package-clean proto-clean
+clean: tools-clean package-clean proto-clean{{ if .HasUi }} ui-clean{{ end }}
 	@echo "$(NAME): clean task"
 {{ if .HasUi }}
 .PHONY: ui
@@ -245,14 +248,22 @@ ui-setup:
 	@echo "$(NAME): ui-setup task"{{ if .HasUiElm }}
 	-[ -d "ui/scss" ] && cd ui/scss && yarn install
 {{ end }}
+
+.PHONY: ui-clean
+ui-clean:
+	@echo "$(NAME): ui-clean task"{{ if .HasUiElm }}
+	-[ -d "ui/scss" ] && cd ui/scss && make clean
+	-[ -d "ui/elm" ] && cd ui/elm && make clean
+{{ end }}
 {{ end }}
 .PHONY: proto
 proto: tools proto-gen-doc{{ if .HasUi }}{{ if .HasUiElm }} proto-gen-elm{{ end }}{{ end }}
 	@echo "$(NAME): proto task"
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			protoc -I. \
 				-I$(shell pwd)/third_party \
+				-I$(shell pwd)/vendor \
 				{{ if .IsGogoGen }}--gogo_out=plugins=grpc,\
 Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,\
 Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
@@ -279,27 +290,28 @@ Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:\
 "${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
+				--gomeet-service_out="gogoimport=true;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_port=${DEFAULT_PORT};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ else }}--go_out="plugins=grpc:${GOPATH}/src" \
 				--grpchan_out="${GOPATH}/src" \
 				--govalidators_out="gogoimport=false:${GOPATH}/src" \
 				--grpc-gateway_out="logtostderr=true:${GOPATH}/src" \
 				--swagger_out="logtostderr=true:." \
 				--gomeetfaker_out="gogoimport=false:${GOPATH}/src" \
-				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
+				--gomeet-service_out="gogoimport=false;project_pkg=${GO_PACKAGE_NAME};ui_type=${UI_TYPE};db_types=${DB_TYPES};queue_types=${QUEUE_TYPES};cron_tasks=${CRON_TASKS};extra_serve_flags=${EXTRA_SERVE_FLAGS};default_prefixes=${DEFAULT_PREFIXES};sub_services=${SUB_SERVICES}:${GOPATH}/src" \{{ end }}
 			$$f; \
 		echo "$(NAME): compiled proto file - " $$f; \
 		echo ""; \
 	done
-	cd $(GO_PROTO_PACKAGE_ALIAS) && go generate .
+	cd $(GO_PROTO_PACKAGE_DIR) && go generate .
 
 .PHONY: proto-gen-doc
 proto-gen-doc:
 	@echo "$(NAME): proto task"
 	PATH=$(shell pwd)/_tools/bin:${GOPATH}/src/{{ .GomeetPkg }}/_build:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			for t in "docbook,$(NAME).docbook" "html,$(NAME).html" "markdown,$(NAME).md"; do \
 				protoc -I. \
 					-I$(shell pwd)/third_party \
+					-I$(shell pwd)/vendor \
 					--plugin=$(shell pwd)/_tools/bin/protoc-gen-doc \
 					--doc_out=./docs/grpc-services/ \
 					--doc_opt="$$t:google/*,github.com/*" \
@@ -316,10 +328,11 @@ proto-gen-elm:
 	@echo "$(NAME)::proto-gen-elm"
 	mkdir -p ui/elm/src/Api
 	PATH=$(shell pwd)/_tools/bin:${PATH} && \
-		for f in $(GO_PROTO_PACKAGE_ALIAS)/*.proto; do \
+		for f in $(GO_PROTO_PACKAGE_DIR)/*.proto; do \
 			protoc -I. \
-				-I$(shell pwd)/third_party \
 				-I$(shell pwd)/pb \
+				-I$(shell pwd)/third_party \
+				-I$(shell pwd)/vendor \
 				--plugin=$(shell pwd)/_tools/bin/protoc-gen-elm \
 				--elm_out=elm_prefix=Api,debug=false,json_name_type=proto:ui/elm/src/Api/ \
 			$$f; \
@@ -330,7 +343,7 @@ proto-gen-elm:
 .PHONY: proto-clean
 proto-clean:
 	@echo "$(NAME): proto-clean task"
-	-rm $(GO_PROTO_PACKAGE_ALIAS)/*.pb.* $(GO_PROTO_PACKAGE_ALIAS)/*.swagger.json
+	-rm $(GO_PROTO_PACKAGE_DIR)/*.pb.* $(GO_PROTO_PACKAGE_DIR)/*.swagger.json
 
 .PHONY: package-arm32
 package-arm32: proto
@@ -403,7 +416,7 @@ package-proto:
 	@echo "$(NAME): package-proto task"
 	mkdir -p $(PACKAGE_DIR)
 	cp -r third_party $(PACKAGE_DIR)/proto
-	cp $(GO_PROTO_PACKAGE_ALIAS)/*.proto $(PACKAGE_DIR)/proto/
+	cp $(GO_PROTO_PACKAGE_DIR)/*.proto $(PACKAGE_DIR)/proto/
 	cp VERSION $(PACKAGE_DIR)/proto/
 	cd $(PACKAGE_DIR) && tar -C ./proto/ -czvf $(PACKAGE_PROTO_NAME) . && rm -rf ./proto/
 	$(call package_shasum)
@@ -458,50 +471,45 @@ docker:
 	echo "MAX_RECV_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE)" >> .env
 	echo "MAX_SEND_MSG_SIZE=$(DOCKER_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE)" >> .env
 {{ range .SubServices }}	echo "TAG_SVC_{{ upperSnakeCase .ShortName }}=$(DOCKER_TAG_SVC_{{ upperSnakeCase .ShortName }})" >> .env
-{{ end -}}
-	{{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}{{ range $.QueueTypes -}}{{ if eq . "memory" }}
-	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
+{{ end }}{{ $envPrefixes := list "DOCKER_ENV" }}{{- range $envPrefix := $envPrefixes }}{{ range $.QueueTypes -}}{{ if eq . "memory" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)' >> .env
 	{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
 	{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
 	{{ else if eq . "sqs" }}# sqs support is not yet implemented
-	{{ end }}{{ end }}{{ range $.DbTypes }}{{ if eq . "mysql" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+	{{ end }}{{ end }}{{ range $.DbTypes }}{{ if eq . "mysql" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "postgres" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "postgres" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "sqlite" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
-	{{ else if eq . "mssql" }}echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "sqlite" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+{{ else if eq . "mssql" }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{- end }}{{- end }}
-	{{ range $.SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
+{{ end }}{{ end }}{{ range $.SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)' >> .env
-	{{ else if eq . "rabbitmq" }}# rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}# zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}# sqs support is not yet implemented
-	{{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "rabbitmq" }}	# rabbitmq support is not yet implemented
+{{ else if eq . "zeromq" }}	# zeromq support is not yet implemented
+{{ else if eq . "sqs" }}	# sqs support is not yet implemented
+{{ end }}{{ end }}{{ range .DbTypes }}{{ if eq . "mysql" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "postgres" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "postgres" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ else if eq . "sqlite" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
-	{{ else if eq . "mssql" }}echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
+{{ else if eq . "sqlite" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_FILE)' >> .env
+{{ else if eq . "mssql" }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_USERNAME)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PASSWORD)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_PORT)' >> .env
 	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DATABASE)' >> .env
-	{{ end }}{{ end }}{{ end }}
-{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
+{{ end }}{{ end }}{{ end }}{{ range $.ExtraServeFlags }}	echo '{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})' >> .env
 {{ end }}{{ range $.SubServices }}{{ $ss := . }}{{ range .ExtraServeFlags }}	echo '{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }}=$({{ upperSnakeCase $envPrefix }}_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})' >> .env
-{{ end }}{{ end -}}
-{{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
+{{ end }}{{ end }}{{ end }}	-docker build -t $(DOCKER_IMAGE_NAME):$(DOCKER_TAG) .
 
 .PHONY: docker-push
 docker-push: docker
@@ -511,28 +519,31 @@ docker-push: docker
 .PHONY: start
 start: docker
 	docker-compose up -d
-	@echo "\n\
-	Grafana:\n\
-		http://localhost:3000/\n\
-		For admin password see GF_SECURITY_ADMIN_PASSWORD in $(shell pwd)/infra/config.monitoring file\n\
-	Prometheus:\n\
-		http://localhost:9090/\n\
-	Alert manager:\n\
-		http://localhost:9093/\n\
-	Swagger docs:\n\
-		http://localhost:8000/docs\n\
-	Godoc:\n\
-		http://localhost:8001/pkg/{{ .ProjectGroupGoPkg }}/$(NAME)\n\
-	Documentation: \n\
-		$(shell pwd)/docs/docker/README.md \n\
-		$(shell pwd)/docs/docker-compose/README.md\n\
-		$(shell pwd)/docs/grafana/README.md\n\
-		"
+	@echo ""
+	@echo "svc-{{ .ShortName }}:"
+	@echo "	http://0.0.0.0:8383/"
+	@echo "Grafana:"
+	@echo "	http://localhost:3000/"
+	@echo "	For admin password see GF_SECURITY_ADMIN_PASSWORD in $(shell pwd)/infra/config.monitoring file"
+	@echo "Prometheus:"
+	@echo "	http://localhost:9090/"
+	@echo "Alert manager:"
+	@echo "	http://localhost:9093/"
+	@echo "Swagger docs:"
+	@echo "	http://localhost:8000/docs"
+	@echo "Godoc:"
+	@echo "	http://localhost:8001/pkg/{{ .ProjectGroupGoPkg }}/$(NAME)"
+	@echo "Documentation:"
+	@echo "	$(shell pwd)/docs/docker/README.md"
+	@echo "	$(shell pwd)/docs/docker-compose/README.md"
+	@echo "	$(shell pwd)/docs/grafana/README.md"
+	@echo ""
 
 .PHONY: stop
 stop:
 	docker-compose down
-	@echo "\nTo remove volume use :\n        docker volume prune -f"
+	@echo "To remove volume use :"
+	@echo "   docker volume prune -f"
 
 .PHONY: install
 install:
@@ -645,15 +656,15 @@ test-func: build
 test-unit:
 	@echo "$(NAME): test-unit task"
 	@if ls models/*_test.go 1> /dev/null 2>&1; then cd models && go test{{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}; fi
-	@if ls $(GO_PROTO_PACKAGE_ALIAS)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_ALIAS) && go test; fi
-	@cd service && go test $(DEBUG_TEST_FLAG){{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@if ls $(GO_PROTO_PACKAGE_DIR)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_DIR) && go test; fi
+	@cd service && go test $(DEBUG_TEST_FLAG) -jwt-secret=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET) -max-recv-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE) -max-send-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE){{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test-race
 test-race:
 	@echo "$(NAME): test-race task"
 	@if ls models/*_test.go 1> /dev/null 2>&1; then cd models && go test -race{{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}; fi
-	@if ls $(GO_PROTO_PACKAGE_ALIAS)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_ALIAS) && go test -race; fi
-	@cd service && go test $(DEBUG_TEST_FLAG) -race{{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
+	@if ls $(GO_PROTO_PACKAGE_DIR)/*_test.go 1> /dev/null 2>&1; then cd $(GO_PROTO_PACKAGE_DIR) && go test -race; fi
+	@cd service && go test $(DEBUG_TEST_FLAG) -race -jwt-secret=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_JWT_SECRET) -max-recv-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_RECV_MSG_SIZE) -max-send-msg-size=$(TEST_ENV_{{ upperSnakeCase $.ProjectGroupName }}_MAX_SEND_MSG_SIZE){{ range .QueueTypes }}{{ if eq . "memory" }} -{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase . }}_DB_DSN)" {{ end }}{{ range .ExtraServeFlags }} -{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ range .SubServices }}{{ $ss := . }}{{ range .QueueTypes }}{{ if eq . "memory" }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-worker-count="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_WORKER_COUNT)" -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-queue-max-size="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_QUEUE_MAX_SIZE)"{{ else if eq . "rabbitmq" }} {{ else if eq . "zeromq" }} {{ else if eq . "sqs" }} {{ end }}{{ end }}{{ range .DbTypes }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase . }}-dsn="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase . }}_DB_DSN)"{{ end }}{{ range .ExtraServeFlags }} -svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}="$(TEST_ENV_{{ upperSnakeCase $ss.Name }}_{{ upperSnakeCase .Name }})"{{ end }}{{ end }}
 
 .PHONY: test
 test:
@@ -691,11 +702,13 @@ gomeet-regenerate-project: tools
 	@echo "$(NAME): gomeet-regenerate-project task"
 	_tools/bin/gomeet new ${GO_PACKAGE_NAME} \
 		--default-prefixes='${DEFAULT_PREFIXES}' \
-		--proto-name='${GO_PROTO_PACKAGE_ALIAS}' \
+		--default-port='${DEFAULT_PORT}' \
+		--proto-alias='${GO_PROTO_PACKAGE_ALIAS}' \
 		--sub-services='${SUB_SERVICES}' \
 		--db-types='${DB_TYPES}' \
 		--ui-type='${UI_TYPE}' \
 		--queue-types='${QUEUE_TYPES}' \
+		--cron-tasks='${CRON_TASKS}' \
 		--extra-serve-flags='${EXTRA_SERVE_FLAGS}' \
 		--force $(NO_GOGO_FLAG)
 

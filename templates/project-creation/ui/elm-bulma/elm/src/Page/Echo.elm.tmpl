@@ -3,7 +3,6 @@ module Page.Echo exposing (Model, Msg, init, subscriptions, toSession, update, v
 import Api.Endpoint as Endpoint
 import Api.GrpcError as GrpcError exposing (GrpcError)
 import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
-import Api.Pb.{{ upperPascalCase .ShortName }} as {{ upperPascalCase .ShortName }}Pb
 import Api.Request as Request
 import Api.Validator as Validator
 import Assets.Icons as Icons
@@ -71,7 +70,7 @@ viewContent model =
         loadingMsg mod =
             Ui.message mod
                 []
-                [ Ui.messageBody [] [ Icons.iconText Icons.Loading Ui.Standard "Loading..." ]
+                [ Ui.messageBody [] [ Icons.iconText Icons.Loading Ui.Standard Ui.Left "Loading..." ]
                 ]
 
         endpointMsg =

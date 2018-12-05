@@ -56,7 +56,7 @@ sudo curl \
      -o /usr/local/bin/docker-compose
 # 2. Apply executable permissions to the binary
 sudo chmod +x /usr/local/bin/docker-compose
-{{ if .HasUi }}{{ if .UiType eq "elm" }}
+{{ if .HasUi }}{{ if .HasUiElm }}
 # 3. Install ui tools chain
 # install nodejs
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
@@ -103,7 +103,7 @@ echo -e "export GOPATH=\$(go env GOPATH)\nexport PATH=\${PATH}:\${GOPATH}/bin" >
 echo "" >> ~/.bashrc
 source ~/.bashrc
 
-{{ if .HasUi }}{{ if .UiType eq "elm" }}
+{{ if .HasUi }}{{ if .HasUiElm }}
 # for ui
 # install nodejs
 brew install node
@@ -240,6 +240,8 @@ TODO in github.com/gomeet/gomeet/templates/protoc-gen/docs/devel/working_with_th
 - `make package-clean` - Clean up the builded packages
 - `make package-proto` - Building the `_build/packaged/proto.tgz` file with dirstribluables protobuf files
 {{ if .HasUi }}- `make ui` - Generation of a virtual file system that is compiled with the binary from files inside `ui/assets`
+- `make ui-setup` - Initialize the ui tools chain
+- `make ui-clean` - Clean up the ui artifacts
 {{ end }}- `make proto` - Generating files from proto
 - `make proto-clean` - Clean up generated files from the proto file
 - `make release` - Making a release (see below)

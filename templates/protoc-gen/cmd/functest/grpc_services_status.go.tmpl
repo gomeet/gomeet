@@ -5,7 +5,7 @@ package functest
 import (
 	"fmt"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType }}
 )
 
 func TestServicesStatus(config FunctionalTestConfig) (failures []TestFailure) {

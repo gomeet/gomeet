@@ -14,7 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"{{ if .HasUi }}
+	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/pb"{{ if .HasUi }}
 	ui "{{ .GoPkg }}/ui"{{ end }}
 )
 

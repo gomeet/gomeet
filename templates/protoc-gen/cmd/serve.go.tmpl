@@ -8,56 +8,14 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	{{ if .HasMemoryQueue }}"runtime"{{ end }}
 
-	{{ if .SubServices }}gomeetService "{{ .GomeetPkg }}/utils/service"
 	{{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}Models "{{ $ss.GoPkg }}/models"
 	{{ end }}{{ end }}
-	{{- end -}}
 	{{ if .DbTypes }}"{{ .GoPkg }}/models"{{ end }}
 	"{{ .GoPkg }}/server"
 )
 
 var (
-	debugMode          bool
-	serverAddress      string
-	grpcServerAddress  string
-	httpServerAddress  string
-	corsAllowedOrigins string
-	jwtSecret          string
-	maxRecvMsgSize     int
-	maxSendMsgSize     int
-
-	//Main server database and extra flags
-	{{ range .DbTypes }}{{ lowerPascalCase . }}Migrate bool
-	{{ lowerPascalCase . }}DataSourceName string
-	{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}
-	{{ end }}
-	// SubService databases and extra flags
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string
-	{{ $ss := . }}{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate bool
-	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName string
-	{{ end }}{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag {{ .Type }}
-	{{ end }}{{ end }}
-
-	// Main server queue
-	{{ range .QueueTypes }}{{ if eq . "memory" }}
-	{{ lowerPascalCase . }}QueueWorkerCount  int
-	{{ lowerPascalCase . }}QueueMaxSize      int
-	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}
-	// SubService queue
-	{{ range .SubServices }}{{ $ss := . }}
-	{{ range .QueueTypes }}{{ if eq . "memory" }}
-	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount  int
-	svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize      int
-	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}{{ end }}
-
 	// serveCmd represents the serve serve command
 	serveCmd = &cobra.Command{
 		Use:   "serve",
@@ -68,107 +26,32 @@ Warning on embed sub-services:
 
 {{ .SubServicesMonolithHelp }}
 `,{{ end }}
-		Run: func(cmd *cobra.Command, args []string) {
-			serve()
-		},
+		PreRun: bindFlagsToConfig,
+		Run: serve,
 	}
 )
 
 func init() {
+	initDebugFlag(serveCmd)
+	initJWTSecretFlag(serveCmd)
+	// initJWTTokenFlag(serveCmd)
+	// initTimeoutFlag(serveCmd)
+	initServerAddressFlag(serveCmd)
+
+	initGrpcFlags(serveCmd)
+	initServerExtraFlags(serveCmd)
+	initServerNetworkFlags(serveCmd)
+	initServerSubServicesNetworkFlags(serveCmd)
+	initServerTlsFlags(serveCmd)
+	initServerQueueFlags(serveCmd)
+	initDbDNSFlags(serveCmd)
+	initDbMigrateFlags(serveCmd)
+
 	rootCmd.AddCommand(serveCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-
-	// force debug mode
-	serveCmd.PersistentFlags().BoolVarP(&debugMode, "debug", "d", false, "Force debug mode")
-
-	// address flag (to serve all protocols on a single port)
-	serveCmd.PersistentFlags().StringVarP(&serverAddress, "address", "a", ":13000", "Multiplexed gRPC/HTTP server address")
-
-	// gRPC address flag (to serve gRPC on a separate address)
-	serveCmd.PersistentFlags().StringVar(&grpcServerAddress, "grpc-address", "", "gRPC server address")
-
-	// HTTP/1.1 address flag (to serve HTTP on a separate address)
-	serveCmd.PersistentFlags().StringVar(&httpServerAddress, "http-address", "", "HTTP server address")
-
-	// cors flag
-	serveCmd.PersistentFlags().StringVarP(&corsAllowedOrigins, "cors", "c", "*", "Cross Origin Resource Sharing AllowedOrigins (string) separed by | ex: http://*gomeet.com|http://*example.com")
-
-	// JWT secret signing key
-	serveCmd.PersistentFlags().StringVarP(&jwtSecret, "jwt-secret", "j", "", "JSON Web Token secret signing key (required for JWT support)")
-
-	// maxRecvMsgSize a ServerOption to set the max message size in bytes the server can receive
-	serveCmd.PersistentFlags().IntVar(&maxRecvMsgSize, "max-recv-msg-size", 10, "The max message size in mega bytes the server can receive")
-
-	// maxSendMsgSize a ServerOption to set the max message size in bytes the server can receive
-	serveCmd.PersistentFlags().IntVar(&maxSendMsgSize, "max-send-msg-size", 10, "The max message size in mega bytes the server can send")
-
-	// CA certificate
-	serveCmd.PersistentFlags().StringVar(&caCertificate, "ca", "", "X.509 certificate of the Certificate Authority (required for gRPC TLS support)")
-
-	// gRPC server certificate
-	serveCmd.PersistentFlags().StringVar(&serverCertificate, "cert", "", "X.509 certificate of the gRPC server (required for gRPC TLS support)")
-
-	// gRPC server private key
-	serveCmd.PersistentFlags().StringVar(&serverPrivateKey, "key", "", "RSA private key of the gRPC server (required for gRPC TLS support)")
-
-	// EXTRA : flags
-	{{ range .QueueTypes }}// Main queue system
-	{{ if eq . "memory" }}
-	serveCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueWorkerCount, "{{ lower . }}-queue-worker-count", runtime.NumCPU(), "The number of spawned workers (default is num cpu)")
-	serveCmd.PersistentFlags().IntVar(&{{ lowerPascalCase . }}QueueMaxSize, "{{ lower . }}-queue-max-size", 100, "The max size of buffered asynchronous job queue (default 100)")
-	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}
-	{{ range .DbTypes }}// {{ upperPascalCase . }} data migration on start
-	serveCmd.PersistentFlags().BoolVar(&{{ lowerPascalCase . }}Migrate, "{{ lower . }}-migrate", false, "{{ upperPascalCase . }} data migration on start")
-	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
-	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
-	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} data source file")
-	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&{{ lowerPascalCase . }}DataSourceName, "{{ lower . }}-dsn", "", "{{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
-	{{ end }}
-	{{ end }}{{ range .ExtraServeFlags }}// {{ lowerPascalCase .Name }} flag is pass to gRPC server
-	serveCmd.PersistentFlags().{{ title .Type }}Var(&{{ lowerPascalCase .Name }}ExtraFlag, "{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
-	{{ end }}
-
-	{{ range .SubServices }}// {{ upperPascalCase .ShortName }} service address
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase .ShortName }}Address, "svc-{{ lowerKebabCase .ShortName }}-address", gomeetService.INPROCESS_ADDRESS, "{{ upperPascalCase .ShortName }} service address (host:port) if empty, the sub-service is embed with svc-{{ lowerKebabCase .ShortName }}-* flags has parameters")
-	{{ $ss := . }}{{ range .QueueTypes }}// {{ upperPascalCase $ss.ShortName }} queue system
-	{{ if eq . "memory" }}
-	serveCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-worker-count", runtime.NumCPU(), "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} number of spawned workers (default is num cpu)")
-	serveCmd.PersistentFlags().IntVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-queue-max-size", 100, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} max size of buffered asynchronous job queue (default 100)")
-	{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
-	{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
-	{{ else if eq . "sqs" }}// sqs support is not yet implemented
-	{{ end }}{{ end }}{{ range .DbTypes }}
-	// svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
-	serveCmd.PersistentFlags().BoolVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-migrate", false, "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data migration on start")
-	{{ if eq . "mysql" }}// {{ upperPascalCase . }} data source name: https://github.com/go-sql-driver/{{ lower . }}#dsn-data-source-name
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (USERNAME:PASSWORD@tcp(HOSTNAME:PORT)/DBNAME)")
-	{{ else if eq . "postgres" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (host=HOSTNAME port=DBPORT user=USERNAME dbname=DBNAME password=PASSWORD)")
-	{{ else if eq . "sqlite" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} data source file")
-	{{ else if eq . "mssql" }}// {{ upperPascalCase . }} data source name: http://gorm.io/database.html#connecting-to-a-database
-	serveCmd.PersistentFlags().StringVar(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lower . }}-dsn", "", "svc{{ upperPascalCase $ss.ShortName }} {{ upperPascalCase . }} connection informations (sqlserver://USERNAME:PASSWORD@tcp(HOSTNAME:PORT)?database=DBNAME)")
-	{{ end }}{{ end }}{{ range .ExtraServeFlags }}
-	serveCmd.PersistentFlags().{{ title .Type }}Var(&svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, "svc-{{ lowerKebabCase $ss.ShortName }}-{{ lowerKebabCase .Name }}", {{ if eq .Type "string" }}"{{ end }}{{ .DefaultValue }}{{ if eq .Type "string" }}"{{ end }}, "{{ .Description }}")
-	{{ end }}{{ end }}
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func databaseMigration() {
+	// TODO: GOMEET use config.Get
 	//SubServices databaseMigration
 	{{ range .SubServices }}{{ if .DbTypes }}svc{{ upperPascalCase .ShortName }}DatabaseMigration(){{ end }}
 	{{ end }}
@@ -191,6 +74,7 @@ func databaseMigration() {
 
 {{ range .SubServices }}{{ $ss := . }}{{ if .DbTypes }}
 func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
+	// TODO: GOMEET use config.Get
 	{{ range .DbTypes }}// {{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }} data migration on start
 	if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}Migrate {
 		if svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName == "" {
@@ -207,7 +91,8 @@ func svc{{ upperPascalCase .ShortName }}DatabaseMigration() {
 }
 {{ end }}{{ end }}
 
-func serve() {
+func serve(cmd *cobra.Command, args []string) {
+	// TODO: GOMEET use config.Get
 	if strings.HasSuffix(svc.Version, "+dev") || debugMode {
 		log.SetLevel(log.DebugLevel)
 		log.WithFields(log.Fields{
@@ -233,7 +118,7 @@ func serve() {
 			{{ else if eq . "sqs" }}// sqs support is not yet implemented
 			{{ end }}{{ end }}
 			{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .QueueTypes }}{{ if eq . "memory" }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize,
 			{{ else if eq . "rabbitmq" }}// rabbitmq support is not yet implemented
@@ -252,7 +137,7 @@ func serve() {
 			{{ else if eq . "zeromq" }}// zeromq support is not yet implemented
 			{{ else if eq . "sqs" }}// sqs support is not yet implemented
 			{{ end }}{{ end }}{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address,
+			{{ if .SubServices -}}{{ range .SubServices }}{{ $ss := . }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls,
 			{{ range .DbTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}DataSourceName, {{ end -}}
 			{{ range .QueueTypes }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueWorkerCount, svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase . }}QueueMaxSize, {{ end -}}
 			{{ range .ExtraServeFlags }}svc{{ upperPascalCase $ss.ShortName }}{{ upperPascalCase .Name }}ExtraFlag, {{ end }}{{ end }}

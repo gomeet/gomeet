@@ -18,7 +18,7 @@ import (
 	svc{{ upperPascalCase .ShortName }}Service "{{ .GoPkg }}/service"{{ end }}
 	gomeetService "{{ .GomeetPkg }}/utils/service"{{ end }}
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/pb"
 )
 
 var (
@@ -61,7 +61,7 @@ func (svc Service) GetServerImpl() {{ .GoProtoPkgAlias }}.{{ upperPascalCase .Sh
 	{{ else if eq . "sqs" }}// sqs support is not yet implemented
 	{{ end }}{{ end -}}
 	{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag {{ .Type }}, {{ end -}}
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, {{ end }}
+	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string, svc{{ upperPascalCase .ShortName }}Tls bool, {{ end }}
 ) {
 	svc.svc{{ upperPascalCase .ShortName }} = svc{{ upperPascalCase .ShortName }}Service.NewService(gomeetService.INPROCESS_ADDRESS)
 	svc.svc{{ upperPascalCase .ShortName }}.RegisterGRPCServices(
@@ -74,7 +74,7 @@ func (svc Service) GetServerImpl() {{ .GoProtoPkgAlias }}.{{ upperPascalCase .Sh
 		{{ else if eq . "sqs" }}// sqs support is not yet implemented
 		{{ end }}{{ end -}}
 		{{ range .ExtraServeFlags }}{{ lowerPascalCase .Name }}ExtraFlag, {{ end -}}
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, {{ end }}
+		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address, svc{{ upperPascalCase .ShortName }}Tls, {{ end }}
 	)
 }
 {{ end }}
@@ -94,7 +94,8 @@ func (svc *Service) RegisterGRPCServices(
 	{{ end }}// END EXTRA : param
 	// SUB-SERVICES DEFINITION : param-address
 	// svc{{ "{{SubServiceNamePascalCase}}" }}Address string,
-	{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address string,
+{{ range .SubServices }}	svc{{ upperPascalCase .ShortName }}Address string,
+	svc{{ upperPascalCase .ShortName }}Tls bool,
 	{{ end }}// END SUB-SERVICES DEFINITION : param-address
 ) {
 	log.WithFields(log.Fields{
@@ -116,8 +117,9 @@ func (svc *Service) RegisterGRPCServices(
 		{{ end }}// END EXTRA : log
 		// SUB-SERVICES DEFINITION : log-address
 		// "svc{{ "{{SubServiceNamePascalCase}}" }}Address": svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : log-address
+{{ range .SubServices }}		"svc{{ upperPascalCase .ShortName }}Address": svc{{ upperPascalCase .ShortName }}Address,
+		"svc{{ upperPascalCase .ShortName }}Tls": svc{{ upperPascalCase .ShortName }}Tls,
+{{ end }}		// END SUB-SERVICES DEFINITION : log-address
 	}).Debug("{{ .Name }}: RegisterGRPCServices")
 	svc.serverImpl = &{{ lowerPascalCase .ShortName }}Server{
 		version:             svc.Version,
@@ -140,8 +142,9 @@ func (svc *Service) RegisterGRPCServices(
 		{{ end }}// END EXTRA : register server
 		// SUB-SERVICES DEFINITION : register-address-to-server
 		// svc{{ "{{SubServiceNamePascalCase}}" }}Address: svc{{ "{{SubServiceNamePascalCase}}" }}Address,
-		{{ range .SubServices }}svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
-		{{ end }}// END SUB-SERVICES DEFINITION : register-address-to-server
+{{ range .SubServices }}		svc{{ upperPascalCase .ShortName }}Address: svc{{ upperPascalCase .ShortName }}Address,
+		svc{{ upperPascalCase .ShortName }}Tls: svc{{ upperPascalCase .ShortName }}Tls,
+{{ end }}		// END SUB-SERVICES DEFINITION : register-address-to-server
 	}
 	{{ .GoProtoPkgAlias }}.RegisterHandler{{ upperPascalCase .ShortName }}(reg, svc.serverImpl)
 }

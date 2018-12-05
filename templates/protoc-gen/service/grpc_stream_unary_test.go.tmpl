@@ -14,9 +14,9 @@ func Test{{ upperPascalCase .GrpcMethod.Method.Name }}(t *testing.T) {
 	stream, err := cli.{{ upperPascalCase .GrpcMethod.Method.Name }}(ctx)
 	assert.Nil(t, err)
 
-	req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
-	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
 	// req := &{{ messageGoType .GrpcMethod.Method.GetInputType }}{}
+	// You can generate a fake request see https://github.com/gomeet/go-proto-gomeetfaker
+	req := {{ messageFake .GrpcMethod.Method.GetInputType }}
 	stream.Send(req)
 	res, err := stream.CloseAndRecv()
 	assert.Nil(t, err)

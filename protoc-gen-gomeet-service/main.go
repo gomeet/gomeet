@@ -49,9 +49,11 @@ func main() {
 		subServices     []string
 		projectPkg      string
 		defaultPrefixes string
+		defaultPort     string
 		dbTypes         string
 		uiType          string
 		queueTypes      string
+		cronTasks       string
 		extraServeFlags string
 	)
 	useGogoImport := false
@@ -71,6 +73,10 @@ func main() {
 				uiType = parts[1]
 			case "queue_types":
 				queueTypes = parts[1]
+			case "cron_tasks":
+				cronTasks = parts[1]
+			case "default_port":
+				defaultPort = parts[1]
 			case "default_prefixes":
 				defaultPrefixes = parts[1]
 			case "project_pkg":
@@ -96,6 +102,7 @@ func main() {
 		g.Error(err, "project initialization fail")
 	}
 	p.SetDefaultPrefixes(defaultPrefixes)
+	p.SetDefaultPort(defaultPort)
 	p.SetSubServices(subServices)
 
 	if dbTypes != "" {
@@ -116,6 +123,13 @@ func main() {
 		err := p.SetQueueTypes(queueTypes)
 		if err != nil {
 			g.Error(err, "bad queue_types parameter")
+		}
+	}
+
+	if cronTasks != "" {
+		err := p.SetCronTasks(cronTasks)
+		if err != nil {
+			g.Error(err, "bad cron_tasks parameter")
 		}
 	}
 

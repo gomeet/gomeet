@@ -1,6 +1,7 @@
 package acl
 
 import (
+	gogoproto "github.com/gogo/protobuf/proto"
 	"github.com/golang/protobuf/proto"
 	"github.com/gomeet/gomeet/utils/log"
 	"golang.org/x/net/context"
@@ -12,14 +13,18 @@ import (
 // AclFunc is the pluggable function that performs Access Control List check.
 //
 // If error is returned, the error and `codes.PermissionDenied` will be returned to the user as well as the verbatim message.
-type AclFunc func(ctx context.Context, fullMethodName string, req proto.Message) error
+type AclFunc func(ctx context.Context, fullMethodName string, req interface{}) error
 
 // ServiceAclFuncOverride allows a given gRPC service implementation to override the global `AclFunc`.
 //
 // If a service implements the AclFuncOverride method, it takes precedence over the `AclFunc` method,
 // and will be called instead of AclFunc for all method invocations within that service.
-type ServiceAclFuncOverride interface {
+type ServiceAclFuncOverrideProto interface {
 	AclFuncOverride(ctx context.Context, fullMethodName string, req proto.Message) error
+}
+
+type ServiceAclFuncOverrideGogoProto interface {
+	AclFuncOverride(ctx context.Context, fullMethodName string, req gogoproto.Message) error
 }
 
 // UnaryServerInterceptor returns a new unary server interceptors that validates incoming messages.
@@ -30,7 +35,9 @@ func UnaryServerInterceptor(aclFunc AclFunc) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		var err error
 		if pbMsg, ok := req.(proto.Message); ok {
-			if overrideSrv, ok := info.Server.(ServiceAclFuncOverride); ok {
+			if overrideSrv, ok := info.Server.(ServiceAclFuncOverrideProto); ok {
+				err = overrideSrv.AclFuncOverride(ctx, info.FullMethod, pbMsg)
+			} else if overrideSrv, ok := info.Server.(ServiceAclFuncOverrideGogoProto); ok {
 				err = overrideSrv.AclFuncOverride(ctx, info.FullMethod, pbMsg)
 			} else if aclFunc != nil {
 				err = aclFunc(ctx, info.FullMethod, pbMsg)
@@ -55,8 +62,20 @@ func UnaryServerInterceptor(aclFunc AclFunc) grpc.UnaryServerInterceptor {
 func StreamServerInterceptor(aclFunc AclFunc) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		var fn AclFunc
-		if overrideSrv, ok := srv.(ServiceAclFuncOverride); ok {
-			fn = overrideSrv.AclFuncOverride
+		if overrideSrv, ok := srv.(ServiceAclFuncOverrideProto); ok {
+			fn = func(ctx context.Context, fullMethodName string, req interface{}) error {
+				if pbMsg, ok := req.(proto.Message); ok {
+					return overrideSrv.AclFuncOverride(ctx, fullMethodName, pbMsg)
+				}
+				return nil
+			}
+		} else if overrideSrv, ok := srv.(ServiceAclFuncOverrideGogoProto); ok {
+			fn = func(ctx context.Context, fullMethodName string, req interface{}) error {
+				if pbMsg, ok := req.(gogoproto.Message); ok {
+					return overrideSrv.AclFuncOverride(ctx, fullMethodName, pbMsg)
+				}
+				return nil
+			}
 		} else {
 			fn = aclFunc
 		}
@@ -75,12 +94,10 @@ func (s *recvWrapper) RecvMsg(m interface{}) error {
 	if err := s.ServerStream.RecvMsg(m); err != nil {
 		return err
 	}
-	if pbMsg, ok := m.(proto.Message); ok {
-		if s.aclFunc != nil {
-			if err := s.aclFunc(s.Context(), s.info.FullMethod, pbMsg); err != nil {
-				log.Error(s.Context(), "PermissionDenied call", err, log.Fields{"fullMethodName": s.info.FullMethod})
-				return status.Errorf(codes.PermissionDenied, err.Error())
-			}
+	if s.aclFunc != nil {
+		if err := s.aclFunc(s.Context(), s.info.FullMethod, m); err != nil {
+			log.Error(s.Context(), "PermissionDenied call", err, log.Fields{"fullMethodName": s.info.FullMethod})
+			return status.Errorf(codes.PermissionDenied, err.Error())
 		}
 	}
 

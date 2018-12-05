@@ -1083,7 +1083,11 @@ func messagesNeededImports(recursive bool, name string) map[string]string {
 					continue
 				}
 				if _, ok := ret[goPkg.Path]; !ok {
-					ret[goPkg.Path] = goPkg.Name
+					if goPkg.Alias != "" {
+						ret[goPkg.Path] = goPkg.Alias
+					} else {
+						ret[goPkg.Path] = goPkg.Name
+					}
 				}
 			}
 		}
@@ -1091,7 +1095,11 @@ func messagesNeededImports(recursive bool, name string) map[string]string {
 		goPkg := msg.File.GoPkg
 		if goPkg.Path != "" {
 			if _, ok := ret[goPkg.Path]; !ok {
-				ret[goPkg.Path] = goPkg.Name
+				if goPkg.Alias != "" {
+					ret[goPkg.Path] = goPkg.Alias
+				} else {
+					ret[goPkg.Path] = goPkg.Name
+				}
 			}
 		}
 	}
@@ -1278,7 +1286,7 @@ func subSvcPkgString(subSvc []*helpers.PkgNfo) string {
 	return strings.Join(ret, ",")
 }
 
-func curlCmdHelpString(name string, protoFiles []*descriptor.FileDescriptorProto) string {
+func curlCmdHelpString(defaultPort int, name string, protoFiles []*descriptor.FileDescriptorProto) string {
 	var ret []string
 
 	for _, file := range protoFiles {
@@ -1306,8 +1314,9 @@ func curlCmdHelpString(name string, protoFiles []*descriptor.FileDescriptorProto
 				ret = append(
 					ret,
 					fmt.Sprintf(
-						"curl -X %s http://localhost:13000%s%s",
+						"curl -X %s http://localhost:%d%s%s",
 						rightPad2Len(httpV, " ", 6), // 6 - DELETE len + 1
+						defaultPort,
 						httpPath(method),
 						attr,
 					),
@@ -1630,7 +1639,11 @@ func messageFake(name string) string {
 	if err != nil {
 		return ""
 	}
+	alias := msg.File.GoPkg.Name
+	if myAlias := msg.File.GoPkg.Alias; myAlias != "" {
+		alias = myAlias
+	}
 
-	ret := fmt.Sprintf("%s.New%sGomeetFaker()", msg.File.GoPkg.Name, msg.GetName())
+	ret := fmt.Sprintf("%s.New%sGomeetFaker()", alias, msg.GetName())
 	return ret
 }

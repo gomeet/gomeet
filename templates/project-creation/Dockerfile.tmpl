@@ -1,11 +1,12 @@
 # golang builder
-FROM golang:1.8.3-alpine3.6 AS builder
+FROM golang:1.11-alpine3.8 AS builder
 WORKDIR /go/src/{{ .GoPkg }}/
 COPY . .
-RUN apk add --no-cache --update git make protobuf protobuf-dev ca-certificates curl && \
+RUN apk add --no-cache --update git make protobuf protobuf-dev ca-certificates curl nodejs yarn && \
      rm -rf /var/cache/apk/*
 RUN rm -f /go/src/{{ .GoPkg }}/_build/{{ .Name }}
-RUN make tools-clean tools-sync tools
+RUN make tools-clean tools-sync tools{{ if .HasUi }}
+RUN make ui-clean ui-setup{{ end }}
 RUN make
 
 # cf. https://hub.docker.com/r/gomeet/gomeet-builder/
@@ -20,6 +21,6 @@ FROM scratch
 LABEL maintainer="Hugues Dubois <hugdubois@gmail.com>"
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=builder /go/src/{{ .GoPkg }}/_build/{{ .Name }} /{{ .Name }}
-EXPOSE 13000
+EXPOSE 50051
 ENTRYPOINT ["/{{ .Name }}"]
 CMD ["serve"]

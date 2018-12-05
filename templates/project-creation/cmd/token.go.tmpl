@@ -12,7 +12,7 @@ import (
 
 const (
 	// issuer (the principal that issues tokens)
-	tokenIssuer = "https://gomeet.com/"
+	tokenIssuer = "https://{{ .ProjectGroupName }}.com"
 
 	// default token lifetime expressed in hours
 	defaultTokenLifetimeHours = 24

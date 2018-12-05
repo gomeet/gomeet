@@ -1,0 +1,12 @@
+package crontask
+
+import (
+	"errors"
+
+	"{{ .GoPkg }}/cmd/functest"
+)
+
+func {{ upperPascalCase .GrpcMethod.Method.Name }}(config functest.FunctionalTestConfig) error {
+	return errors.New("Not Yet Implemented")
+}
+

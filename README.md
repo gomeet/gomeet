@@ -50,13 +50,18 @@ Usage:
   gomeet new [name] [flags]
 
 Flags:
-      --db-types string           DB types [mysql,postgres,postgis,sqllite,mssql] (comma separated)
-      --default-prefixes string   List of prefixes [svc-,gomeet-svc-] (comma separated) - Overloaded with $GOMEET_DEFAULT_PREFIXES
-      --force                     Replace files if exists
-  -h, --help                      help for new
-      --no-gogo                   if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file
-      --proto-name string         Protobuf pakage name (inside project)
-      --sub-services string       Sub services dependencies (comma separated)
+      --cron-tasks string          Cron tasks (comma separated)
+      --db-types string            DB types [mysql,postgres,postgis,sqlite,mssql] (comma separated)
+      --default-port string        Default port (default "50051")
+      --default-prefixes string    List of prefixes (comma separated) (default "svc-,gomeet-svc-")
+      --extra-serve-flags string   extra serve flags passed to gRPC server format [<name-of-flag>@<type-of-flag[string|int]>|<flag description (no comma, no semicolon, no colon)>|<default value>] (comma separated)
+      --force                      Replace files if exists
+  -h, --help                       help for new
+      --no-gogo                    if is true the protoc plugin is protoc-gen-go else it's protoc-gen-gogo in the Makefile file
+      --proto-alias string         Protobuf pakage alias (default "pb")
+      --queue-types string         Queue types [memory,rabbitmq,zeromq,sqs] (comma separated)
+      --sub-services string        Sub services dependencies (comma separated)
+      --ui-type string             UI type [none|simple|elm|elm-bulma|elm-milligram|elm-minimal|elm-minimal-http] (default "none")
 ```
 
 ## Use case
@@ -114,7 +119,7 @@ Which branch should be used for bringing forth production releases?
 
 - [ ] Units tests
 - [ ] Add an use case see [gomeet-examples](https://github.com/gomeet-examples/)
-- [ ] Add ui generator
+- [x] Add ui generator
 - [ ] Use bazel for build?
 - [ ] Improvements
 - [ ] Add `make package-<OS>-<ARCH>` directives

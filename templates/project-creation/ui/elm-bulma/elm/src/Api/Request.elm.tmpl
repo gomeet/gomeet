@@ -6,6 +6,7 @@ module Api.Request exposing
     , delete
     , echo
     , encodeInvalidArgumentError
+    , encodeUnknownError
     , errorToString
     , get
     , post
@@ -68,7 +69,7 @@ type Cred
 
 credHeader : Cred -> Http.Header
 credHeader (Cred _ str) =
-    Http.header "authorization" ("Token " ++ str)
+    Http.header "authorization" ("Bearer " ++ str)
 
 
 
@@ -196,6 +197,11 @@ errorToString (Error code grpcError message) =
         ++ " - "
         ++ String.fromInt code
         ++ " )"
+
+
+encodeUnknownError : Error
+encodeUnknownError =
+    Error 500 GrpcError.Unknown "Unknown error"
 
 
 encodeInvalidArgumentError : String -> String -> Error

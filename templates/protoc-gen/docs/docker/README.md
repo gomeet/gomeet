@@ -17,7 +17,7 @@ docker build -t {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) .
 ```shell
 docker run -d \
     --net=network-grpc-{{ .ProjectGroupName }} \
-    -p 13000:13000 \
+    -p {{ .DefaultPort }}:{{ .DefaultPort }} \
     --name=svc-{{ .Name }}-1 \
     -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __)
 ```
@@ -39,11 +39,11 @@ docker run -d \
 - Or use HTTP/1.1 api
 
   ```shell
-{{ curlCmdHelpString .Name .ProtoFiles }}
-  $ curl -X GET    http://localhost:13000/
-  $ curl -X GET    http://localhost:13000/version
-  $ curl -X GET    http://localhost:13000/metrics
-  $ curl -X GET    http://localhost:13000/status
+{{ curlCmdHelpString .DefaultPort .Name .ProtoFiles }}
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/version
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/metrics
+  $ curl -X GET    http://localhost:{{ .DefaultPort }}/status
   $ curl -X GET    http://localhost:42000/version
   ```
 
@@ -73,7 +73,7 @@ docker run -d \
 docker run -d \
     --net=network-grpc-{{ .ProjectGroupName }} \
     --name=console-{{ .Name }} \
-    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) console --address=svc-{{ .Name }}:13000
+    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) console --address=svc-{{ .Name }}:{{ .DefaultPort }}
 ```
 
 Detach console with `Ctrl + p Ctrl + q` and attach with :
@@ -87,7 +87,7 @@ docker attach console-{{ .Name }}
 ```shell
 docker run \
     --net=network-grpc-{{ .ProjectGroupName }} \
-    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) cli --address=svc-{{ .Name }}:13000 <grpc_service> <params...>
+    -it {{ .ProjectGroupName }}/{{ .Name }}:$(cat VERSION | tr +- __) cli --address=svc-{{ .Name }}:{{ .DefaultPort }} <grpc_service> <params...>
 ```
 
 #### Curl with docker use gomeet/gomeet-curl
@@ -98,14 +98,14 @@ docker run \
 # use HTTP/1.1 api
 docker run \
     --net=network-grpc-{{ .ProjectGroupName }} \
-    -it gomeet/gomeet-curl -X POST http://svc:13000/api/v1/-X <HTTP_VERB> http://localhost:13000/api/v1/<grpc_service> -d '<HTTP_REQUEST_BODY json format>'
+    -it gomeet/gomeet-curl -X POST http://svc:{{ .DefaultPort }}/api/v1/-X <HTTP_VERB> http://localhost:{{ .DefaultPort }}/api/v1/<grpc_service> -d '<HTTP_REQUEST_BODY json format>'
 
 # status and metrics
 docker run \
     --net=network-grpc-{{ .ProjectGroupName }} \
-    -it gomeet/gomeet-curl http://svc-{{ .Name }}:13000/status
+    -it gomeet/gomeet-curl http://svc-{{ .Name }}:{{ .DefaultPort }}/status
 
 docker run \
     --net=network-grpc-{{ .ProjectGroupName }} \
-    -it gomeet/gomeet-curl http://svc-{{ .Name }}:13000/metrics
+    -it gomeet/gomeet-curl http://svc-{{ .Name }}:{{ .DefaultPort }}/metrics
 ```

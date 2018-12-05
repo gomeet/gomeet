@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType .GrpcMethod.Method.GetOutputType }}
 	"{{ .GoPkg }}/service"
 )
 

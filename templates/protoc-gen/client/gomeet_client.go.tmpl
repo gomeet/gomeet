@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/pb"
 )
 
 const (
@@ -31,6 +31,7 @@ type GomeetClient struct {
 	clientPrivateKey  string
 	maxRecvMsgSize    int
 	maxSendMsgSize    int
+	withTls           bool
 	cc                *grpc.ClientConn
 	inProcessChannel  grpchan.Channel
 	c                 {{ .GoProtoPkgAlias }}.{{ upperPascalCase .ShortName }}Client
@@ -51,6 +52,7 @@ func NewGomeetInProcessClient(
 		cc:                nil,
 		maxRecvMsgSize:    10,
 		maxSendMsgSize:    10,
+		withTls:           false,
 		inProcessChannel:  inProcessChannel,
 		c:                 c,
 	}, nil
@@ -61,6 +63,7 @@ func NewGomeetClient(
 	timeout int,
 	caCertificate, clientCertificate, clientPrivateKey string,
 	maxRecvMsgSize, maxSendMsgSize int,
+	withTls bool,
 ) (*GomeetClient, error) {
 	// set up a connection to the server
 	var (
@@ -97,6 +100,11 @@ func NewGomeetClient(
 			RootCAs:      certPool,
 		})
 		clientDialOpts = append(clientDialOpts, grpc.WithTransportCredentials(clientCredentials))
+	} else if withTls {
+		clientCredentials := credentials.NewTLS(&tls.Config{
+			InsecureSkipVerify: true,
+		})
+		clientDialOpts = append(clientDialOpts, grpc.WithTransportCredentials(clientCredentials))
 	} else {
 		clientDialOpts = append(clientDialOpts, grpc.WithInsecure())
 	}
@@ -121,6 +129,7 @@ func NewGomeetClient(
 		clientPrivateKey:  clientPrivateKey,
 		maxRecvMsgSize:    maxRecvMsgSize,
 		maxSendMsgSize:    maxSendMsgSize,
+		withTls:           withTls,
 		cc:                cc,
 		inProcessChannel:  new(inprocgrpc.Channel),
 		c:                 c,
@@ -167,4 +176,9 @@ func (c GomeetClient) GetMaxRecvMsgSize() int {
 // GetMaxSendMsgSize return maxSendMsgSize DialOption
 func (c GomeetClient) GetMaxSendMsgSize() int {
 	return c.maxSendMsgSize
+}
+
+// GetWithTls return withTls DialOption
+func (c GomeetClient) GetWithTls() bool {
+	return c.withTls
 }

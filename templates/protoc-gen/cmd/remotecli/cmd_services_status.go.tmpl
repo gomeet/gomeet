@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"fmt"
 
-	{{ .GoProtoPkgAlias }} "{{ .GoPkg }}/{{ .GoProtoPkgAlias }}"
+{{ protoMessagesNeededImports false .GrpcMethod.Method.GetInputType }}
 )
 
 func (c *remoteCli) cmdServicesStatus(args []string) (string, error) {

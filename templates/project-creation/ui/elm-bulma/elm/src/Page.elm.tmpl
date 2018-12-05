@@ -135,19 +135,19 @@ navbarMenu config maybeViewer page =
             case maybeViewer of
                 Just viewer ->
                     Ui.navbarEnd []
-                        [ navbarLink page Route.Logout [ text "logout" ] ]
+                        [ navbarLink page Route.Logout [ Icons.iconText Icons.Logout Ui.Standard Ui.Right "logout" ] ]
 
                 Nothing ->
                     Ui.navbarEnd []
-                        [ navbarLink page Route.Login [ text "login" ] ]
+                        [ navbarLink page Route.Login [ Icons.iconText Icons.Login Ui.Standard Ui.Right "Login" ] ]
     in
     Ui.navbarMenu config.navbarOpened
         []
         [ Ui.navbarStart []
-            [ navbarLink page Route.Home [ Icons.iconText Icons.Home Ui.Standard "Home" ]
-            , navbarLink page Route.Version [ Icons.iconText Icons.CodeBranch Ui.Standard "Version" ]
-            , navbarLink page Route.ServicesStatus [ Icons.iconText Icons.InfoCircle Ui.Standard "Services Status" ]
-            , navbarLink page Route.Echo [ Icons.iconText Icons.Comment Ui.Standard "Echo" ]
+            [ navbarLink page Route.Home [ Icons.iconText Icons.Home Ui.Standard Ui.Left "Home" ]
+            , navbarLink page Route.Version [ Icons.iconText Icons.CodeBranch Ui.Standard Ui.Left "Version" ]
+            , navbarLink page Route.ServicesStatus [ Icons.iconText Icons.InfoCircle Ui.Standard Ui.Left "Services Status" ]
+            , navbarLink page Route.Echo [ Icons.iconText Icons.Comment Ui.Standard Ui.Left "Echo" ]
             ]
 
         --, navbarEnd
