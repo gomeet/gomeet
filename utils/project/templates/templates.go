@@ -410,7 +410,7 @@ func projectCreationDirectory() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.directory", size: 42, mode: os.FileMode(384), modTime: time.Unix(1543251091, 0)}
+	info := bindataFileInfo{name: "project-creation/.directory", size: 42, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -430,7 +430,7 @@ func projectCreationFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.fsw.yml.tmpl", size: 1407, mode: os.FileMode(420), modTime: time.Unix(1540894962, 0)}
+	info := bindataFileInfo{name: "project-creation/.fsw.yml.tmpl", size: 1407, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -450,7 +450,7 @@ func projectCreationGitignoreTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 682, mode: os.FileMode(420), modTime: time.Unix(1543251395, 0)}
+	info := bindataFileInfo{name: "project-creation/.gitignore.tmpl", size: 682, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -470,7 +470,7 @@ func projectCreationMetadataIconPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/.metadata/icon.png", size: 9712, mode: os.FileMode(420), modTime: time.Unix(1543251078, 0)}
+	info := bindataFileInfo{name: "project-creation/.metadata/icon.png", size: 9712, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -490,7 +490,7 @@ func projectCreationChangelogMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 1191, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "project-creation/CHANGELOG.md.tmpl", size: 1191, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -510,7 +510,7 @@ func projectCreationCode_of_conductMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/CODE_OF_CONDUCT.md.tmpl", size: 3223, mode: os.FileMode(420), modTime: time.Unix(1543404143, 0)}
+	info := bindataFileInfo{name: "project-creation/CODE_OF_CONDUCT.md.tmpl", size: 3223, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -530,7 +530,7 @@ func projectCreationDockerfileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 855, mode: os.FileMode(420), modTime: time.Unix(1543337671, 0)}
+	info := bindataFileInfo{name: "project-creation/Dockerfile.tmpl", size: 855, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -590,7 +590,7 @@ func projectCreationMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 45701, mode: os.FileMode(420), modTime: time.Unix(1543335402, 0)}
+	info := bindataFileInfo{name: "project-creation/Makefile.tmpl", size: 45701, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -610,7 +610,7 @@ func projectCreationReadmeMdTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2600, mode: os.FileMode(420), modTime: time.Unix(1542030649, 0)}
+	info := bindataFileInfo{name: "project-creation/README.md.tmpl", size: 2600, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -650,7 +650,7 @@ func projectCreationCmdConsoleGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 2980, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/console.go.tmpl", size: 2980, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -670,7 +670,7 @@ func projectCreationCmdFunctestClientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2172, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/functest/clients.go.tmpl", size: 2172, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -850,7 +850,7 @@ func projectCreationCmdTokenGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/token.go.tmpl", size: 2118, mode: os.FileMode(420), modTime: time.Unix(1542033271, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/token.go.tmpl", size: 2118, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -870,7 +870,7 @@ func projectCreationCmdVersionGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/cmd/version.go.tmpl", size: 441, mode: os.FileMode(420), modTime: time.Unix(1540820566, 0)}
+	info := bindataFileInfo{name: "project-creation/cmd/version.go.tmpl", size: 441, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -910,7 +910,7 @@ func projectCreationDocsDevelReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/docs/devel/README.md", size: 93, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/docs/devel/README.md", size: 93, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1110,7 +1110,7 @@ func projectCreationHackContainersUpSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2528, mode: os.FileMode(493), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/containers-up.sh", size: 2528, mode: os.FileMode(493), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1230,7 +1230,7 @@ func projectCreationHackGrpcEditAllMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-all-method.sh", size: 204, mode: os.FileMode(493), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-edit-all-method.sh", size: 204, mode: os.FileMode(493), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1270,7 +1270,7 @@ func projectCreationHackGrpcListMethodSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/grpc-list-method.sh", size: 230, mode: os.FileMode(493), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/grpc-list-method.sh", size: 230, mode: os.FileMode(493), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1370,7 +1370,7 @@ func projectCreationHackRunEnvSh() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7493, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "project-creation/hack/run-env.sh", size: 7493, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1650,7 +1650,7 @@ func projectCreationPbProtoProtoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3513, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/pb/proto.proto.tmpl", size: 3513, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1670,7 +1670,7 @@ func projectCreationServiceAuth_and_acl_funcsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/auth_and_acl_funcs.go.tmpl", size: 2176, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/service/auth_and_acl_funcs.go.tmpl", size: 2176, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1690,7 +1690,7 @@ func projectCreationServiceHelpersGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/helpers.go.tmpl", size: 184, mode: os.FileMode(420), modTime: time.Unix(1542033279, 0)}
+	info := bindataFileInfo{name: "project-creation/service/helpers.go.tmpl", size: 184, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1710,7 +1710,7 @@ func projectCreationServiceHttpGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 4291, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "project-creation/service/http.go.tmpl", size: 4291, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2130,7 +2130,7 @@ func projectCreationToolsJsonTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1542044439, 0)}
+	info := bindataFileInfo{name: "project-creation/tools.json.tmpl", size: 2826, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2150,7 +2150,7 @@ func projectCreationUiElmBulmaFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/.fsw.yml.tmpl", size: 470, mode: os.FileMode(420), modTime: time.Unix(1541007549, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/.fsw.yml.tmpl", size: 470, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2610,7 +2610,7 @@ func projectCreationUiElmBulmaElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/Makefile.tmpl", size: 440, mode: os.FileMode(420), modTime: time.Unix(1543252293, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/Makefile.tmpl", size: 440, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2710,7 +2710,7 @@ func projectCreationUiElmBulmaElmSrcApiRequestElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Request.elm.tmpl", size: 6642, mode: os.FileMode(420), modTime: time.Unix(1540987375, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Api/Request.elm.tmpl", size: 6642, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2790,7 +2790,7 @@ func projectCreationUiElmBulmaElmSrcAssetsIconsElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Icons.elm.tmpl", size: 1889, mode: os.FileMode(420), modTime: time.Unix(1540899837, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Assets/Icons.elm.tmpl", size: 1889, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2890,7 +2890,7 @@ func projectCreationUiElmBulmaElmSrcPageEchoElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Echo.elm.tmpl", size: 12371, mode: os.FileMode(420), modTime: time.Unix(1540900880, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Echo.elm.tmpl", size: 12371, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2970,7 +2970,7 @@ func projectCreationUiElmBulmaElmSrcPageServicesstatusElmTmpl() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/ServicesStatus.elm.tmpl", size: 6987, mode: os.FileMode(420), modTime: time.Unix(1540897383, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/ServicesStatus.elm.tmpl", size: 6987, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -2990,7 +2990,7 @@ func projectCreationUiElmBulmaElmSrcPageVersionElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Version.elm.tmpl", size: 5335, mode: os.FileMode(420), modTime: time.Unix(1540897368, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page/Version.elm.tmpl", size: 5335, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3010,7 +3010,7 @@ func projectCreationUiElmBulmaElmSrcPageElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page.elm.tmpl", size: 5118, mode: os.FileMode(420), modTime: time.Unix(1540899084, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Page.elm.tmpl", size: 5118, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3070,7 +3070,7 @@ func projectCreationUiElmBulmaElmSrcViewerElmTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Viewer.elm.tmpl", size: 1069, mode: os.FileMode(420), modTime: time.Unix(1540987711, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/elm/src/Viewer.elm.tmpl", size: 1069, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3110,7 +3110,7 @@ func projectCreationUiElmBulmaScssMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1543253264, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-bulma/scss/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3210,7 +3210,7 @@ func projectCreationUiElmMilligramFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/.fsw.yml.tmpl", size: 470, mode: os.FileMode(420), modTime: time.Unix(1541007549, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/.fsw.yml.tmpl", size: 470, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -3630,7 +3630,7 @@ func projectCreationUiElmMilligramElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1543252157, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/elm/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4130,7 +4130,7 @@ func projectCreationUiElmMilligramScssMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1543253264, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-milligram/scss/Makefile.tmpl", size: 373, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4290,7 +4290,7 @@ func projectCreationUiElmMinimalFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/.fsw.yml.tmpl", size: 423, mode: os.FileMode(420), modTime: time.Unix(1541007549, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/.fsw.yml.tmpl", size: 423, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4650,7 +4650,7 @@ func projectCreationUiElmMinimalElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/Makefile.tmpl", size: 282, mode: os.FileMode(420), modTime: time.Unix(1543252151, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal/elm/Makefile.tmpl", size: 282, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -4710,7 +4710,7 @@ func projectCreationUiElmMinimalHttpFswYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/.fsw.yml.tmpl", size: 423, mode: os.FileMode(420), modTime: time.Unix(1541007549, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/.fsw.yml.tmpl", size: 423, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5070,7 +5070,7 @@ func projectCreationUiElmMinimalHttpElmMakefileTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/Makefile.tmpl", size: 282, mode: os.FileMode(420), modTime: time.Unix(1543252359, 0)}
+	info := bindataFileInfo{name: "project-creation/ui/elm-minimal-http/elm/Makefile.tmpl", size: 282, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5470,7 +5470,7 @@ func protocGenClientGomeet_clientGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 5234, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "protoc-gen/client/gomeet_client.go.tmpl", size: 5234, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5490,7 +5490,7 @@ func protocGenCmdCliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 1418, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/cli.go.tmpl", size: 1418, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5510,7 +5510,7 @@ func protocGenCmdCrontaskClientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/crontask/clients.go.tmpl", size: 3378, mode: os.FileMode(420), modTime: time.Unix(1542222784, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/crontask/clients.go.tmpl", size: 3378, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5530,7 +5530,7 @@ func protocGenCmdCrontaskCrontaskGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/crontask/crontask.go.tmpl", size: 212, mode: os.FileMode(420), modTime: time.Unix(1540561831, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/crontask/crontask.go.tmpl", size: 212, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5550,7 +5550,7 @@ func protocGenCmdCrontaskGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/crontask.go.tmpl", size: 5056, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/crontask.go.tmpl", size: 5056, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5570,7 +5570,7 @@ func protocGenCmdFunctestGrpc_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_services_status.go.tmpl", size: 1257, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/grpc_services_status.go.tmpl", size: 1257, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5690,7 +5690,7 @@ func protocGenCmdFunctestHelpers_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_services_status.go.tmpl", size: 2808, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_services_status.go.tmpl", size: 2808, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5770,7 +5770,7 @@ func protocGenCmdFunctestHelpers_unary_unaryGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_unary.go.tmpl", size: 3384, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/helpers_unary_unary.go.tmpl", size: 3384, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5950,7 +5950,7 @@ func protocGenCmdFunctestTypesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2612, mode: os.FileMode(420), modTime: time.Unix(1542216716, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest/types.go.tmpl", size: 2612, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5970,7 +5970,7 @@ func protocGenCmdFunctestGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 9576, mode: os.FileMode(420), modTime: time.Unix(1542215404, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/functest.go.tmpl", size: 9576, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -5990,7 +5990,7 @@ func protocGenCmdHelpers_configGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_config.go.tmpl", size: 5659, mode: os.FileMode(420), modTime: time.Unix(1540826306, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_config.go.tmpl", size: 5659, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6010,7 +6010,7 @@ func protocGenCmdHelpers_flagsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 13632, mode: os.FileMode(420), modTime: time.Unix(1542217805, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/helpers_flags.go.tmpl", size: 13632, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6030,7 +6030,7 @@ func protocGenCmdMigrateGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 4675, mode: os.FileMode(420), modTime: time.Unix(1540820566, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/migrate.go.tmpl", size: 4675, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6070,7 +6070,7 @@ func protocGenCmdRemotecliCmd_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_services_status.go.tmpl", size: 1045, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/cmd_services_status.go.tmpl", size: 1045, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6190,7 +6190,7 @@ func protocGenCmdRemotecliRemotecliGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3897, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/remotecli/remotecli.go.tmpl", size: 3897, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6210,7 +6210,7 @@ func protocGenCmdRootGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1531, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/root.go.tmpl", size: 1531, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6230,12 +6230,12 @@ func protocGenCmdServeGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 6590, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/cmd/serve.go.tmpl", size: 6590, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _protocGenDockerComposeYmlTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xec\x5a\x7b\x6f\xdb\x38\x12\xff\xdf\x9f\x62\xa0\x18\x68\x02\x9c\x1e\xa9\x9b\x22\x15\x60\xdc\xb9\x89\x37\xd7\xbb\xa6\xc9\xc5\xde\xdd\xdb\x7b\x19\xb4\x44\x2b\x6a\x24\x52\x21\x29\x27\x5e\xdb\xdf\xfd\x40\x59\x6f\x4b\x8e\x9f\x09\xae\xb8\xfe\xe1\x3a\x33\xe4\xcc\x68\xe6\x47\xce\x8f\xb4\xc6\x98\x71\x97\x12\x13\x94\x96\xd2\x68\x8c\xa9\x17\xfa\x98\x9b\x8d\xe9\x14\x18\x22\x0e\x06\xed\x72\xd8\x9f\x04\x98\xc3\x7c\x0e\x60\x0f\x07\xd3\x29\x78\xf4\x09\xb3\x1e\x41\x0f\xf8\x02\x71\x0c\x1a\xcc\xe7\x15\xe2\xa6\xf6\x0d\xf9\x58\xea\x6c\x24\x90\x09\xd3\xb9\x34\x8a\x89\x0d\xf3\x79\x66\xbd\x17\x0e\x7b\x98\x8d\x5d\x2b\xf2\x30\x9d\x42\x93\x73\x30\xdb\x91\xd1\x3d\xc4\xc0\xf9\xea\x28\x16\x5f\x00\x02\x46\x7d\x2c\xee\x71\xc8\xb3\x71\x00\x0e\x43\x23\x44\x50\x26\x6a\x10\x2c\x9e\x28\x7b\x58\x24\xc8\x1d\x81\xf6\x67\xc4\x2f\x87\x71\x5c\x66\x03\x00\xc0\x66\xee\x18\x33\x13\x86\xcc\xb5\x1d\xdc\xc8\x39\x71\x58\x60\x55\x8e\x01\xb8\x17\x22\xa8\x51\xf9\x94\xb8\x82\x32\x97\x38\xea\x88\x51\x22\x5e\x1e\x36\x44\xd6\x43\xe5\xa8\x06\x8f\x53\x2d\xb5\x47\xf9\x7f\xf2\x6f\xb8\x44\x02\x0d\x11\xc7\x1c\x8e\x96\xf4\x55\xb5\x88\x73\x80\x1f\x41\x03\xc5\x9f\xf0\x47\x4f\x89\x33\xa1\x26\xa5\xf8\x2b\x1e\xa2\x61\x5a\xa1\x0a\x71\x8a\x92\x45\xc0\x00\xae\x8f\x1c\x6c\x82\x8f\x98\x8b\xec\x61\x2c\x64\x98\x0b\xc4\x84\x09\xc8\x7b\x42\x13\x1e\x4b\x31\x19\xbb\x8c\x12\x1f\x27\x49\x91\xff\xae\x7f\xeb\xfd\xed\xeb\xe0\xe7\x5e\xf7\xce\x84\xe6\x74\x0a\xca\x54\x59\x94\x3a\x0c\x82\x6a\x78\x2e\xeb\x22\x34\x5d\x7e\x8e\xac\x7c\xeb\x5c\x77\xa5\x99\xb9\x32\x9f\x97\x9c\xdc\x76\x7a\xbd\x5f\x6f\xee\x2e\x77\x77\x94\x58\xaa\x71\x74\xd9\xe9\x77\x3e\x77\x7a\xdd\xdd\x1d\x25\x96\x6a\x1c\xdd\x75\xbe\x5d\xde\x5c\x0f\xee\x6e\x6e\xfa\xb9\xa7\x53\x26\x98\x2b\xf1\xc8\x74\x83\x48\x26\xaa\xbb\x6c\x0a\xfa\x18\x31\xdd\x73\x87\x7a\x84\x9e\xd8\x66\xb6\xc6\xf2\x3e\xa2\x85\xe4\x71\x9c\x21\x2e\xa0\x5c\x38\x0c\xf3\xfd\x81\x6e\x81\xe7\xa6\x5c\xd4\xb7\xd2\xb8\x2b\x51\xfe\x80\x98\xa0\xbf\x23\x3d\x58\x48\x92\x30\xe6\xf3\xc4\x7f\xba\xc2\x37\x07\xeb\xed\x4d\xaf\x7f\x75\xd7\xed\x1d\x1a\xaf\xa9\x9f\x57\x80\x6c\xea\xeb\xf2\xf3\x01\xf1\x7a\x7b\x25\x55\x26\xa4\x08\x4a\xaa\xf1\xe8\xe9\x12\x5a\x7a\xe0\xc8\xff\x0e\x8b\xda\x95\x3e\xd7\x85\xb1\xcf\xf7\xbb\x71\xba\x16\xa3\x9c\x8e\x84\x1e\x19\x56\xe5\x96\x8f\x99\xea\xb9\x24\x7c\x5e\x05\xc5\xce\xc5\x45\xf7\xb6\x3f\xe8\xfe\xfc\xb5\x63\xc2\x6f\xa9\xb8\xd7\x39\x3c\x66\x02\xca\x44\x21\x4d\xca\xe9\x87\x56\xcb\x94\x1f\x07\xdc\x76\x68\x10\xa7\x28\xaa\x5d\x05\x2b\x68\x6c\xc8\x52\x24\xd9\xd8\x73\x73\xcc\xe8\xcb\xab\xb7\xc7\x1c\x73\x3a\x74\x83\x5c\xcb\xd5\x7e\x5a\xe4\x5a\xae\xde\xbc\x49\x96\x59\xeb\x5b\xb5\xc9\x5a\xf8\x25\x36\x0f\xdb\xf1\x76\x83\xe0\xa6\x3d\x6f\x37\x14\xae\xdf\xf5\x76\x83\xe0\xeb\xf6\xbd\x5a\x20\xbe\x69\xe7\xab\xdf\x15\xdf\xaa\xf7\xed\x82\x9d\x57\xe8\x7e\x95\x65\x7c\xb1\xff\x65\x8d\xb0\x74\x1a\x8c\x0e\x8b\x69\x3f\x2c\x9f\x15\x1b\x00\x7c\x6c\xc9\xba\x69\xbd\x7b\xca\x44\xa1\x54\xc3\xd0\xf5\x6c\x13\x34\xbd\x01\x05\xda\xad\xdd\x32\xfa\x1d\x5b\xe2\x8a\xd1\x30\x88\x67\xe8\x52\x9e\xcc\x6e\x4e\xfb\x9d\xab\x45\xca\x2c\xea\xfb\x88\xd8\x26\x44\xe5\x05\x55\xfd\xfe\x24\x54\x8e\x2d\x86\x45\xbb\x39\xfd\xcb\xaf\xfd\x41\xaf\x7b\x71\xd7\xed\xcf\x41\x55\x7d\xf4\xac\x32\x6c\x8d\x55\x9f\x3b\x2a\x77\x7f\xc7\xed\xe6\xf4\xba\xf3\xf7\xc1\x5d\xf7\xe2\x97\xc1\x75\xef\x6a\xd0\xfb\xf2\x8f\x6e\x32\x90\x63\x62\x97\x07\xf6\xba\xdf\x2e\xb3\x81\x75\x8c\x00\x54\xb5\xea\x99\x55\x64\xdb\x0c\x73\xde\x56\x2a\x33\x72\x66\x18\x67\xa7\x4a\xc5\xa5\x48\xee\xba\x43\xad\x5b\x17\xbe\xeb\x30\x24\x70\xfd\x00\x9b\x93\xb6\xd2\x98\x4e\xd5\x25\x1a\xa2\xce\xe7\xfb\x3e\x69\x98\xfb\xa6\x86\x7f\x12\x56\x70\xbc\x1d\x1f\x6e\xb5\x8c\x8f\x27\xfa\xde\x4f\x1e\x32\x93\xf5\x9d\xf5\x9e\x72\xd1\xde\x2a\xde\x68\x03\x68\x9f\x7d\x68\xbd\x87\x90\x63\xd6\xde\x29\xf0\x72\x5d\x20\x40\x9c\x3f\x51\x66\xef\x66\xb6\xa2\x40\x60\x0f\x09\xf2\xf1\xce\x76\xd7\xc8\x33\x7f\xf4\x5c\x81\xa5\x0b\xdd\x1e\xee\x5c\xd8\x9f\xbe\x7c\x5d\xe5\x2c\x6d\x4a\xfc\xd1\x5b\xf4\x0f\x53\xd7\x39\xda\x3f\xc0\xb7\x03\xb7\x6c\x0b\x7f\xb4\xe3\x8b\xba\x03\x25\x3f\xda\x8d\xaa\xf6\xa5\xee\xb3\x60\x48\x6e\x7b\xf8\x27\x0f\x39\xf5\xfb\x53\xec\xb8\xad\x6c\x1d\x5f\xac\x5a\xc4\x55\x88\x26\x6a\x01\x47\x36\x0e\x3c\x3a\x59\xf4\x94\x23\x49\x40\x03\xcf\xb5\x10\x37\xe1\x2c\x13\x71\x1a\x32\x2b\xe9\x9a\x47\xf2\xc3\x73\x7d\x57\xe4\x05\x00\x56\x10\x72\x13\x14\x43\x3b\x55\xf2\x62\x1f\xfb\x94\x4d\x4c\x38\x33\xae\x73\x06\x25\xc9\x1d\x04\xd4\x73\xad\x49\xce\x88\x45\x89\xed\x8a\xe8\x0e\x9d\x12\x75\x84\x5c\x2f\x64\xb8\xb1\xd4\xda\x55\x38\x6f\x9d\xb7\x16\x9b\x7e\x72\x7b\x9c\x6d\xf4\x55\x9b\x7f\xfe\x04\x99\xad\x81\x8c\x10\x64\x96\x77\x39\x0b\xdb\x43\xbd\x70\xe4\x5d\x66\x01\xee\x08\x28\xcb\x02\x2b\xf7\x3e\x00\xb0\x71\x80\x89\xcd\x07\x94\x98\xeb\x3d\x5a\x16\xf8\x16\x8b\xa0\x36\xca\xe5\x73\x7a\x75\xb7\x8e\x9d\x57\x35\xe5\x55\x3c\xa8\xc8\x6d\x97\x9e\xb3\x44\x75\xd3\x29\x52\x56\xba\x9d\x4f\x0b\xe7\xb0\xc0\x4a\xff\xb8\x17\x22\x58\xf3\xd2\x61\x25\xc9\xda\x94\x56\x0d\x7a\xbf\x5c\x54\x2d\xc2\xbc\xe5\xff\x53\xaf\x57\xa1\x5e\x5b\x1d\x79\x57\xf7\xa6\xad\xce\x26\x9b\xd3\xaf\xdc\xa1\x6c\x0d\x02\xb6\xdd\x21\x78\xdf\x14\x2c\x8b\x62\x23\x12\xf6\x72\xf0\x5b\xd2\xb0\xad\x4a\xb5\x16\x11\xdb\x57\xbe\x37\xa0\x62\x6b\xb9\x3c\x04\x19\xdb\x0e\xf0\xdb\x82\x7d\x03\x42\xb6\x43\x11\x5e\x89\x92\xad\x8e\xf0\x25\x52\x06\x25\x56\x56\x45\xcb\x2a\x79\x59\x15\x31\xab\x63\x66\x55\xd4\xac\x9e\x9b\xad\x20\x67\xf8\x39\xa0\x3c\xc7\xa1\xde\x9e\x98\x2d\x5d\xd3\xfc\xef\x50\xb3\x2c\xf4\x1f\x9d\x9c\xa5\x80\x5f\xba\x11\xbb\xa0\x84\x53\xaf\xfa\x46\xcc\x5a\xe8\xf6\x44\xd8\x4a\x64\x2c\x36\xbe\x7f\xce\x05\x6a\x4a\xa3\xea\x59\x54\xa3\x8c\xb2\x95\x15\x84\x8a\xfb\xe1\x38\xd3\x75\x88\xd8\x7b\xfa\xb6\xe0\xbb\x3f\x4e\x8a\x2b\xf1\x9b\x81\x38\xea\x27\xa0\xc2\x17\x32\x62\x68\xf9\x3d\xa0\x78\x9c\x43\x55\xfe\x84\x1c\x07\xb3\x64\xaf\xb5\x28\x11\xc8\x25\x98\x0d\x24\x19\x31\x73\x23\xf2\x25\x72\xa8\x8f\xb1\xd0\x17\xff\xa9\xa5\x31\x1b\x3d\x60\x5a\x99\x7f\x82\x12\x31\x03\xe5\x0f\xa0\x44\x6f\x51\xe9\x7a\x7d\x22\x75\x14\xb8\xfa\xf8\x54\x8f\xdd\x6a\xdf\x39\x25\x0a\xfc\x7b\xd1\x0f\x96\x7f\x19\x50\xe1\xf6\xe6\xae\xdf\x3e\x37\x2a\x4f\xf3\x86\x61\x98\xb1\x6a\x39\xdd\xd1\x76\x11\x65\xca\xa6\x56\x7d\x92\x6c\x6a\xad\xca\x4f\xa2\x2e\xfd\x00\xa0\x82\xa6\x9b\xba\x43\x75\xce\xac\x08\xde\x57\xf4\xf6\xc1\x49\x52\xb3\x1c\xe7\xa9\xf9\xd1\xf8\x68\xc8\x70\xb2\xf7\xdc\x0a\x4b\x47\x8a\xf5\x9c\x6e\x7c\xaa\x9d\x6b\xef\x6b\xa3\x8e\xa2\xcb\x86\xd7\x85\xe8\x4a\x0c\xe5\xcc\xea\xa6\x8e\x85\x95\x17\xa4\x83\xcb\xef\xdf\xe9\x25\xeb\x49\xb9\xd3\x09\xef\x54\xd5\xa2\x64\xe4\x3a\xda\xc8\xf5\x70\xbb\x6c\x38\xfb\xaa\x4d\x7c\xef\x5d\x7e\x1a\x17\x94\x21\x07\x6b\x1e\xb5\x90\xa7\x05\x48\xdc\xb7\x73\xc3\x0b\x43\x91\x87\x99\xf0\x11\x41\x12\x2b\x21\xf3\xda\x31\xc0\xf2\x72\xf3\x93\xf1\xa9\xf5\xae\x92\x51\x7c\x32\x3e\x55\x22\x47\xca\xcd\x54\xe9\xb9\x24\x0f\x9c\xbc\xed\x1a\x6c\x55\xf5\xab\x75\x17\xcf\x8a\x4d\x76\xe5\xa4\xec\x97\xa0\xf8\xa5\xc8\x02\x7e\x62\x99\x9e\xe8\x3e\x68\x1f\x5f\x82\x4f\x3c\xb4\x36\xf8\x12\x00\x4a\x29\x6c\xc9\xc5\x27\x3f\xaa\xb1\x57\x78\x71\x33\xfd\xd1\x32\xef\x12\x93\xf1\x40\x22\x27\x9b\xb3\x40\x6b\x0c\xaa\x2c\xc5\x1b\xd4\xa0\x24\x8f\xde\xd6\x94\x19\x2b\xc0\x65\x69\xd9\x15\xb4\x63\x43\x3b\x35\xb4\x3a\xd4\xb4\x22\xb0\xad\x5e\x6e\x79\x73\xf1\x82\x2b\x88\x36\x78\x9e\x8a\x45\xb7\xb4\xe6\x0a\xb6\x63\x6d\x69\xc5\x25\x0b\x6e\xb1\xd4\xf2\x13\xde\xc9\xec\x58\xc8\x1e\xbb\x9c\x16\x33\xe3\x50\xea\x78\x58\x4f\x75\x63\x43\x7b\x7f\xa6\xd5\x54\x5b\x37\x75\x46\xa9\x18\x71\x93\xd1\x4c\x28\xab\xce\x42\x62\xa6\x5f\xd8\x53\xa6\xe4\x13\x6e\x46\x1f\xe5\x19\x12\x27\x36\xb5\x1e\xa2\xe4\x15\x05\xc9\xd8\xf2\x32\x3f\x37\x6a\xbb\x40\x39\xab\x0d\x00\x42\x6d\xac\x4a\x13\x4c\xd4\x77\xcf\xc2\xa0\x25\xc4\x14\x4d\x48\xc8\x9c\x69\xa7\x35\xa9\x09\x18\xb5\x4c\xfd\x9e\x72\xb1\xf8\x9a\x7f\xde\x28\x09\x91\xaa\x9c\x89\x72\x42\xd3\x6e\x2b\x11\xe0\x79\xd8\x12\x94\x69\xd2\xde\x88\xb7\x33\xe3\x90\x53\xf2\x09\x4f\x75\x7c\xc2\xf3\x2a\x09\x1e\x3e\xe1\x02\xfb\x9a\xeb\x10\xca\xb0\xad\xfa\x34\x24\x42\x0d\xa8\x4b\x04\x6f\x2b\xff\x39\x8e\xdd\xcf\xa2\xf9\xb3\x13\xfd\x98\x4f\xf8\x4c\xba\x98\xd9\x78\x3c\x8b\x84\x58\x58\x27\xc7\xcd\xe6\x4c\x3f\x51\x60\xa5\xed\x11\x57\x85\x3c\x04\x48\xbb\xa9\x19\x14\x0a\x3a\xb3\x1c\x49\x13\xa5\xc9\x40\xf0\x19\xe1\x33\x14\xce\x46\x21\xc7\xff\xd2\xbc\x67\x6b\xe6\x3f\x86\x38\xc4\x27\xc7\x23\x3e\x3b\x69\x36\x95\x9a\x2d\xfe\xd4\x58\xb7\xf6\xff\x0d\x00\x00\xff\xff\x22\x93\x6f\x66\x69\x2f\x00\x00")
+var _protocGenDockerComposeYmlTmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xec\x5a\x7b\x6f\xe3\xb8\x11\xff\xdf\x9f\x62\xa0\x18\xd8\x04\xa8\x1e\x39\x6f\x16\x59\x01\x46\xeb\x8d\x7d\xe9\xb6\x9b\x4d\x1a\xfb\xee\x7a\x7d\x19\xb4\x44\x2b\xda\x48\xa4\x42\x52\x4e\x7c\xb6\xbf\x7b\x41\x59\x6f\x4b\x5e\x3f\x13\xf4\xd0\xfd\xc3\xeb\xcc\x90\x33\xa3\x99\x1f\x39\x3f\xd2\x9a\x60\xc6\x5d\x4a\x4c\x50\x5a\x4a\xa3\x31\xa1\x5e\xe8\x63\x6e\x36\x66\x33\x60\x88\x38\x18\xb4\xee\x68\x30\x0d\x30\x87\xc5\x02\xc0\x1e\x0d\x67\x33\xf0\xe8\x33\x66\x7d\x82\x1e\xf1\x15\xe2\x18\x34\x58\x2c\x2a\xc4\x4d\xed\x2b\xf2\xb1\xd4\xd9\x48\x20\x13\x66\x0b\x69\x14\x13\x1b\x16\x8b\xcc\x7a\x3f\x1c\xf5\x31\x9b\xb8\x56\xe4\x61\x36\x83\x26\xe7\x60\xb6\x23\xa3\x07\x88\x81\xf3\xf5\x51\x2c\xbf\x00\x04\x8c\xfa\x58\x3c\xe0\x90\x67\xe3\x00\x1c\x86\xc6\x88\xa0\x4c\xd4\x20\x58\x3c\x53\xf6\xb8\x4c\x90\x3b\x06\xed\xcf\x88\x77\x47\x71\x5c\x66\x03\x00\xc0\x66\xee\x04\x33\x13\x46\xcc\xb5\x1d\xdc\xc8\x39\x71\x58\x60\x55\x8e\x01\x78\x10\x22\xa8\x51\xf9\x94\xb8\x82\x32\x97\x38\xea\x98\x51\x22\xbe\x3f\x6c\x84\xac\xc7\xca\x51\x0d\x1e\xa7\x5a\x6a\x4f\xf2\xff\xe4\xdf\xd0\x45\x02\x8d\x10\xc7\x1c\x4e\x56\xf4\x55\xb5\x88\x73\x80\x9f\x40\x03\xc5\x9f\xf2\x27\x4f\x89\x33\xa1\x26\xa5\xf8\x2b\x1e\xa1\x51\x5a\xa1\x0a\x71\x8a\x92\x65\xc0\x00\xae\x8f\x1c\x6c\x82\x8f\x98\x8b\xec\x51\x2c\x64\x98\x0b\xc4\x84\x09\xc8\x7b\x46\x53\x1e\x4b\x31\x99\xb8\x8c\x12\x1f\x27\x49\x91\xff\x6e\x7e\xed\xff\xed\xcb\xf0\xa7\x7e\xef\xde\x84\xe6\x6c\x06\xca\x4c\x59\x96\x3a\x0c\x82\x6a\x78\xae\xea\x22\x34\x75\x3f\x45\x56\xbe\x76\x6e\x7a\xd2\xcc\x42\x59\x2c\x4a\x4e\xee\x3a\xfd\xfe\x2f\xb7\xf7\xdd\xfd\x1d\x25\x96\x6a\x1c\x75\x3b\x83\xce\xa7\x4e\xbf\xb7\xbf\xa3\xc4\x52\x8d\xa3\xfb\xce\xd7\xee\xed\xcd\xf0\xfe\xf6\x76\x90\x7b\x3a\x65\x8a\xb9\x12\x8f\x4c\x37\x88\x64\xa2\xba\xcf\xa6\xa0\x4f\x10\xd3\x3d\x77\xa4\x47\xe8\x89\x6d\x66\x6b\x2c\xef\x23\x5a\x48\x1e\xc7\x19\xe2\x02\xca\x85\xc3\x30\x3f\x1c\xe8\x96\x78\x6e\xca\x45\x7d\x27\x8d\xbb\x12\xe5\x8f\x88\x09\xfa\x1b\xd2\x83\xa5\x24\x09\x63\xb1\x48\xfc\xa7\x2b\x7c\x7b\xb0\xde\xdd\xf6\x07\xd7\xf7\xbd\xfe\xb1\xf1\x9a\xfa\x79\x05\xc8\xa6\xbe\xba\x9f\x8e\x88\xd7\xbb\x6b\xa9\x32\x21\x45\x50\x52\x8d\x27\x4f\x97\xd0\xd2\x03\x47\xfe\x77\x5c\xd4\xae\xf5\xb9\x29\x8c\x7d\x7e\xd8\x8d\xd3\xb5\x18\xe5\x74\x2c\xf4\xc8\xb0\x2a\xb7\x7c\xcc\x54\xcf\x25\xe1\xcb\x3a\x28\x76\xae\xae\x7a\x77\x83\x61\xef\xa7\x2f\x1d\x13\x7e\x4d\xc5\xfd\xce\xf1\x31\x13\x50\x26\x0a\x69\x52\xce\xdf\xb7\x5a\xa6\xfc\x38\xe2\xb6\x43\x83\x38\x45\x51\xed\x2a\x58\x41\x63\x4b\x96\x22\xc9\xc6\x81\x9b\x63\x46\x5f\x5e\xbd\x3d\xe6\x98\xd3\xb1\x1b\xe4\x46\xae\x0e\xd3\x22\x37\x72\xf5\xe6\x4d\xb2\xcc\x5a\xdf\xaa\x4d\xd6\xc2\x2f\xb1\x79\xdc\x8e\xb7\x1f\x04\xb7\xed\x79\xfb\xa1\x70\xf3\xae\xb7\x1f\x04\x5f\xb7\xef\xd5\x02\xf1\x4d\x3b\x5f\xfd\xae\xf8\x56\xbd\x6f\x1f\xec\xbc\x42\xf7\xab\x2c\xe3\x77\xfb\x5f\xd6\x08\x4b\xa7\xc1\xe8\xb0\x98\xf6\xc3\xf2\x59\xb1\x01\xc0\x27\x96\xac\x9b\xd6\x7f\xa0\x4c\x14\x4a\x35\x0a\x5d\xcf\x36\x41\xd3\x1b\x50\xa0\xdd\xda\x1d\xa3\xdf\xb0\x25\xae\x19\x0d\x83\x78\x86\x2e\xe5\xc9\xec\xe6\x6c\xd0\xb9\x5e\xa6\xcc\xa2\xbe\x8f\x88\x6d\x42\x54\x5e\x50\xd5\x6f\xcf\x42\xe5\xd8\x62\x58\xb4\x9b\xb3\xbf\xfc\x32\x18\xf6\x7b\x57\xf7\xbd\xc1\x02\x54\xd5\x47\x2f\x2a\xc3\xd6\x44\xf5\xb9\xa3\x72\xf7\x37\xdc\x6e\xce\x6e\x3a\x7f\x1f\xde\xf7\xae\x7e\x1e\xde\xf4\xaf\x87\xfd\xcf\xff\xe8\x25\x03\x39\x26\x76\x79\x60\xbf\xf7\xb5\x9b\x0d\xac\x63\x04\xa0\xaa\x55\xcf\xac\x22\xdb\x66\x98\xf3\xb6\x52\x99\x91\x0b\xc3\xb8\x38\x57\x2a\x2e\x45\x72\xd7\x1d\x6a\xdd\xba\xf0\x5d\x87\x21\x81\xeb\x07\xd8\x9c\xb4\x95\xc6\x6c\xa6\xae\xd0\x10\x75\xb1\x38\xf4\x49\xc3\x3c\x34\x35\xfc\x93\xb0\x82\xd3\xdd\xf8\x70\xab\x65\x7c\x38\xd3\x0f\x7e\xf2\x90\x99\xac\xef\xac\x0f\x94\x8b\xf6\x4e\xf1\x46\x1b\x40\xfb\xe2\x7d\xeb\x07\x08\x39\x66\xed\x43\x97\x06\x02\xc4\xf9\x33\x65\xf6\xde\x96\xcb\x35\x02\x7b\x44\x90\x8f\xf7\xb6\xbb\x41\xaa\xf9\x93\xe7\x0a\x2c\x5d\xe8\xf6\x68\xef\xda\xfe\xf8\xf9\xcb\x3a\x67\x69\x5f\xe2\x4f\xde\xb2\x85\x98\xba\xce\xd1\xe1\x31\xbe\x1b\xbe\x65\x67\xf8\xa3\x1d\xdf\xd5\x1d\x29\xf9\xd1\x86\x54\xb5\x35\xf5\x5e\x04\x43\x72\xe7\xc3\x3f\x7a\xc8\xa9\xdf\xa2\x62\xc7\x6d\x65\xe7\xf8\x62\xd5\x32\xae\x42\x34\x51\x17\x38\xb1\x71\xe0\xd1\xe9\xb2\xad\x9c\x48\x0e\x1a\x78\xae\x85\xb8\x09\x17\x99\x88\xd3\x90\x59\x49\xe3\x3c\x91\x1f\x9e\xeb\xbb\x22\x2f\x00\xb0\x82\x90\x9b\xa0\x18\xda\xb9\x92\x17\xfb\xd8\xa7\x6c\x6a\xc2\x85\x71\x93\x33\x28\x79\xee\x30\xa0\x9e\x6b\x4d\x73\x46\x2c\x4a\x6c\x57\x44\xd7\xe8\x94\xa8\x63\xe4\x7a\x21\xc3\x8d\x95\xee\xae\xc2\x65\xeb\xb2\xb5\xdc\xf7\x93\x0b\xe4\x6c\xaf\xaf\xda\xff\xf3\x87\xc8\x6c\x0d\x64\x9c\x20\xb3\xbc\xcf\x71\xd8\x1e\xe9\x85\x53\xef\x2a\x11\x70\xc7\x40\x59\x16\x58\xb9\xfd\x01\x80\x8d\x03\x4c\x6c\x3e\xa4\xc4\xdc\xec\xd1\xb2\xc0\x77\x58\x04\xb5\x51\xae\x1e\xd5\xab\x1b\x76\xec\xbc\xaa\x2f\xaf\xa3\x42\x45\x7a\xbb\xf2\x9c\x25\xb6\x9b\x4e\x91\xb2\xd2\x05\x7d\x5a\x38\x87\x05\x56\xfa\xc7\x83\x10\xc1\x86\xf7\x0e\x6b\x79\xd6\xb6\xcc\x6a\xd8\xff\xf9\xaa\x6a\x11\xe6\x2d\xff\x9f\x7d\xbd\x0a\xfb\xda\xe9\xd4\xbb\xbe\x37\xed\x74\x3c\xd9\x9e\x81\xe5\xce\x65\x1b\x70\xb0\xdd\xce\xc1\x87\x66\x61\x59\x14\x5b\xf1\xb0\x9d\x8a\xb4\x21\x13\xdb\xa9\x5a\x1b\x71\xb1\x43\xa5\x7c\x0b\x36\xb6\x91\xcb\x63\xf0\xb1\xdd\x30\xbf\x2b\xde\xb7\xe0\x64\x7b\x14\xe1\x95\x58\xd9\xfa\x08\xbf\xc7\xcb\xa0\x44\xcc\xaa\x98\x59\x25\x35\xab\xe2\x66\x75\xe4\xac\x8a\x9d\xd5\xd3\xb3\x35\xfc\x0c\xbf\x04\x94\xe7\x68\xd4\xdb\x73\xb3\x95\xcb\x9a\xff\x1d\x76\x96\x85\xfe\x7b\xe7\x67\x29\xe0\x57\xee\xc5\xae\x28\xe1\xd4\xab\xbe\x17\xb3\x96\xba\x03\x71\xb6\x12\x1f\x8b\x8d\x1f\x9e\x76\x81\x9a\x32\xa9\x7a\x22\xd5\x28\xa3\x6c\x6d\x05\xa1\xe2\x96\x38\xce\x74\x1d\x22\x0e\x9e\xbe\x1d\x28\xef\xef\x27\xc5\x95\xf8\xcd\x40\x1c\xf5\x13\x50\xe1\x33\x19\x33\xb4\xfa\x36\x50\x3c\xce\xa1\x2a\x7f\x46\x8e\x83\x59\xb2\xd7\x5a\x94\x08\xe4\x12\xcc\x86\x92\x8c\x98\xb9\x11\xf9\x12\x39\xd4\xc7\x58\xe8\xcb\xff\xd4\xd2\x98\xad\x1e\x30\xad\xcc\x3f\x41\x89\x98\x81\xf2\x07\x50\xa2\x77\xa9\x74\xbd\x3e\x91\x3a\x0a\x5c\x7d\x72\xae\xc7\x6e\xb5\x6f\x9c\x12\x05\xfe\xbd\xec\x07\xab\xbf\x0f\xa8\x70\x77\x7b\x3f\x68\x5f\x1a\x95\x07\x7a\xc3\x30\xcc\x58\xb5\x9a\xee\x68\xbb\x88\x32\x65\x53\xab\x3e\x49\x36\xb5\xd6\xe5\x27\x51\x97\x7e\x06\x50\x41\xd3\x4d\xdd\xa1\x3a\x67\x56\x04\xef\x6b\x7a\xf7\xe8\x24\xa9\x59\x8d\xf3\xdc\xfc\x60\x7c\x30\x64\x38\xd9\xdb\x6e\x85\xa5\x23\xc5\x7a\x4e\x37\x39\xd7\x2e\xb5\x1f\x6a\xa3\x8e\xa2\xcb\x86\xd7\x85\xe8\x4a\x0c\xe5\xcc\xea\xa6\x8e\x85\x95\x17\xa4\x83\xcb\x6f\xe1\xe9\x25\xeb\x49\xb9\xd3\x09\xef\x54\xd5\xa2\x64\xec\x3a\xda\xd8\xf5\x70\xbb\x6c\x38\xfb\xaa\x4d\x7d\xef\x5d\x7e\x1a\x17\x94\x21\x07\x6b\x1e\xb5\x90\xa7\x05\x48\x3c\xb4\x73\xc3\x0b\x43\x91\x87\x99\xf0\x11\x41\x12\x2b\x21\xf3\xda\x31\xc0\xf2\x72\xf3\xa3\xf1\xb1\xf5\xae\x92\x51\x7c\x34\x3e\x56\x22\x47\xca\xcd\x54\xe9\xb9\x24\x0f\x9c\xbc\xed\x1a\x6c\x55\xf5\xab\x4d\x17\xcf\x9a\x4d\x76\xed\xa4\xec\xf7\xa0\xf8\xd5\xc8\x02\x7e\x62\x99\x9e\xe8\xde\x6b\x1f\xbe\x07\x9f\x78\x68\x6d\xf0\x25\x00\x94\x52\xd8\x92\x8b\x4f\x7e\x54\x63\xaf\xf0\xfa\x66\xfa\xd3\x65\xde\x25\x26\x93\xa1\x44\x4e\x36\x67\x89\xd6\x18\x54\x59\x8a\xb7\xa8\x41\x49\x1e\xbd\xb3\x29\x33\x56\x80\xcb\xca\xb2\x2b\x68\x27\x86\x76\x6e\x68\x75\xa8\x69\x45\x60\x5b\xbf\xdc\xf2\xe6\xe2\x05\x57\x10\x6d\xf1\x3c\x15\x8b\x6e\x65\xcd\x15\x6c\xc7\xda\xd2\x8a\x4b\x16\xdc\x72\xa9\xe5\x27\xbc\x93\xd9\xb1\x90\x3d\x71\x39\x2d\x66\xc6\xa1\xd4\xf1\xb0\x9e\xea\x26\x86\xf6\xc3\x85\x56\x53\x6d\xdd\xd4\x19\xa5\x62\xcc\x4d\x46\x33\xa1\xac\x3a\x0b\x89\x99\x7e\x61\xcf\x99\x92\x4f\xb9\x19\x7d\x94\x67\x48\x9c\xd8\xd4\x7a\x8c\x92\x57\x14\x24\x63\xcb\xcb\xfc\xd2\xa8\xed\x02\xe5\xac\x36\x00\x08\xb5\xb1\x2a\x4d\x30\x51\xdf\x3d\x0b\x83\x56\x10\x53\x34\x21\x21\x73\xa1\x9d\xd7\xa4\x26\x60\xd4\x32\xf5\x07\xca\xc5\xf2\x6b\xfe\x79\xa3\x24\x44\xaa\x72\x26\xca\x09\x4d\xbb\xad\x44\x80\xe7\x61\x4b\x50\xa6\x49\x7b\x63\xde\xce\x8c\x43\x4e\xc9\xa7\x3c\xd5\xf1\x29\xcf\xab\x24\x78\xf8\x94\x0b\xec\x6b\xae\x43\x28\xc3\xb6\xea\xd3\x90\x08\x35\xa0\x2e\x11\xbc\xad\xfc\xe7\x34\x76\x3f\x8f\xe6\xcf\xcf\xf4\x53\x3e\xe5\x73\xe9\x62\x6e\xe3\xc9\x3c\x12\x62\x61\x9d\x9d\x36\x9b\x73\xfd\x4c\x81\xb5\xb6\xc7\x5c\x15\xf2\x10\x20\xed\xa6\x66\x50\x28\xe8\xdc\x72\x24\x4d\x94\x26\x03\xc1\xe7\x84\xcf\x51\x38\x1f\x87\x1c\xff\x4b\xf3\x5e\xac\xb9\xff\x14\xe2\x10\x9f\x9d\x8e\xf9\xfc\xac\xd9\x54\x6a\xb6\xf8\x73\x63\xd3\xda\xff\x37\x00\x00\xff\xff\x77\xfe\x14\x24\x6f\x2f\x00\x00")
 
 func protocGenDockerComposeYmlTmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -6250,7 +6250,7 @@ func protocGenDockerComposeYmlTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 12137, mode: os.FileMode(420), modTime: time.Unix(1543337660, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docker-compose.yml.tmpl", size: 12143, mode: os.FileMode(420), modTime: time.Unix(1544179851, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6290,7 +6290,7 @@ func protocGenDocsDevelWorking_with_the_sourcesReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 17400, mode: os.FileMode(420), modTime: time.Unix(1543252929, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/devel/working_with_the_sources/README.md", size: 17400, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6330,7 +6330,7 @@ func protocGenDocsDockerReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2871, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker/README.md", size: 2871, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6370,7 +6370,7 @@ func protocGenDocsDockerComposeReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1495, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/docker-compose/README.md", size: 1495, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6410,7 +6410,7 @@ func protocGenDocsUsageReadmeMd() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4536, mode: os.FileMode(420), modTime: time.Unix(1542041325, 0)}
+	info := bindataFileInfo{name: "protoc-gen/docs/usage/README.md", size: 4536, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6430,7 +6430,7 @@ func protocGenHackRunConsoleShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3609, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run-console.sh.tmpl", size: 3609, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6450,7 +6450,7 @@ func protocGenHackRunShTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30047, mode: os.FileMode(420), modTime: time.Unix(1542018131, 0)}
+	info := bindataFileInfo{name: "protoc-gen/hack/run.sh.tmpl", size: 30047, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6470,7 +6470,7 @@ func protocGenInfraNginxNginxExampleConfTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/infra/nginx/nginx-example.conf.tmpl", size: 1692, mode: os.FileMode(420), modTime: time.Unix(1542030138, 0)}
+	info := bindataFileInfo{name: "protoc-gen/infra/nginx/nginx-example.conf.tmpl", size: 1692, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6490,7 +6490,7 @@ func protocGenInfraPrometheusPrometheusYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1689, mode: os.FileMode(420), modTime: time.Unix(1543338774, 0)}
+	info := bindataFileInfo{name: "protoc-gen/infra/prometheus/prometheus.yml", size: 1689, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6550,7 +6550,7 @@ func protocGenPbGeneratorMainGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/pb/generator/main.go.tmpl", size: 903, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/pb/generator/main.go.tmpl", size: 903, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6570,7 +6570,7 @@ func protocGenPbSwaggerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/pb/swagger.go.tmpl", size: 338, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/pb/swagger.go.tmpl", size: 338, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6590,7 +6590,7 @@ func protocGenServerServerGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 17579, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/server/server.go.tmpl", size: 17579, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6610,7 +6610,7 @@ func protocGenServiceGrpcGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 2570, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc.go.tmpl", size: 2570, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6630,7 +6630,7 @@ func protocGenServiceGrpc_services_statusGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status.go.tmpl", size: 4595, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status.go.tmpl", size: 4595, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6650,7 +6650,7 @@ func protocGenServiceGrpc_services_status_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status_test.go.tmpl", size: 1969, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_services_status_test.go.tmpl", size: 1969, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6690,7 +6690,7 @@ func protocGenServiceGrpc_stream_stream_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream_test.go.tmpl", size: 807, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_stream_test.go.tmpl", size: 807, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6730,7 +6730,7 @@ func protocGenServiceGrpc_stream_unary_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary_test.go.tmpl", size: 680, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_stream_unary_test.go.tmpl", size: 680, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6770,7 +6770,7 @@ func protocGenServiceGrpc_unary_stream_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream_test.go.tmpl", size: 777, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_stream_test.go.tmpl", size: 777, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6810,7 +6810,7 @@ func protocGenServiceGrpc_unary_unary_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary_test.go.tmpl", size: 966, mode: os.FileMode(420), modTime: time.Unix(1541584436, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/grpc_unary_unary_test.go.tmpl", size: 966, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6870,7 +6870,7 @@ func protocGenServiceInit_databasesGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 5879, mode: os.FileMode(420), modTime: time.Unix(1542735566, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_databases.go.tmpl", size: 5879, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6910,7 +6910,7 @@ func protocGenServiceInit_subservice_clientsGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/init_subservice_clients.go.tmpl", size: 2052, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/init_subservice_clients.go.tmpl", size: 2052, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6930,7 +6930,7 @@ func protocGenServiceServiceGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 9266, mode: os.FileMode(420), modTime: time.Unix(1542204467, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service.go.tmpl", size: 9266, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -6950,7 +6950,7 @@ func protocGenServiceService_testGoTmpl() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 16001, mode: os.FileMode(420), modTime: time.Unix(1542218428, 0)}
+	info := bindataFileInfo{name: "protoc-gen/service/service_test.go.tmpl", size: 16001, mode: os.FileMode(420), modTime: time.Unix(1544027830, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
