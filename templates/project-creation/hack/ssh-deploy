@@ -1,0 +1,83 @@
+#!/bin/sh
+
+if [ "$#" -le 0 ]; then
+	echo "Usage : ssh-deploy <SSH_USER>@<SSH_HOST> [<ARCH (amd64|arm64|arm32) default amd64>] [<OS (linux|darwin|openbsd) default linux>]" >&2
+  exit 1
+fi
+
+ARCH="amd64" # amd64 | arm64 | arm32
+OS="linux"   # linux | darwin | openbsd
+
+[ ! -z "$2" ] && ARCH="$2"
+[ ! -z "$3" ] && OS="$3"
+
+case "$ARCH" in
+	"amd64"|"arm32"|"arm64")
+		;;
+	*)
+		echo "$ARCH build is not supported"
+		exit 1
+esac
+
+case "$OS" in
+	"linux"|"darwin"|"openbsd")
+		;;
+	*)
+		echo "$OS on $ARCH build is not supported"
+		exit 1
+esac
+
+SSH_USER="$(cut -d '@' -f 1 <<< $1)"
+SSH_HOST="$(cut -d '@' -f 2 <<< $1)"
+
+ssh $SSH_USER@$SSH_HOST 'bash -c "sudo -v"'
+[ "$?" != "0" ] && echo "Error: $SSH_USER is not sudoers on $SSH_HOST or Connection refused" && exit 1
+
+
+PKG_NAME="$OS-$ARCH"
+MAKE_DIRECTIVE="package-$ARCH-$OS"
+case "$ARCH" in
+	"amd64")
+		;;
+
+	"arm32"|"arm64")
+		if [ "$OS" != "linux" ]; then
+			echo "$OS on $ARCH build is not supported"
+			exit 1
+		fi;
+		MAKE_DIRECTIVE="package-$ARCH"
+		;;
+
+	*)
+		echo "$OS on $ARCH build is not supported"
+		exit 1
+esac
+
+
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASE_DIR=$(readlink -f "$SCRIPTPATH/..")
+RELEASE_VERSION="v$(cat $BASE_DIR/VERSION)"
+RELEASE_PACKAGE="$PKG_NAME.tar.gz"
+LOCAL_PKG_FILE=$BASE_DIR/_build/packaged/$RELEASE_PACKAGE
+
+(cd $BASE_DIR && make $MAKE_DIRECTIVE)
+[ ! -f "$LOCAL_PKG_FILE" ] && \
+	echo "Error : $LOCAL_PKG_FILE doesn't found" >&2 && exit 1
+
+echo "Copy $LOCAL_PKG_FILE to $SSH_USER@$SSH_HOST:/tmp/$RELEASE_PACKAGE"
+scp $LOCAL_PKG_FILE $SSH_USER@$SSH_HOST:/tmp/$RELEASE_PACKAGE
+
+echo "Install $SSH_USER@$SSH_HOST:/tmp/$RELEASE_PACKAGE on $SSH_HOST"
+ssh $SSH_USER@$SSH_HOST PKG_NAME=$PKG_NAME RELEASE_PACKAGE=$RELEASE_PACKAGE RELEASE_VERSION=$RELEASE_VERSION 'bash -s' <<'ENDSSH'
+	echo "Install $RELEASE_PACKAGE to /opt/{{ .ProjectGroupName }}/{{ .Name }}_$RELEASE_VERSION"
+	rm -rf /tmp/$PKG_NAME
+	tar xzvf /tmp/$RELEASE_PACKAGE -C /tmp/
+	sudo -u {{ .ProjectGroupName }} cp /tmp/$PKG_NAME/{{ .Name }} "/opt/{{ .ProjectGroupName }}/{{ .Name }}_$RELEASE_VERSION"
+	sudo supervisorctl stop {{ .Name }}
+	sudo -u {{ .ProjectGroupName }} rm /opt/{{ .ProjectGroupName }}/{{ .Name }}
+	sudo -u {{ .ProjectGroupName }} ln -s "/opt/{{ .ProjectGroupName }}/{{ .Name }}_$RELEASE_VERSION" /opt/{{ .ProjectGroupName }}/{{ .Name }}
+	sudo supervisorctl start {{ .Name }}
+	rm -rf /tmp/$PKG_NAME
+	rm -rf /tmp/$RELEASE_PACKAGE
+ENDSSH
