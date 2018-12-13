@@ -8,11 +8,6 @@ else
 ELM_TAG=
 endif
 
-.PHONY: clean
-clean:
-	@echo "$(NAME)::clean"
-	rm -rf ./elm-stuff
-
 .PHONY: build
 build:
 	@echo "$(NAME)::build"
@@ -20,3 +15,7 @@ build:
 	../../_tools/bin/elm make src/Main.elm $(ELM_TAG) --output ../assets/elm.js
 	../../_tools/bin/elm make src/Main.elm --debug --output ../assets/elm-debug.js
 
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf ./elm-stuff

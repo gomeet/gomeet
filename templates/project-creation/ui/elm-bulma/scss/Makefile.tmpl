@@ -1,11 +1,6 @@
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}::scss
 
-.PHONY: clean
-clean:
-	@echo "$(NAME)::clean"
-	rm -rf ./node_modules
-
 .PHONY: build
 build:
 	@echo "$(NAME)::build"
@@ -14,3 +9,8 @@ build:
 	cp dist/main.css ../assets/css/main.css
 	mkdir -p ../assets/webfonts
 	cp -r node_modules/@fortawesome/fontawesome-free/webfonts/* ../assets/webfonts/
+
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf ./node_modules

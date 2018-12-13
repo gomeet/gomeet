@@ -1,11 +1,6 @@
 SVC_PREFIX={{ .Prefix }}
 NAME = $(SVC_PREFIX){{ .ShortName }}::ui
 
-.PHONY: clean
-clean:
-	@echo "$(NAME)::clean"
-	rm -rf ./elm-stuff
-
 .PHONY: build
 build:
 	@echo "$(NAME)::build"
@@ -13,3 +8,7 @@ build:
 	../../_tools/bin/elm make src/Main.elm --optimize --output ../assets/elm.js
 	../../_tools/bin/elm make src/Main.elm --debug --output ../assets/elm-debug.js
 
+.PHONY: clean
+clean:
+	@echo "$(NAME)::clean"
+	rm -rf ./elm-stuff
