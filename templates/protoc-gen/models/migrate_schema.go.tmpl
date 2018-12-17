@@ -33,7 +33,7 @@ func (*Logger) Print(v ...interface{}) {
 	{{ if eq . "mysql" }}if strings.Contains(dsn, "?") {
 		return fmt.Errorf("database connection error: data source name cannot contain options")
 	}
-	dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn)
+	dsn = fmt.Sprintf("%s?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True", dsn)
 	{{ end }}
 	db, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 	if err != nil {
@@ -47,7 +47,7 @@ func (*Logger) Print(v ...interface{}) {
 	}
 	mdls := {{ lowerPascalCase . }}Models()
 	if len(mdls) > 0 {
-		{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
+		{{ if eq . "mysql" }}db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").AutoMigrate(mdls...)
 		{{ else }}db.AutoMigrate(mdls...){{ end }}
 		for _, mdl := range mdls {
 			if !db.HasTable(mdl) {
@@ -67,7 +67,7 @@ func Flush(dsn string) error {
 	{{ if eq . "mysql" }}if strings.Contains(dsn, "?") {
 		return fmt.Errorf("database connection error: data source name cannot contain options")
 	}
-	dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn)
+	dsn = fmt.Sprintf("%s?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True", dsn)
 	{{ end }}
 	db, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 	if err != nil {
@@ -107,7 +107,7 @@ func Flush(dsn string) error {
 			if strings.Contains(dsn, "?") {
 				return fmt.Errorf("database connection error: data source name cannot contain options")
 			}
-			dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn){{ end }}
+			dsn = fmt.Sprintf("%s?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True", dsn){{ end }}
 			db, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 			if err != nil {
 				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
@@ -120,7 +120,7 @@ func Flush(dsn string) error {
 			}
 			mdls := {{ lowerPascalCase . }}Models()
 			if len(mdls) > 0 {
-				{{ if eq . "mysql" }}db.Set("gorm:table_options", fmt.Sprintf("ENGINE=%s", "InnoDB")).AutoMigrate(mdls...)
+				{{ if eq . "mysql" }}db.Set("gorm:table_options", "ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci").AutoMigrate(mdls...)
 				{{ else }}db.AutoMigrate(mdls...){{ end }}
 				for _, mdl := range mdls {
 					if !db.HasTable(mdl) {
@@ -148,7 +148,7 @@ func Flush(dsn string) error {
 			if strings.Contains(dsn, "?") {
 				return fmt.Errorf("database connection error: data source name cannot contain options")
 			}
-			dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True", dsn){{ end }}
+			dsn = fmt.Sprintf("%s?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True", dsn){{ end }}
 			db, err := gorm.Open("{{ lower . }}{{ if eq . "sqlite" }}3{{ end }}", dsn)
 			if err != nil {
 				return fmt.Errorf("{{ upperPascalCase . }} database connection error: %v", err)
